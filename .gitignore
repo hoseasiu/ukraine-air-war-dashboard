@@ -1,0 +1,32 @@
+# Source downloads and raw data: never commit
+*.zip
+data/raw/*
+!data/raw/.gitkeep
+
+# Local-only planning note (cleaned copy lives in docs/plan.md)
+/Air War Dashboard Plan.md
+
+# Local tool settings
+.claude/settings.local.json
+.claude/worktrees/
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node / Vite
+node_modules/
+dist/
+*.tsbuildinfo
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
