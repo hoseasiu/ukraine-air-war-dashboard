@@ -231,6 +231,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Guided mode: Day 1 context segment, about 20 minutes, step-through stops.
 - Alert source: the Vadimkin sirens dataset (RaidTrend and alerts.in.ua history rejected).
 - Build vs. reuse: **build the full plan** (all of Phases 0–6), chosen over a slide deck only or a scoped-down build. §14 records the prior-art review behind that choice.
+- Kaggle license (checked Nov 25, 2026, #1): CC BY-NC-SA 4.0. Processed data may go in a public repo with attribution, a note of changes, noncommercial use and the same license on adapted data. Details are in [data-audit.md](data-audit.md#license-and-redistribution). Visibility and the code license are still the owner's call (#26).
 - Repo: `ukraine-air-war-dashboard` (replaces the name suggested in §8). Private until the data license check and a review are done.
 
 **Open**
@@ -238,7 +239,12 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Weapon-class taxonomy sign-off (Phase 0).
 - Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January).
 - Which three oblasts to compare in stop 10 (suggested: Kharkiv, Kyiv city, Lviv).
-- Whether the Kaggle license allows redistributing processed data in a public repo.
+- Ballistic-restriction flag start date (#1). This plan and `AGENTS.md` rule 3 say after Aug 12, 2026. The Kaggle page says reporting stopped Aug 10, and `hidden` rows end from Aug 11. They also cover some cruise and anti-ship missiles. Suggested: flag every night ending Aug 11 or later and call it a missile-reporting restriction.
+- Rows marked `hidden` mostly carry `launched` = 0 (#1). Suggested: treat `launched` as unknown, never zero, leave these rows out of intercept rates, and decide how to show their published `destroyed` counts.
+- Which rows count as attacks (#1; for #5 and #7): regional-command reports that may repeat national figures (including all `Geran` rows), and reconnaissance and unknown UAV rows, which are almost all logged as destroyed.
+- How daytime reports fit "attack night" keyed by end date, given overlapping windows (#1; for #5 and #7).
+- Scope of A5 (#1; for #5): decoys can't be separated. A jet-drone share is possible only from about Aug 28, 2026, with partial coverage in September. This also affects guided stop 3 and the "Shahed-type and decoy" wording.
+- Wording for "since 2022" and "full period" (A1, stops 1 and 2): strike data starts Sept 28, 2022 (#1). Suggested: say "since Sept 28, 2022".
 - Final annotation list (Hosea reviews).
 
 ---

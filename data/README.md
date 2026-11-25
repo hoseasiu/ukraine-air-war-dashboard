@@ -3,13 +3,15 @@
 | Folder | Contents | In git? |
 |---|---|---|
 | `raw/` | Source files, exactly as downloaded. Never edit them or rename their columns. | No |
-| `processed/` | Pipeline outputs that the site loads. Don't commit any until the license check in issue #1 is done. | Yes, after that check |
+| `processed/` | Pipeline outputs that the site loads. Anything derived from Kaggle is CC BY-NC-SA 4.0 (see below). | Yes, with the license notice |
 
 ## Current raw files
 
 ### Kaggle: Massive Missile Attacks on Ukraine
 
-Source: <https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine> (Petro Ivaniuk). Downloading needs a Kaggle login, so a person has to do it; coding sessions can't fetch it. **License: not yet verified** (#1).
+Source: <https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine> (Petro Ivaniuk). Downloading needs a Kaggle login, so a person has to do it; coding sessions can't fetch it.
+
+**License: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)**, read from the License field on that page on Nov 25, 2026. Processed data may be committed and published with credit to Petro Ivaniuk, links to the dataset and license, a note of what changed, noncommercial use only, and the same license on adapted data. Put that notice in `processed/` with the first outputs. Raw files still stay out of git. Details: [data audit](../docs/data-audit.md#license-and-redistribution).
 
 Received Nov 25, 2026 as `archive.zip`. The files inside are dated Nov 21, 2026.
 
