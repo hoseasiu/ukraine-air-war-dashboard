@@ -1,11 +1,19 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { parseAlertMonthly } from "../src/alerts/alertData.ts";
+import { nationalMonth, parseAlertMonthly } from "../src/alerts/alertData.ts";
+import { sparklinePoints } from "../src/alerts/sparklineData.ts";
 import { alertLaunchRows } from "../src/alerts/alertLaunchData.ts";
-import { assignStyles, comparisonAreas, comparisonRows, DEFAULT_COMPARISON } from "../src/alerts/comparisonData.ts";
+import {
+  assignStyles,
+  comparisonAreas,
+  comparisonRows,
+  DEFAULT_COMPARISON,
+  endLabel,
+  spreadLabels,
+} from "../src/alerts/comparisonData.ts";
 import { parseAreas } from "../src/buildData.ts";
-import { chartFlags, monthPeriod, type ColumnSpec } from "../src/chart/flags.ts";
+import { chartFlags, combinedFlags, monthPeriod, type ColumnSpec } from "../src/chart/flags.ts";
 import { parseMonthly } from "../src/strikes/strikeData.ts";
 import { CLASS_IDS } from "../src/theme/classStyles.ts";
 
@@ -97,4 +105,44 @@ test("the launch series carries the restriction flag from August 2026, whatever 
 test("a total over only some classes says that mixed rows aren't split", () => {
   assert.ok(!flags(launchRows()).includes("classes_not_split"));
   assert.ok(flags(launchRows({ classes: ["cruise"] })).includes("classes_not_split"));
+});
+
+test("the sparkline's months are the national means, on a scale from zero", () => {
+  const rows = alerts.months.map((month) => nationalMonth(alerts, month));
+  const launches = launchRows();
+  assert.deepEqual(rows.map((r) => r.hours), alerts.months.map((month) => row(launches, month).hours));
+  const { points, peak } = sparklinePoints(rows);
+  assert.equal(points.length, alerts.months.length);
+  assert.equal(points[0]!.x, 0);
+  assert.equal(points.at(-1)!.x, 100);
+  assert.equal(peak.hours, Math.max(...rows.map((r) => r.hours!)));
+  assert.equal(points[rows.findIndex((r) => r.month === peak.month)]!.y, 0);
+});
+
+test("a month without figures is never drawn as zero", () => {
+  assert.equal(nationalMonth(alerts, "2026-08").hours, null);
+  assert.throws(
+    () => sparklinePoints([nationalMonth(alerts, "2026-07"), nationalMonth(alerts, "2026-08")]),
+    /No alert figures for 2026-08/,
+  );
+});
+
+test("figures drawn beside a chart's rows add their badges once, in the usual order", () => {
+  assert.deepEqual(
+    combinedFlags(["alert_regions_excluded"], ["alert_granularity_change", "alert_end_assumed", "alert_regions_excluded"]),
+    ["alert_end_assumed", "alert_regions_excluded", "alert_granularity_change"],
+  );
+});
+
+test("line-end names stay unambiguous", () => {
+  assert.equal(endLabel("Lviv oblast"), "Lviv");
+  assert.equal(endLabel("Kyiv oblast"), "Kyiv oblast");
+  assert.equal(endLabel("Kyiv city"), "Kyiv city");
+});
+
+test("line-end labels move apart, keep their order and stay on the chart", () => {
+  assert.deepEqual(spreadLabels([100, 200], 20, 0, 300), [100, 200]);
+  assert.deepEqual(spreadLabels([105, 100], 20, 0, 300), [120, 100]);
+  assert.deepEqual(spreadLabels([300, 298, 299], 20, 0, 300), [300, 260, 280]);
+  assert.deepEqual(spreadLabels([2, 1], 20, 10, 300), [30, 10]);
 });

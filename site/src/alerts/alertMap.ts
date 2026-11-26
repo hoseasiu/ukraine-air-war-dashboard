@@ -11,7 +11,16 @@ import { alertAreas, alertMonthly, boundaries, excludedAlertAreas } from "../dat
 import { ALERT_BINS, alertBin } from "../theme/alertScale.ts";
 import type { FixedView } from "../strikes/shared.ts";
 import { svgElement } from "../theme/marks.ts";
-import { mapRows, monthsInRange, nearestMonth, type Boundary, type MapRow } from "./alertData.ts";
+import {
+  mapRows,
+  monthsInRange,
+  nationalMonth,
+  nearestMonth,
+  type Boundary,
+  type MapRow,
+  type NationalMonth,
+} from "./alertData.ts";
+import { monthSparkline } from "./monthSparkline.ts";
 import "./alertMap.css";
 
 const TITLE = "Alert hours by oblast";
@@ -221,7 +230,7 @@ function spec(
   month: string,
   rows: MapRow[],
   highlight: readonly string[],
-  parts: Pick<ChartSpec<MapRow>, "controls" | "scaleKey" | "footnote" | "source" | "emptyText">,
+  parts: Pick<ChartSpec<MapRow>, "controls" | "scaleKey" | "footnote" | "source" | "emptyText" | "alsoDraws">,
   maxHeight = 600,
 ): ChartSpec<MapRow> {
   const outlined = highlight.length ? " Oblasts chosen in the filters have a double outline." : "";
@@ -256,6 +265,15 @@ function spec(
     coverage: monthPeriod(month),
     pointer: "shape",
     draw: (data, width) => drawMap(data, width, highlight, maxHeight),
+  };
+}
+
+/** What the sparkline draws, for the badges. It covers every month offered, whichever one the map shows. */
+function sparklineFigures(rows: readonly NationalMonth[]): ChartSpec<MapRow>["alsoDraws"] {
+  return {
+    columns: [{ key: "hours", label: "Alert hours (mean across areas)", type: "number", measure: "alert_hours" }],
+    rows,
+    coverage: { from: monthPeriod(rows[0]!.month).from, to: monthPeriod(rows.at(-1)!.month).to },
   };
 }
 
@@ -319,13 +337,24 @@ export function alertMap(settings: AlertMapSettings): HTMLElement {
   const current = () => offered[index]!;
   const currentSpec = () =>
     spec(current(), mapRows(alertMonthly, alertAreas, current()), settings.highlight, parts, settings.fixed?.height);
-  const parts = { controls, scaleKey: scaleKey(), footnote: footnote(), source: credit() };
+  // A guided stop's view has no sparkline: its height is for the map.
+  const national = offered.map((month) => nationalMonth(alertMonthly, month));
+  const sparkline = !settings.fixed && offered.length > 1 ? monthSparkline(national) : undefined;
+  if (sparkline) controls.prepend(sparkline.element);
+  const parts = {
+    controls,
+    scaleKey: scaleKey(),
+    footnote: footnote(),
+    source: credit(),
+    alsoDraws: sparkline && sparklineFigures(national),
+  };
 
   function syncControls(): void {
     const text = formatMonth(current());
     slider.value = String(index);
     slider.setAttribute("aria-valuetext", text);
     value.textContent = text;
+    sparkline?.mark(index);
     // aria-disabled rather than disabled, which would drop focus at either end.
     previous.setAttribute("aria-disabled", String(index === 0));
     next.setAttribute("aria-disabled", String(index === offered.length - 1));

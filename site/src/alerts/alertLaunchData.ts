@@ -8,7 +8,7 @@ import { BALLISTIC_RESTRICTION_FROM, monthPeriod } from "../chart/flags.ts";
 import { monthFromNumber, monthNumber } from "../filters/state.ts";
 import { sumKnown, type MonthRow, type MonthTable } from "../strikes/strikeData.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
-import type { AlertTable } from "./alertData.ts";
+import { nationalMonth, type AlertTable } from "./alertData.ts";
 
 export interface AlertLaunchRow {
   month: string;
@@ -66,20 +66,20 @@ export function alertLaunchRows(
   for (let number = monthNumber(from); number <= monthNumber(to); number++) {
     const month = monthFromNumber(number);
     const found = strikes.rows.filter((row) => row.month === month && filters.classes.includes(row.class));
-    const areas = alerts.rows.filter((row) => row.month === month);
+    const national = nationalMonth(alerts, month);
     rows.push({
       month,
       launched: sumKnown(found.map((row) => row.launched)),
       launch_note: launchNote(strikes, month, found, filters.classes.length),
-      hours: areas.length ? areas.reduce((sum, row) => sum + row.hours, 0) / areas.length : null,
+      hours: national.hours,
       // By date as well as by row, so a month with no matching row is still marked.
       ballistic_restricted:
         found.some((row) => row.ballistic_restricted) || monthPeriod(month).to >= BALLISTIC_RESTRICTION_FROM,
       // A total over only some classes leaves out their share of jointly reported counts.
       classes_not_split: !everyClass && filters.classes.length > 0,
-      alert_end_assumed: areas.some((row) => row.alert_end_assumed),
-      alert_regions_excluded: areas.some((row) => row.alert_regions_excluded),
-      alert_granularity_change: areas.some((row) => row.alert_granularity_change),
+      alert_end_assumed: national.alert_end_assumed,
+      alert_regions_excluded: national.alert_regions_excluded,
+      alert_granularity_change: national.alert_granularity_change,
     });
   }
   return rows;

@@ -108,6 +108,13 @@ export const TRACES: readonly Trace[] = [
     code: ["pipeline/alerts.py", "site/src/alerts/alertData.ts"],
   },
   {
+    figure: "National alert hours above the map’s month slider",
+    shownOn: "Tab E",
+    method: "For each month the slider offers, the mean of the areas’ alert hours.",
+    tables: ["alert_hours_monthly.json"],
+    code: ["site/src/alerts/alertData.ts", "site/src/alerts/sparklineData.ts"],
+  },
+  {
     figure: "Alert hours for up to three areas",
     shownOn: "Tab E; stop 10",
     method: "Those areas’ rows of the monthly alert table.",

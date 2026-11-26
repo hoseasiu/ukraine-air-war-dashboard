@@ -55,3 +55,27 @@ export function assignStyles(
   const free = [...Array(MAX_OBLASTS).keys()].filter((slot) => ![...kept.values()].includes(slot));
   return new Map(oblasts.map((id) => [id, kept.get(id) ?? free.shift()!]));
 }
+
+/** The name written at a line's end. "Kyiv" alone could be the city or the oblast, so both keep theirs. */
+export function endLabel(name: string): string {
+  return name === "Kyiv oblast" ? name : name.replace(/ oblast$/, "");
+}
+
+/**
+ * Moves labels apart so they're at least `gap` pixels from each other and stay
+ * between `top` and `bottom`, keeping them as near their lines' ends as that
+ * allows. Returns positions in the order given.
+ */
+export function spreadLabels(wanted: readonly number[], gap: number, top: number, bottom: number): number[] {
+  const order = [...wanted.keys()].sort((a, b) => wanted[a]! - wanted[b]!);
+  const placed = [...wanted];
+  let lowest = top - gap;
+  for (const index of order) {
+    lowest = placed[index] = Math.max(wanted[index]!, lowest + gap, top);
+  }
+  let highest = bottom + gap;
+  for (const index of order.reverse()) {
+    highest = placed[index] = Math.min(placed[index]!, highest - gap, bottom);
+  }
+  return placed;
+}

@@ -19,6 +19,7 @@ export const CHANGELOG: readonly ChangelogEntry[] = [
       "Time charts shade the missile-reporting restriction, and alert-hour line charts shade the move to raion alerts. Data-quality badges now open their full text, and each chart tab lists its notes at the top.",
       "Attacks tab: salvo sizes for all years in one chart; new calendar colors; the one-night breakdown now shows the night among all of its year’s nights.",
       "Defense tab: the saturation chart shows all nights in one panel, with a summary by size group; the before/after panels became one chart with a row for each class.",
+      "Alerts tab: mean alert hours by month now show above the map’s month slider.",
     ],
   },
   {

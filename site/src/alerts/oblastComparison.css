@@ -1,0 +1,36 @@
+/* The oblast comparison. Its line styles are in theme/areaStyles.ts. */
+.comparison-key-button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2rem;
+  padding: 0.2rem 0.6rem;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* A heavier border and bold name mark the held choice, so it doesn't depend on color. */
+.comparison-key-button[aria-pressed="true"] {
+  font-weight: 700;
+  border: 2px solid var(--ink);
+  padding: calc(0.2rem - 1px) calc(0.6rem - 1px);
+}
+
+/* Only the lines, points and leaders fade. Names stay at full contrast. */
+g[aria-label].comparison-lighter,
+.comparison-end.comparison-lighter path {
+  opacity: 0.22;
+}
+
+.comparison-end.comparison-focus text {
+  font-weight: 700;
+}
+
+.comparison-end-label {
+  font-size: 15px;
+  fill: var(--ink);
+}
