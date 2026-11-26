@@ -35,8 +35,32 @@ def raw(tmp_path):
         {"time_end": "2030-03-04  "},
         {"time_end": "2030-03-01"},
     ])
-    for name in (KAGGLE_REFERENCE, *ALERTS):
+    for name in (KAGGLE_REFERENCE, ALERTS[1]):
         write_csv(folder / name, list(COLUMNS[name]), [{}])
+    # One made-up oblast, with rows on both sides of the alert tables' window.
+    write_csv(folder / ALERTS[0], list(COLUMNS[ALERTS[0]]), [
+        {
+            "oblast": "Testova", "raion": "North", "level": "raion",
+            "started_at": f"{day} 10:00:00+00:00", "finished_at": f"{day} 11:30:00+00:00",
+        }
+        for day in ("2022-03-15", "2024-05-05", "2026-08-02")
+    ])
+    return folder
+
+
+@pytest.fixture
+def reference(tmp_path):
+    folder = tmp_path / "reference"
+    folder.mkdir()
+    write_csv(
+        folder / "oblasts.csv",
+        ["iso_3166_2", "name", "kind", "in_alert_totals", "alert_exclusion_reason"],
+        [{"iso_3166_2": "UA-05", "name": "Testova oblast", "in_alert_totals": "yes"}],
+    )
+    write_csv(folder / "oblast_aliases.csv", ["alias", "iso_3166_2"],
+              [{"alias": "Testova", "iso_3166_2": "UA-05"}])
+    write_csv(folder / "raions.csv", ["iso_3166_2", "raion"],
+              [{"iso_3166_2": "UA-05", "raion": "North"}])
     return folder
 
 
@@ -48,9 +72,9 @@ def no_network(url, destination):
     raise AssertionError(f"unexpected download of {url}")
 
 
-def test_build_writes_manifest_and_snapshot_date(raw, tmp_path):
+def test_build_writes_manifest_and_snapshot_date(raw, reference, tmp_path):
     out = tmp_path / "processed"
-    build(raw, out, checksums(raw))
+    build(raw, out, checksums(raw), reference)
     manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["snapshot_date"] == "2030-03-04"
     assert json.loads((out / "build_info.json").read_text()) == {"snapshot_date": "2030-03-04"}
@@ -61,13 +85,21 @@ def test_build_writes_manifest_and_snapshot_date(raw, tmp_path):
     assert files[0]["rows"] == 3
 
 
-def test_build_is_reproducible(raw, tmp_path):
+def test_build_is_reproducible(raw, reference, tmp_path):
     out = tmp_path / "processed"
-    build(raw, out, checksums(raw))
+    build(raw, out, checksums(raw), reference)
     first = {p.name: p.read_bytes() for p in out.iterdir()}
-    build(raw, out, checksums(raw))
+    assert {"alert_hours_monthly.json", "alert_daily.json"} <= set(first)
+    build(raw, out, checksums(raw), reference)
     assert {p.name: p.read_bytes() for p in out.iterdir()} == first
     assert all(b"\r" not in content for content in first.values())
+
+
+def test_bad_alerts_leave_no_outputs(raw, reference, tmp_path):
+    write_csv(raw / ALERTS[0], list(COLUMNS[ALERTS[0]]), [{}])
+    with pytest.raises(PipelineError):
+        build(raw, tmp_path / "processed", checksums(raw), reference)
+    assert not (tmp_path / "processed").exists()
 
 
 @pytest.mark.parametrize("name", [KAGGLE_DAILY, KAGGLE_REFERENCE])

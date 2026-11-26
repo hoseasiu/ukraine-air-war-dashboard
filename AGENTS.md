@@ -54,9 +54,9 @@ Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` instal
 
 | Command | What it does |
 |---|---|
-| `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json` and `build_info.json`. It's a stub until #7 and #8 add the tables. |
+| `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json`, `build_info.json` and the [alert tables](data/README.md#alert-tables). #7 adds the strike tables. |
 | `uv run python -m pipeline fetch` | Only downloads and verifies the pinned alert files. |
-| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. |
+| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and checks on the committed alert tables, the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. |
 | `uv run ruff check .` | Lints the Python, apart from `.github/`. |
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
@@ -121,6 +121,12 @@ From the alerts audit (#2), at upstream commit `1a34978`. Read the [alerts secti
 - Don't splice the volunteer file onto the official one. Their levels differ by area and period.
 - Luhansk and Crimea permanent alerts aren't listed. Show both as excluded, never as zero.
 - Official end times assumed by the upstream parser aren't flagged.
+
+From the alerts pipeline (#8). Read the [table notes](data/README.md#alert-tables) before charting alerts.
+
+- `hours` and `n_alerts` are both averages per raion, in Kyiv time, April 2022 to July 2026. A national figure is a mean over areas, not a sum.
+- `alert_end_assumed` means an end *may* be assumed (a row of exactly one hour). Don't word it as certain.
+- The tables have no rows for excluded areas. A map must add them from `oblasts.csv` as excluded.
 
 ## Working on issues
 
