@@ -68,7 +68,7 @@ From the audit of the Nov 21 snapshot (#1). Read [docs/data-audit.md](docs/data-
 
 From the alerts audit (#2), at upstream commit `1a34978`. Read the [alerts section](docs/data-audit.md#alerts-ukrainian-air-raid-sirens-dataset) before using alert data.
 
-- The official file's last alert starts Sept 7, 2026, and Aug 29 to Sept 2 is largely missing.
+- The official file's last alert starts Sept 7, 2026, and Aug 29 to Sept 2 is largely missing. The owner decided that alert figures end at July 2026; check upstream again at #28.
 - 113,845 official rows appear exactly twice. Drop exact duplicates first.
 - `level` is the administrative level (oblast, raion, hromada), not the yellow/red alert level. Neither file carries yellow/red.
 - Raion alerting phased in during 2025. Don't add up rows or count "any raion" as the whole oblast. The proposed roll-up averages the raions.

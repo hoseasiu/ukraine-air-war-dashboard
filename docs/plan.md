@@ -234,6 +234,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Kaggle license (checked Nov 25, 2026, #1): CC BY-NC-SA 4.0. Processed data may go in a public repo with attribution, a note of changes, noncommercial use and the same license on adapted data. Details are in [data-audit.md](data-audit.md#license-and-redistribution). Visibility and the code license are still the owner's call (#26).
 - Repo: `ukraine-air-war-dashboard` (replaces the name suggested in §8). Private until the data license check and a review are done.
 - Issue dependencies: GitHub's "blocked by" links are the only record. A GitHub Action generates a graph and list from them in #31, which replaces the hand-kept table in `DEPENDENCIES.md`.
+- Alert coverage (owner, Nov 25, 2026, #2): alert figures end at July 2026, because the official file stops Sept 7, 2026 and August is incomplete. No volunteer-only view for later months. Check upstream again at the snapshot refresh (#28). This overrides §3's snapshot date for alert data and affects E1–E3 and stops 9 and 10.
 
 **Open**
 - Definition of a "massive" night: percentile or fixed threshold (decide in Phase 0).
@@ -247,7 +248,6 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Scope of A5 (#1; for #5): decoys can't be separated. A jet-drone share is possible only from about Aug 28, 2026, with partial coverage in September. This also affects guided stop 3 and the "Shahed-type and decoy" wording.
 - Wording for "since 2022" and "full period" (A1, stops 1 and 2): strike data starts Sept 28, 2022 (#1). Suggested: say "since Sept 28, 2022".
 - Final annotation list (Hosea reviews).
-- Alert coverage after July 2026 (#2; affects E1–E3, stops 9 and 10, #8, #28). The official alerts file stops Sept 7, 2026 and August is incomplete, so §3's "updated daily" and the Dec 31 snapshot don't hold for it. Suggested: end alert figures at July 2026 and check upstream again at #28. Alternatives: a separate, labeled volunteer-only view, or auditing another source.
 - Alert roll-up rule and source choice (#2; for #5 and #8). Suggested: drop duplicates; leave out hromada rows; average each oblast's raions (each raion's rows plus oblast-wide rows); official file April 2022 to July 2026; volunteer file only as a cross-check. See [data-audit.md](data-audit.md#proposed-roll-up-rule).
 - Alert granularity flag (#2). §3 and §4 say the switch to raions was in Dec 2025. It phased in during 2025, with the main step in Nov 2025. Suggested: mark the transition from 2025.
 - "Total alert-hours nationwide" in stop 1 (#2). Suggested: replace it with a mean per area (23 oblasts and Kyiv city), because a sum of raion averages is hard to interpret.
