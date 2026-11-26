@@ -1,7 +1,7 @@
 model,class,components,note
 Shahed-136/131,shahed_drone,,"Catch-all that includes Gerbera, imitator drones and other types; decoys can't be separated."
-Geran-4,shahed_drone,,Draft: grouped with Shahed-type as the reference file does. See README choice 6.
-Geran-5,shahed_drone,,Draft: grouped with Shahed-type as the reference file does. See README choice 6.
+Geran-4,shahed_drone,,Grouped with Shahed-type as the reference file does. See README decision 6.
+Geran-5,shahed_drone,,Grouped with Shahed-type as the reference file does. See README decision 6.
 Geran-4 and Geran-5,shahed_drone,Geran-4; Geran-5,
 Geran-2 and Geran-4,shahed_drone,Geran-2; Geran-4,Geran-2 never appears on its own.
 Geran-2 and Geran-4 and Geran-5,shahed_drone,Geran-2; Geran-4; Geran-5,Geran-2 never appears on its own.
@@ -12,15 +12,15 @@ X-59/X-69,cruise,,
 X-59MK2,cruise,,
 X-69,cruise,,
 Iskander-K,cruise,,Cruise missile despite the Iskander name.
-Banderol,cruise,,Draft: follows the reference file. See README choice 5.
-Banderol/Dan-T,cruise,,Draft: follows the reference file. See README choice 5.
-X-101/X-555 and Kalibr,mixed_cruise,X-101/X-555; Kalibr,
-X-101/X-555 and Iskander-K,mixed_cruise,X-101/X-555; Iskander-K,
-Iskander-K and Kalibr,mixed_cruise,Iskander-K; Kalibr,
-X-101/X-555 and Kalibr and Iskander-K,mixed_cruise,X-101/X-555; Kalibr; Iskander-K,
-X-101/X-555 and Kalibr and X-59/X-69,mixed_cruise,X-101/X-555; Kalibr; X-59/X-69,
-X-101/X-555 and Iskander-K and X-59/X-69,mixed_cruise,X-101/X-555; Iskander-K; X-59/X-69,
-X-101/X-555 and Kalibr and Iskander-K and X-59,mixed_cruise,X-101/X-555; Kalibr; Iskander-K; X-59,
+Banderol,cruise,,Follows the reference file. See README decision 5.
+Banderol/Dan-T,cruise,,Follows the reference file. See README decision 5.
+X-101/X-555 and Kalibr,cruise,X-101/X-555; Kalibr,
+X-101/X-555 and Iskander-K,cruise,X-101/X-555; Iskander-K,
+Iskander-K and Kalibr,cruise,Iskander-K; Kalibr,
+X-101/X-555 and Kalibr and Iskander-K,cruise,X-101/X-555; Kalibr; Iskander-K,
+X-101/X-555 and Kalibr and X-59/X-69,cruise,X-101/X-555; Kalibr; X-59/X-69,
+X-101/X-555 and Iskander-K and X-59/X-69,cruise,X-101/X-555; Iskander-K; X-59/X-69,
+X-101/X-555 and Kalibr and Iskander-K and X-59,cruise,X-101/X-555; Kalibr; Iskander-K; X-59,
 Iskander-M,ballistic,,
 KN-23,ballistic,,
 Iskander-M/KN-23,ballistic,Iskander-M; KN-23,Both are ballistic.
@@ -31,16 +31,16 @@ X-47 Kinzhal,aeroballistic_hypersonic,,
 X-22,antiship_other,,
 X-22 and X-32,antiship_other,X-22; X-32,X-32 never appears on its own.
 P-800 Oniks,antiship_other,,
-X-31,antiship_other,,Draft. See README choice 3.
-X-31P,antiship_other,,Draft: anti-radiation. See README choice 3.
-X-31PD,antiship_other,,Draft: anti-radiation. See README choice 3.
-X-35,antiship_other,,Draft. See README choice 3.
-X-35Y,antiship_other,,Draft. See README choice 3.
+X-31,antiship_other,,See README decision 3.
+X-31P,antiship_other,,Anti-radiation. See README decision 3.
+X-31PD,antiship_other,,Anti-radiation. See README decision 3.
+X-35,antiship_other,,See README decision 3.
+X-35Y,antiship_other,,See README decision 3.
 X-22 and X-31P,antiship_other,X-22; X-31P,
-C-300,antiship_other,,Draft: surface-to-air missile. See README choice 2.
-C-400,antiship_other,,Draft: surface-to-air missile. See README choice 2.
-C-300/C-400,antiship_other,C-300; C-400,Draft: surface-to-air missiles. See README choice 2.
-Unknown Missile,antiship_other,,"Draft: type unknown, so counted as other. See README choice 4."
+C-300,antiship_other,,Surface-to-air missile. See README decision 2.
+C-400,antiship_other,,Surface-to-air missile. See README decision 2.
+C-300/C-400,antiship_other,C-300; C-400,Surface-to-air missiles. See README decision 2.
+Unknown Missile,antiship_other,,"Type unknown, so counted as other. See README decision 4."
 3M22 Zircon/P-800 Oniks,mixed,3M22 Zircon; P-800 Oniks,
 X-47 Kinzhal and Iskander-M,mixed,X-47 Kinzhal; Iskander-M,
 X-47 Kinzhal and Iskander-M/KN-23,mixed,X-47 Kinzhal; Iskander-M/KN-23,The reference file calls this a cruise missile.
@@ -63,7 +63,7 @@ X-101/X-555 and Kalibr and X-22,mixed,X-101/X-555; Kalibr; X-22,The reference fi
 X-101/X-555 and Kalibr and Iskander-M/KN-23,mixed,X-101/X-555; Kalibr; Iskander-M/KN-23,
 Iskander-M/KN-23 and Iskander-K and Kalibr,mixed,Iskander-M/KN-23; Iskander-K; Kalibr,
 Iskander-M/KN-23 and Iskander-K and X-59/X-69,mixed,Iskander-M/KN-23; Iskander-K; X-59/X-69,
-Shahed-136/131 and Lancet,mixed,Shahed-136/131; Lancet,Crosses a counted and an excluded class. See README choice 8.
+Shahed-136/131 and Lancet,mixed,Shahed-136/131; Lancet,Crosses a counted and an excluded class. See README decision 8.
 Unknown UAV,other_uav,,"Unidentified, so not assumed to be Shahed-type."
 Reconnaissance UAV,other_uav,,
 Orlan-10,other_uav,,
@@ -81,9 +81,9 @@ Orlan-10 and ZALA,other_uav,Orlan-10; ZALA,
 Orlan-10 and Supercam,other_uav,Orlan-10; Supercam,
 Orlan-10 and ZALA and Supercam,other_uav,Orlan-10; ZALA; Supercam,
 Orlan-10 and Orlan-30 and ZALA and Supercam,other_uav,Orlan-10; Orlan-30; ZALA; Supercam,
-Lancet,other_uav,,Loitering munition. See README choice 7.
-Kub,other_uav,,Loitering munition. See README choice 7.
-Молнія,other_uav,,See README choice 7.
+Lancet,other_uav,,Loitering munition. See README decision 7.
+Kub,other_uav,,Loitering munition. See README decision 7.
+Молнія,other_uav,,See README decision 7.
 Молнія and Lancet,other_uav,Молнія; Lancet,
 Orion,other_uav,,The reference file calls it reconnaissance and armed.
 Mohajer-6,other_uav,,The reference file calls it multirole ISTAR.

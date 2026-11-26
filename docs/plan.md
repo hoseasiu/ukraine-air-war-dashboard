@@ -71,7 +71,7 @@ This is the handoff spec for coding sessions. Phases in §9 have done-when crite
 All processing happens offline in Python. The site only loads small, precomputed JSON or Parquet files.
 
 - **Attack night** is the unit for A and B. An Air Force morning report covers roughly 18:00–09:00 Kyiv time, so one night spans two calendar dates. Key each night by the date it *ends*, and document that.
-- **Weapon-class taxonomy:** map the raw `model` strings to a short list of classes: Shahed-type and decoy drones · cruise missiles (Kh-101/555, Kalibr, Kh-59/69) · ballistic (Iskander-M, KN-23) · aeroballistic and hypersonic (Kinzhal, Zircon) · anti-ship and other (Kh-22/32, Oniks) · guided bombs, if present. Combined entries such as "X-101/Kalibr" go to a **mixed-cruise** bucket rather than being split by guesswork. The mapping table is an editable CSV in the repo, and Hosea signs it off.
+- **Weapon-class taxonomy:** map the raw `model` strings to a short list of classes: Shahed-type and decoy drones · cruise missiles (Kh-101/555, Kalibr, Kh-59/69) · ballistic (Iskander-M, KN-23) · aeroballistic and hypersonic (Kinzhal, Zircon) · anti-ship and other (Kh-22/32, Oniks) · guided bombs, if present. Combined entries are never split by guesswork: one whose components share a class (such as "X-101/X-555 and Kalibr") takes that class, and one that crosses classes goes to **mixed**. Reconnaissance, tactical and unidentified UAVs and bombs are excluded from totals. The mapping is an editable CSV in the repo; rules and decisions are in [data/reference/README.md](../data/reference/README.md).
 - **Oblast gazetteer:** one canonical English name and ISO 3166-2 code per oblast, with aliases covering Ukrainian, transliterated and Kaggle spellings. Boundaries come from an Admin-1 GeoJSON (the alerts repo ships Admin-2; dissolve it to Admin-1 or use a standard Admin-1 file).
 - **Derived tables:**
   - `nights` (date, class, launched, destroyed, n_models, is_massive)
@@ -232,12 +232,16 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Alert source: the Vadimkin sirens dataset (RaidTrend and alerts.in.ua history rejected).
 - Build vs. reuse: **build the full plan** (all of Phases 0–6), chosen over a slide deck only or a scoped-down build. §14 records the prior-art review behind that choice.
 - Kaggle license (checked Nov 25, 2026, #1): CC BY-NC-SA 4.0. Processed data may go in a public repo with attribution, a note of changes, noncommercial use and the same license on adapted data. Details are in [data-audit.md](data-audit.md#license-and-redistribution). Visibility and the code license are still the owner's call (#26).
+- Weapon classes (Nov 25, 2026, #3). The owner delegated the choices to the coding agent, which decided them; [data/reference/README.md](../data/reference/README.md#decisions) has the reasons.
+  - Counted: Shahed-type and decoy, cruise, ballistic, aeroballistic and hypersonic, anti-ship and other, and mixed (no class intercept rate).
+  - Excluded from totals, the massive-night threshold and intercept rates: reconnaissance, tactical and unidentified UAVs (including Lancet) and bombs. List them on Data & Methods.
+  - No separate mixed-cruise bucket (changes the original §4): rows naming only cruise missiles are cruise.
+  - Cross-class rows aren't split, so the A and B charts must say that some class series and rates don't cover every launch of that kind.
 - Repo: `ukraine-air-war-dashboard` (replaces the name suggested in §8). Private until the data license check and a review are done.
 - Issue dependencies: GitHub's "blocked by" links are the only record. A GitHub Action generates a graph and list from them in #31, which replaces the hand-kept table in `DEPENDENCIES.md`.
 
 **Open**
 - Definition of a "massive" night: percentile or fixed threshold (decide in Phase 0).
-- Weapon-class taxonomy sign-off (Phase 0). A draft mapping and its open choices are in [data/reference/README.md](../data/reference/README.md) (#3); it isn't signed off.
 - Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January).
 - Which three oblasts to compare in stop 10 (suggested: Kharkiv, Kyiv city, Lviv).
 - Ballistic-restriction flag start date (#1). This plan and `AGENTS.md` rule 3 say after Aug 12, 2026. The Kaggle page says reporting stopped Aug 10, and `hidden` rows end from Aug 11. They also cover some cruise and anti-ship missiles. Suggested: flag every night ending Aug 11 or later and call it a missile-reporting restriction.

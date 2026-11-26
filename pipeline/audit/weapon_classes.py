@@ -43,7 +43,7 @@ def components(row):
 
 
 def expected_class(parts, by_model):
-    """The draft rule for combined rows (data/reference/README.md)."""
+    """The rule for combined rows (data/reference/README.md)."""
     found = set()
     for part in parts:
         if part in by_model:
@@ -52,11 +52,7 @@ def expected_class(parts, by_model):
             found.add(COMPONENT_ONLY[part])
         else:
             return None
-    if len(found) > 1:
-        return "mixed_cruise" if found <= {"cruise", "mixed_cruise"} else "mixed"
-    only = found.pop()
-    # Plan section 4: several cruise missiles in one row go to mixed_cruise.
-    return "mixed_cruise" if only == "cruise" else only
+    return found.pop() if len(found) == 1 else "mixed"
 
 
 def main():

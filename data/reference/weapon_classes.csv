@@ -1,7 +1,6 @@
 class,label,counts_in_totals,own_intercept_rate
 shahed_drone,Shahed-type and decoy drones,yes,yes
 cruise,Cruise missiles,yes,yes
-mixed_cruise,Mixed cruise missiles,yes,yes
 ballistic,Ballistic missiles,yes,yes
 aeroballistic_hypersonic,Aeroballistic and hypersonic missiles,yes,yes
 antiship_other,Anti-ship and other missiles,yes,yes
