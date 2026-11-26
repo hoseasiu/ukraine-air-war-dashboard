@@ -73,4 +73,4 @@ Counts here are subject to the same reporting-restriction note as above. The gui
 
 ## License
 
-The `model` strings in `model_classes.csv` are copied from Petro Ivaniuk's [Massive Missile Attacks on Ukraine](https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine) dataset, and some notes quote its reference file. We added the class assignments, components and notes. To be safe, treat that file as adapted material under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/); see the [data audit](../../docs/data-audit.md#license-and-redistribution).
+The `model` strings in `model_classes.csv` are copied from Petro Ivaniuk's [Massive Missile Attacks on Ukraine](https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine) dataset, and some notes quote its reference file. We added the class assignments, components and notes. To be safe, treat that file as adapted material under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/); see the [data audit](../../docs/data-audit.md#license-and-redistribution). Terms for the other files in this folder are in [LICENSING.md](../../LICENSING.md).

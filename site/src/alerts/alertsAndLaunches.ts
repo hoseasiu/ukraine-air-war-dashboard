@@ -9,14 +9,14 @@ import * as Plot from "@observablehq/plot";
 import { chartFrame, formatMonth, type Drawing } from "../chart/chartFrame.ts";
 import { BALLISTIC_RESTRICTION_FROM, monthPeriod } from "../chart/flags.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
-import { alertMonthly, formatDate, launchTable, weaponClasses } from "../data.ts";
+import { alertMonthly, formatDate, monthlyTable, weaponClasses } from "../data.ts";
 import { COMBINED_LAUNCH_FILL } from "../theme/areaStyles.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
 import { classFill } from "../theme/marks.ts";
 import { plotDefaults } from "../theme/plot.ts";
 import { alertLaunchRows, type AlertLaunchRow } from "./alertLaunchData.ts";
-import { monthTicks } from "./monthAxis.ts";
-import { alertCredit, alertRangeNote, paragraph } from "./notes.ts";
+import { monthAxisTicks, strikeFootnote } from "../strikes/shared.ts";
+import { alertCredit, alertRangeNote } from "./notes.ts";
 import "./alertsAndLaunches.css";
 
 export interface AlertLaunchSettings {
@@ -85,8 +85,7 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
     domain: months,
     label: null,
     padding: 0.2,
-    ticks: monthTicks(months, plotWidth),
-    tickFormat: formatMonth,
+    ...monthAxisTicks(months, plotWidth),
   };
   const top = (values: (number | null)[]) => [0, Math.max(1, ...values.filter((value) => value !== null))];
   const restricted = months.find((month) => monthPeriod(month).to >= BALLISTIC_RESTRICTION_FROM);
@@ -141,34 +140,20 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
 }
 
 function footnote(settings: AlertLaunchSettings, hasHours: boolean): HTMLElement {
-  const note = document.createElement("div");
-  note.className = "chart-footnote";
-  if (!hasHours) note.append(paragraph(alertRangeNote()));
-  note.append(
-    paragraph(
-      `Weapon classes in the launch panel: ${classNames(settings.classes) || "none (choose one in the filters)"}. ` +
-        "Launches count national military reports, daytime ones included, and leave out reconnaissance, tactical and " +
-        "unidentified UAVs, and bombs. A month with no published count has no bar, which doesn’t mean zero.",
-    ),
-    paragraph(
-      "Alert hours are the mean of the oblasts and Kyiv city in alert totals, each counted once. The oblast " +
-        "filter doesn’t change them, because the launch figures aren’t broken down by oblast.",
-    ),
+  const note = strikeFootnote(
+    ...(hasHours ? [] : [alertRangeNote()]),
+    `Weapon classes in the launch panel: ${classNames(settings.classes) || "none (choose one in the filters)"}. ` +
+      "Daytime reports are included. Reconnaissance, tactical and unidentified UAVs and bombs are left out. " +
+      "A month with no published count has no bar, which doesn’t mean zero.",
+    "Alert hours are the mean of the oblasts and Kyiv city in alert totals, each counted once. The oblast " +
+      "filter doesn’t change them, because the launch figures aren’t broken down by oblast.",
   );
-  const strikes = paragraph("Launches: ");
-  const dataset = document.createElement("a");
-  dataset.href = "https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine";
-  dataset.textContent = "Massive Missile Attacks on Ukraine";
-  const license = document.createElement("a");
-  license.href = "https://creativecommons.org/licenses/by-nc-sa/4.0/";
-  license.textContent = "CC BY-NC-SA 4.0";
-  strikes.append(dataset, " by Petro Ivaniuk, ", license, ". Filtered, classed and summed by month.");
-  note.append(strikes, alertCredit());
+  note.append(alertCredit());
   return note;
 }
 
 export function alertsAndLaunches(settings: AlertLaunchSettings): HTMLElement {
-  const rows = alertLaunchRows(alertMonthly, launchTable, settings);
+  const rows = alertLaunchRows(alertMonthly, monthlyTable, settings);
   const chosen = chosenText(settings.classes);
   const hasHours = rows.some((row) => row.hours !== null);
 

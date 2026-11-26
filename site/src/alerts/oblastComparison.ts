@@ -13,7 +13,7 @@ import { AREA_STYLES } from "../theme/areaStyles.ts";
 import { areaSymbolPath, svgElement } from "../theme/marks.ts";
 import { plotDefaults } from "../theme/plot.ts";
 import { assignStyles, comparisonRows, type ComparisonRow } from "./comparisonData.ts";
-import { monthTicks } from "./monthAxis.ts";
+import { monthAxisTicks } from "../strikes/shared.ts";
 import { alertCredit, alertRangeNote, paragraph } from "./notes.ts";
 
 export interface ComparisonSettings {
@@ -73,8 +73,7 @@ function draw(
       type: "band",
       domain: months,
       label: null,
-      ticks: monthTicks(months, width - marginLeft),
-      tickFormat: formatMonth,
+      ...monthAxisTicks(months, width - marginLeft),
     },
     // Starts at zero, so the lines' heights compare fairly.
     y: { label: "Alert hours in the month, average per raion", domain: [0, Math.max(1, ...rows.map((row) => row.hours))], nice: true, grid: true },

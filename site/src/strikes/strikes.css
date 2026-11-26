@@ -1,0 +1,97 @@
+/* The tab A charts. Weapon-class colors live in theme/classStyles.ts. */
+.strike-svg {
+  font-family: inherit;
+}
+
+/* A dashed line, so the bar doesn't depend on color. The white edge keeps it visible over bars. */
+.massive-rule {
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 3;
+  filter: drop-shadow(1px 0 0 var(--surface)) drop-shadow(-1px 0 0 var(--surface));
+}
+
+.strike-key,
+.strike-key-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+}
+
+.strike-key-title {
+  font-weight: 700;
+}
+
+.calendar-night {
+  stroke: #767676;
+  stroke-width: 0.75;
+}
+
+.calendar-none {
+  fill: none;
+  stroke: #b0b0b0;
+  stroke-width: 0.75;
+}
+
+/* A night whose counts are all unpublished: dashed, not a shade that would read as a size. */
+.calendar-unknown {
+  fill: var(--surface);
+  stroke: var(--ink);
+  stroke-dasharray: 2 2;
+}
+
+.massive-ring {
+  fill: none;
+  stroke: #111111;
+  stroke-width: 2.5;
+  paint-order: stroke;
+  filter: drop-shadow(0 0 1px #ffffff);
+}
+
+.massive-dot {
+  fill: #ffffff;
+  stroke: #111111;
+  stroke-width: 1;
+}
+
+.night-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+}
+
+.night-controls select {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.5rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+.night-breakdown {
+  margin: 2rem 0;
+}
+
+.night-breakdown .chart-frame {
+  margin: 0 0 1rem;
+}
+
+.night-places {
+  max-width: 60rem;
+}
+
+.night-places dt {
+  margin-top: 0.5rem;
+  font-weight: 700;
+}
+
+.night-places dd {
+  margin-left: 0;
+}
+

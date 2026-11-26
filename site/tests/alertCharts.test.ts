@@ -2,19 +2,18 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { parseAlertMonthly } from "../src/alerts/alertData.ts";
-import { alertLaunchRows, parseLaunchTable } from "../src/alerts/alertLaunchData.ts";
+import { alertLaunchRows } from "../src/alerts/alertLaunchData.ts";
 import { assignStyles, comparisonAreas, comparisonRows, DEFAULT_COMPARISON } from "../src/alerts/comparisonData.ts";
-import { monthTicks } from "../src/alerts/monthAxis.ts";
 import { parseAreas } from "../src/buildData.ts";
 import { chartFlags, monthPeriod, type ColumnSpec } from "../src/chart/flags.ts";
+import { parseMonthly } from "../src/strikes/strikeData.ts";
 import { CLASS_IDS } from "../src/theme/classStyles.ts";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 const areas = parseAreas(read("../../data/reference/oblasts.csv"));
 const alerts = parseAlertMonthly(JSON.parse(read("../../data/processed/alert_hours_monthly.json")), areas);
-const json = JSON.parse(read("../../data/processed/monthly_by_class.json"));
-const strikes = parseLaunchTable(json);
+const strikes = parseMonthly(JSON.parse(read("../../data/processed/monthly_by_class.json")));
 
 const everything = { from: "2022-03", to: "2026-11", classes: CLASS_IDS };
 const launchRows = (change: Partial<Parameters<typeof alertLaunchRows>[2]> = {}) =>
@@ -98,24 +97,4 @@ test("the launch series carries the restriction flag from August 2026, whatever 
 test("a total over only some classes says that mixed rows aren't split", () => {
   assert.ok(!flags(launchRows()).includes("classes_not_split"));
   assert.ok(flags(launchRows({ classes: ["cruise"] })).includes("classes_not_split"));
-});
-
-test("a launch table with a bad row is rejected", () => {
-  const changed = (change: (rows: Record<string, unknown>[]) => void) => {
-    const copy = structuredClone(json);
-    change(copy.rows);
-    return copy;
-  };
-  assert.throws(() => parseLaunchTable(changed((rows) => rows.push(rows[0]!))), /repeated/);
-  assert.throws(() => parseLaunchTable(changed((rows) => (rows[0]!.class = "bomb"))), /counted class/);
-  assert.throws(() => parseLaunchTable(changed((rows) => (rows[0]!.launched = -1))), /count or null/);
-  assert.throws(() => parseLaunchTable(changed((rows) => (rows[0]!.month = "2022-08"))), /outside/);
-});
-
-test("month labels thin out as the range grows or the chart narrows", () => {
-  const months = alerts.months;
-  assert.deepEqual(monthTicks(months.slice(0, 4), 900), months.slice(0, 4));
-  assert.ok(monthTicks(months, 900).length <= 10);
-  assert.ok(monthTicks(months, 400).every((month) => month.endsWith("-01")));
-  assert.deepEqual(monthTicks(["2023-02"], 400), ["2023-02"]);
 });

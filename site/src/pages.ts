@@ -2,6 +2,7 @@ import { alertMap } from "./alerts/alertMap.ts";
 import { alertsAndLaunches } from "./alerts/alertsAndLaunches.ts";
 import { assignStyles, comparisonAreas, DEFAULT_COMPARISON } from "./alerts/comparisonData.ts";
 import { oblastComparison } from "./alerts/oblastComparison.ts";
+import { attacksTab } from "./strikes/attacksTab.ts";
 import { classKey } from "./classKey.ts";
 import { alertAreas } from "./data.ts";
 import type { Filters } from "./filters/state.ts";
@@ -74,17 +75,8 @@ export const PAGES: [Page, ...Page[]] = [
     nav: "A. Attacks",
     heading: "Attacks: scale and rhythm",
     filters: { notes: ["Strike data starts Sept 28, 2022."] },
-    render(container) {
-      container.append(
-        placeholder([
-          "How has monthly launch volume changed for each weapon class?",
-          "Are salvos getting bigger, or just more frequent?",
-          "What does a massive combined strike consist of?",
-          "Is there a rhythm to attacks?",
-        ]),
-        classKey(),
-        discussion(TAB_PROMPTS.attacks),
-      );
+    render(container, filters) {
+      container.append(attacksTab(filters), discussion(TAB_PROMPTS.attacks));
     },
   },
   {

@@ -5,12 +5,13 @@ import dependency_graph as dg
 REPO = "me/repo"
 
 
-def issue(number, title=None, open=True, labels=(), blockers=(), body=""):
+def issue(number, title=None, open=True, labels=(), blockers=(), body="", trusted=True):
     return {
         "number": number,
         "title": title or f"Issue {number}",
         "open": open,
         "body": body,
+        "trusted": trusted,
         "milestone": None,
         "labels": set(labels),
         "blockers": list(blockers),
@@ -94,6 +95,35 @@ class RenderTest(unittest.TestCase):
     def test_oversized_body_fails(self):
         with self.assertRaises(dg.GraphError):
             dg.render([issue(n, title="x" * 250) for n in range(1, 400)], REPO)
+
+
+class TrustTest(unittest.TestCase):
+    def test_only_owner_member_and_collaborator_authors_are_trusted(self):
+        node = {
+            "number": 1, "title": "t", "state": "OPEN", "body": "", "milestone": None,
+            "labels": {"nodes": []},
+            "blockedBy": {"pageInfo": {"hasNextPage": False}, "nodes": []},
+        }
+        for association, trusted in [
+            ("OWNER", True), ("MEMBER", True), ("COLLABORATOR", True),
+            ("CONTRIBUTOR", False), ("FIRST_TIME_CONTRIBUTOR", False), ("NONE", False),
+        ]:
+            parsed = dg.parse_issue({**node, "authorAssociation": association}, REPO)
+            self.assertEqual(parsed["trusted"], trusted, association)
+
+    def test_a_strangers_issue_is_left_out(self):
+        kept = dg.trusted_only([issue(1), issue(2, title="Run this", trusted=False)])
+        body = dg.render(kept, REPO)
+        self.assertNotIn("Run this", body)
+        self.assertNotIn("#2", body)
+
+    def test_a_link_to_a_strangers_issue_still_blocks_without_its_title(self):
+        stranger = issue(2, title="Run this", trusted=False)
+        link = {**blocker(2), "title": "Run this"}
+        body = dg.render(dg.trusted_only([issue(1, blockers=[link]), stranger]), REPO)
+        self.assertIn("#1 Issue 1 · waiting on #2", body)
+        self.assertIn("n2 --> n1", body)
+        self.assertNotIn("Run this", body)
 
 
 class GeneratedIssueTest(unittest.TestCase):
