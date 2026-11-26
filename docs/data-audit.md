@@ -226,7 +226,7 @@ The script doesn't cover the license, the upstream code and documentation, the u
 | Timestamps | **UTC.** |
 | Does the official file reach the present? | **No.** Its last alert starts **Sept 7, 2026**. It also has a hole from Aug 29 to Sept 2. |
 | Anything else wrong with the official file? | **113,845 exact duplicate rows**, all starting before Jan 26, 2026. |
-| How should raion alerts roll up? | Proposed: **average the raions** ([rule](#proposed-roll-up-rule)). It changes nothing in 2023–24, but months after the switch still aren't like-for-like. |
+| How should raion alerts roll up? | **Average the raions** ([rule](#roll-up-rule), accepted by the owner). It changes nothing in 2023–24, but months after the switch still aren't like-for-like. |
 | Which file for which period? | Alert figures **end at July 2026** (owner's decision). Proposed: **official file from April 2022**. Don't splice the volunteer file onto it ([source choice](#proposed-source-choice)). |
 | How much is `naive=True`? | **5.1% of volunteer rows**, and 1.1–4.7% of volunteer hours by year. |
 | Permanent alerts | **Confirmed not listed** for Crimea or Luhansk. |
@@ -344,7 +344,9 @@ Selected areas, mean hours per month, **Dec 2025–Jul 2026**:
 
 Over that period, ranking areas by "any part", "any raion" or "all raions" gives nearly the same order as the raion average (Spearman 0.98). "Oblast rows only" is unusable after the switch (−0.08). The volunteer ranking agrees less (0.81).
 
-### Proposed roll-up rule
+### Roll-up rule
+
+**Accepted by the owner on Nov 25, 2026.**
 
 1. Drop exact duplicate rows.
 2. Exclude Luhansk and Crimea, and flag them.
@@ -393,14 +395,14 @@ After the switch the volunteer file stays at oblast level, and **we can't tell**
 | Period | Proposal | Why |
 |---|---|---|
 | Feb 25 – Mar 31, 2022 | Leave out of monthly figures | The official file starts Mar 15. Strike data starts only Sept 28, 2022. |
-| **April 2022 – July 2026** | **Official file, proposed roll-up rule** | 52 months from one file with one formula. Flag the 2025 transition. |
+| **April 2022 – July 2026** | **Official file, with the [roll-up rule](#roll-up-rule)** | 52 months from one file with one formula. Flag the 2025 transition. |
 | August 2026 | Leave out | About 4 days are largely missing. |
 | Sept 2026 onward | **No figure.** Show as not available | The official file stops Sept 7. |
 | All periods | Volunteer file as a cross-check only | Its levels differ from official by area and period. |
 
 **Effect of splicing instead:** switching to the volunteer file after July 2026 would create a step caused only by the change of file. In Dec 2025–Jul 2026, where both exist, moving from official to volunteer takes the national mean from 133 to 76 hours, Kharkiv from 339 to 157, Lviv from 8 to 54 and Volyn from 12 to 113. The differences go both ways, so one correction factor wouldn't work.
 
-**Owner's decision (Nov 25, 2026):** alert figures end at July 2026, with no volunteer-only view for later months. Check upstream again at the snapshot refresh (#28). The cost is that strike data runs to Nov 21, 2026, and the planned snapshot to Dec 31, which limits E1's month slider, E2, E3 and guided stops 9 and 10. So August 2026 is left out rather than shown as incomplete. The roll-up rule and the rest of the source choice are still proposals, listed in [plan §11](plan.md#11-decisions).
+**Owner's decision (Nov 25, 2026):** alert figures end at July 2026, with no volunteer-only view for later months. Check upstream again at the snapshot refresh (#28). The cost is that strike data runs to Nov 21, 2026, and the planned snapshot to Dec 31, which limits E1's month slider, E2, E3 and guided stops 9 and 10. So August 2026 is left out rather than shown as incomplete. The rest of the source choice is still a proposal, listed in [plan §11](plan.md#11-decisions).
 
 A third-party archive of alerts.in.ua history may be another route: a [pull request in another project](https://github.com/yehor-o/time_series_air_alerts/pull/1) reportedly says it fills the gap. We saw this only in a web search summary and **haven't checked** the claim, the archive, its license or its coverage.
 
