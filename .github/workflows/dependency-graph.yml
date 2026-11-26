@@ -1,0 +1,49 @@
+name: Issue dependency graph
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - closed
+      - reopened
+      - deleted
+      - transferred
+      - labeled
+      - unlabeled
+      - assigned
+      - unassigned
+      - milestoned
+      - demilestoned
+  # Adding or removing a "blocked by" link triggers no workflow event.
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/scripts/**
+      - .github/workflows/dependency-graph.yml
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: dependency-graph
+  cancel-in-progress: false
+
+jobs:
+  update:
+    # Hand edits to the generated issue are overwritten on the next run, not at once.
+    if: ${{ !contains(github.event.issue.labels.*.name, 'auto:dependency-graph') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test
+        run: python3 -m unittest discover -s .github/scripts
+      - name: Update the generated issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/dependency_graph.py
