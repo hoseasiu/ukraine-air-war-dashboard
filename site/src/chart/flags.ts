@@ -24,7 +24,7 @@ export type FlagId = (typeof FLAG_IDS)[number];
 export interface FlagText {
   /** Short name, used on the badge and in tooltips. */
   label: string;
-  /** The caveat in full. Always visible next to the chart. */
+  /** The caveat in full. Opens from the badge and from the tab's data notes. */
   text: string;
 }
 
@@ -81,6 +81,9 @@ export const BALLISTIC_RESTRICTION_FROM = "2026-08-11";
 
 /** The raion switch phased in during 2025 (data audit; the owner accepted this start on #8). */
 export const ALERT_GRANULARITY_CHANGE_FROM = "2025-01-01";
+
+/** The last month an area switched in was Nov 2025; from December none had oblast rows (data audit). */
+export const ALERT_GRANULARITY_CHANGE_TO = "2025-11-30";
 
 /** An inclusive range of ISO dates, YYYY-MM-DD. */
 export interface Period {
@@ -163,6 +166,14 @@ function rowFlag(row: object, id: FlagId): boolean {
 /** The flags that apply to one row, whatever the chart's columns are. */
 export function rowFlags(row: object): FlagId[] {
   return FLAG_IDS.filter((id) => rowFlag(row, id));
+}
+
+/** What a tab's data-notes strip lists: each flag any of its charts shows, once, in badge order. */
+export function notesFlags(shown: Iterable<string>): FlagId[] {
+  const found = new Set(shown);
+  const unknown = [...found].filter((id) => !(FLAG_IDS as readonly string[]).includes(id));
+  if (unknown.length) throw new Error(`Unknown data-quality flag: ${unknown.join(", ")}`);
+  return FLAG_IDS.filter((id) => found.has(id));
 }
 
 /** Every badge the chart must show, in a fixed order. */

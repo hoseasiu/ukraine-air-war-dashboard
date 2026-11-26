@@ -7,13 +7,15 @@
 import * as Plot from "@observablehq/plot";
 import { chartFrame, formatMonth, type Drawing } from "../chart/chartFrame.ts";
 import { monthPeriod } from "../chart/flags.ts";
+import { monthBand } from "../chart/periodBandMarks.ts";
+import { bandMonths, RAION_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { alertAreas, alertMonthly, excludedAlertAreas } from "../data.ts";
 import { AREA_STYLES } from "../theme/areaStyles.ts";
 import { areaSymbolPath, svgElement } from "../theme/marks.ts";
 import { plotDefaults } from "../theme/plot.ts";
-import { assignStyles, comparisonRows, raionSwitchMonths, type ComparisonRow } from "./comparisonData.ts";
-import { endLabelRoom, endLabels, focusControl, switchBand, type FocusControl } from "./comparisonMarks.ts";
+import { assignStyles, comparisonRows, type ComparisonRow } from "./comparisonData.ts";
+import { endLabelRoom, endLabels, focusControl, type FocusControl } from "./comparisonMarks.ts";
 import { monthAxisTicks, type FixedView } from "../strikes/shared.ts";
 import { alertCredit, alertRangeNote, paragraph } from "./notes.ts";
 import "./oblastComparison.css";
@@ -117,11 +119,10 @@ function draw(
       group.dataset.oblast = oblasts[index]!;
     });
   }
+  monthBand(plot, months, RAION_BAND);
   if (rows.length) {
     const frame = { top: MARGIN_TOP, bottom: height - plotDefaults.marginBottom };
-    const drawn = plot as SVGSVGElement & Plot.Plot;
-    switchBand(drawn, months, width, frame);
-    endLabels(drawn, rows, oblasts, (id) => styleOf(styles, id), frame);
+    endLabels(plot as SVGSVGElement & Plot.Plot, rows, oblasts, (id) => styleOf(styles, id), frame);
   }
 
   // One target per month, at its highest line, listing every oblast.
@@ -139,13 +140,11 @@ export function oblastComparison(settings: ComparisonSettings): HTMLElement {
 
   const footnote = document.createElement("div");
   footnote.className = "chart-footnote";
-  if (!rows.length) footnote.append(paragraph(alertRangeNote()));
   footnote.append(
     paragraph(
       `A 0 means the file lists no alert counted for that month. ${list.format(excludedAlertAreas())} are excluded ` +
         "and can’t be compared, which doesn’t mean they had no alerts.",
     ),
-    alertCredit(),
   );
 
   // A guided stop draws its lines alike and has no controls of its own. One line needs none.
@@ -153,12 +152,16 @@ export function oblastComparison(settings: ComparisonSettings): HTMLElement {
 
   return chartFrame<ComparisonRow>({
     title: `Alert hours by month: ${names}`,
+    subtitle: "Hours under air-raid alert each month, averaged over each oblast’s raions.",
     howToRead:
       "Each line is one oblast’s hours under air-raid alert in each month, on a shared scale. For an oblast, " +
       "the figure is the average over its raions, so it isn’t the time that any part of it was under alert. " +
       "Kyiv city is a single unit." +
-      (raionSwitchMonths(rows.map((row) => row.month))
-        ? " The shaded band is 2025, when alerting moved from whole oblasts to raions; months after the switch " +
+      (bandMonths(
+        rows.map((row) => row.month),
+        RAION_BAND,
+      )
+        ? " The shaded band is January to November 2025, when areas moved from oblast to raion alerts. Later months " +
           "are only partly comparable with earlier ones."
         : "") +
       (focus ? " To pick out one line, point at or press its name in the legend." : ""),
@@ -176,6 +179,8 @@ export function oblastComparison(settings: ComparisonSettings): HTMLElement {
     coverage: (row) => monthPeriod(row.month),
     scaleKey: key(oblasts, styles, focus),
     footnote,
+    source: alertCredit(),
+    emptyText: rows.length ? undefined : alertRangeNote(),
     pointer: "x",
     draw: (data, width) => {
       const drawing = draw(data, width, oblasts, styles, settings.fixed?.height ?? 400);

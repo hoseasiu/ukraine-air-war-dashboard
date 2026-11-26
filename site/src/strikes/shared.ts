@@ -44,10 +44,11 @@ export function footnote(...paragraphs: string[]): HTMLElement {
   return note;
 }
 
-/** The source line under every strike chart, then any other notes. */
-export function strikeFootnote(...notes: string[]): HTMLElement {
-  return footnote(
-    ...notes,
+/** The source line under every strike chart. */
+export function strikeSource(): HTMLParagraphElement {
+  return create(
+    "p",
+    "",
     "Strikes: national military reports in “Massive Missile Attacks on Ukraine” (Petro Ivaniuk, Kaggle, CC BY-NC-SA 4.0), " +
       `grouped into our weapon classes. Data from ${formatDate(nightTable.firstDay)} through ${formatDate(nightTable.lastDay)}.`,
   );
@@ -56,6 +57,15 @@ export function strikeFootnote(...notes: string[]): HTMLElement {
 /** Plain-language definition (data audit). Show the year's bar wherever "massive" appears. */
 export const MASSIVE_DEFINITION =
   "A massive night had more weapons launched than 95% of the attack nights in the same calendar year.";
+
+/** The massive bars for these dates' years, to show wherever "massive" appears (data audit). */
+export function yearBars(dates: readonly string[]): string {
+  const shown = new Set(dates.map((date) => Number(date.slice(0, 4))));
+  const bars = nightTable.years
+    .filter((year) => shown.has(year.year))
+    .map((year) => `${year.year}: ${barText(year.massive_above)}`);
+  return bars.length ? `Massive means more weapons than that year’s bar (${bars.join("; ")}).` : "";
+}
 
 /** Why figures for nights before the restriction can still carry its badge. */
 export const RESTRICTED_BAR_NOTE =

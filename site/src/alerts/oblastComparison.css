@@ -34,13 +34,3 @@ g[aria-label].comparison-lighter,
   font-size: 15px;
   fill: var(--ink);
 }
-
-.comparison-switch-band {
-  fill: var(--ink);
-  opacity: 0.08;
-}
-
-.comparison-switch-label {
-  font-size: 14px;
-  fill: var(--ink-secondary);
-}

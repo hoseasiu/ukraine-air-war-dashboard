@@ -117,13 +117,16 @@ function footnote(): HTMLElement {
       "The map shows administrative boundaries only. It shows no front line, occupied areas or who controls a place.",
     ),
   );
+  return note;
+}
+
+function credit(): HTMLParagraphElement {
   const source = create("p", "", "Alerts: official file of the Ukrainian air-raid sirens dataset (Vadimkin, MIT license). ");
   const license = create("a", "", "CC BY-IGO");
   license.href = boundaries.license.slice(boundaries.license.indexOf("https://"));
   // The credit comes from the boundary file, so it changes when the file does.
   source.append(`${boundaries.attribution} License: `, license, ".");
-  note.append(source);
-  return note;
+  return source;
 }
 
 function label(x: number, y: number, text: string): SVGTextElement {
@@ -227,13 +230,14 @@ function spec(
   month: string,
   rows: MapRow[],
   highlight: readonly string[],
-  parts: Pick<ChartSpec<MapRow>, "controls" | "scaleKey" | "footnote" | "alsoDraws">,
+  parts: Pick<ChartSpec<MapRow>, "controls" | "scaleKey" | "footnote" | "source" | "emptyText" | "alsoDraws">,
   maxHeight = 600,
 ): ChartSpec<MapRow> {
   const outlined = highlight.length ? " Oblasts chosen in the filters have a double outline." : "";
   return {
     ...parts,
     title: rows.length ? `${TITLE}, ${formatMonth(month)}` : TITLE,
+    subtitle: "Darker means more hours under alert, averaged over raions. Hatched means no figures, not no alerts.",
     howToRead:
       "Darker areas had more hours under air-raid alert in the month, averaged over the oblast’s raions, so it " +
       "isn’t the time that any part of the oblast was under alert. The colors mean the same in every month. " +
@@ -283,12 +287,9 @@ export function alertMap(settings: AlertMapSettings): HTMLElement {
   if (!months.length) {
     const first = alertMonthly.months[0]!;
     const last = alertMonthly.months[alertMonthly.months.length - 1]!;
-    const note = create(
-      "p",
-      "chart-footnote",
-      `Alert figures run from ${formatMonth(first)} to ${formatMonth(last)}. Widen “Months shown” to include some of them.`,
-    );
-    return liveChartFrame(spec(last, [], settings.highlight, { footnote: note })).element;
+    const emptyText =
+      `Alert figures run from ${formatMonth(first)} to ${formatMonth(last)}. Widen “Months shown” to include some of them.`;
+    return liveChartFrame(spec(last, [], settings.highlight, { source: credit(), emptyText })).element;
   }
   const offered = months as [string, ...string[]];
   let index = offered.indexOf(nearestMonth(offered, settings.month));
@@ -344,6 +345,7 @@ export function alertMap(settings: AlertMapSettings): HTMLElement {
     controls,
     scaleKey: scaleKey(),
     footnote: footnote(),
+    source: credit(),
     alsoDraws: sparkline && sparklineFigures(national),
   };
 

@@ -1,12 +1,14 @@
 /** The calendar of nights, day-of-week bars and gaps between massive nights (plan §2 A4). */
 import * as Plot from "@observablehq/plot";
 import { chartFrame, formatMonth, type Target } from "../chart/chartFrame.ts";
+import { drawBand, dateBand } from "../chart/periodBandMarks.ts";
+import { RESTRICTED_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { nightTable } from "../data.ts";
 import { svgElement } from "../theme/marks.ts";
 import { NIGHT_BINS, nightBin } from "../theme/nightScale.ts";
 import { plotDefaults } from "../theme/plot.ts";
-import { barText, barValue, chartSvg, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, strikeFootnote, svgText, type FixedView } from "./shared.ts";
+import { barValue, chartSvg, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, footnote, strikeSource, svgText, yearBars, type FixedView } from "./shared.ts";
 import {
   allNights,
   barIsRestricted,
@@ -25,15 +27,6 @@ import {
 
 const DAY = 86_400_000;
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-/** The bars for the years of the dates shown, and no others. */
-function yearBars(dates: readonly string[]): string {
-  const shown = new Set(dates.map((date) => Number(date.slice(0, 4))));
-  const bars = nightTable.years
-    .filter((year) => shown.has(year.year))
-    .map((year) => `${year.year}: more than ${barText(year.massive_above)}`);
-  return bars.length ? ` Bars by year: ${bars.join("; ")}.` : "";
-}
 
 interface CalendarRow extends Night {
   massive: string;
@@ -95,10 +88,11 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
 
   return chartFrame<CalendarRow>({
     title: "Calendar of attack nights",
+    subtitle: `A square for each date: darker means more weapons launched that night. ${yearBars(rows.map((row) => row.date))}`,
     howToRead:
       "Each square is a date, in weeks running left to right from Monday at the top, with a line between months. " +
       "Darker squares had more weapons launched in the night ending that day. An outlined empty square has no night in the data for the " +
-      `classes shown, which may mean it was quiet or unreported. ${MASSIVE_DEFINITION}${yearBars(rows.map((row) => row.date))}` +
+      `classes shown, which may mean it was quiet or unreported. ${MASSIVE_DEFINITION}` +
       (subset
         ? " Shades count only the classes shown; the massive mark still comes from all counted classes."
         : ""),
@@ -130,7 +124,8 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
     coverage: (row) => ({ from: row.date, to: row.date }),
     scaleKey: calendarKey(),
     pointer: "shape",
-    footnote: strikeFootnote(
+    source: strikeSource(),
+    footnote: footnote(
       "A night is the reports ending on one Kyiv date, without daytime reports. " +
         (options.fixed ? "" : "Colors mean the same whatever the filters show. ") +
         "A calendar can suggest seasons, but the data spans only about four winters, while totals and " +
@@ -166,6 +161,9 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
         }
 
         const edges: SVGElement[] = [];
+        // The weeks of this year's dates that fall in the restricted period, as pixels.
+        let restrictedFrom: number | undefined;
+        let restrictedTo = 0;
         for (let time = jan1; time < Date.UTC(year + 1, 0, 1); time += DAY) {
           const date = new Date(time).toISOString().slice(0, 10);
           const month = date.slice(0, 7);
@@ -173,6 +171,10 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
           const position = (time - jan1) / DAY + offset;
           const x = columnLeft + left + Math.floor(position / 7) * cell;
           const y = top + (position % 7) * cell;
+          if (date >= RESTRICTED_BAND.from) {
+            restrictedFrom ??= x;
+            restrictedTo = x + cell;
+          }
           if (date.endsWith("-01")) {
             // Names sit over the week the month starts in.
             svg.append(svgText(x, top - 6, MONTH_NAMES[Number(date.slice(5, 7)) - 1]!, { "font-size": 12 }));
@@ -197,6 +199,16 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
         }
         // Over the squares, in the gaps between them.
         svg.append(...edges);
+        if (restrictedFrom !== undefined) {
+          // Behind the squares, so it shows around the month names and below the week.
+          drawBand(svg, RESTRICTED_BAND.label, {
+            x0: restrictedFrom,
+            x1: restrictedTo,
+            top: top - 18,
+            bottom: top + 7 * cell + 4,
+            labelY: top - 22,
+          });
+        }
       });
       return { element: svg, targets };
     },
@@ -211,14 +223,15 @@ export function weekdayChart(selection: Selection, options: { fixed?: FixedView 
   const sizeLabel = subset ? "Median launched per night, classes shown" : "Median launched per night";
   return chartFrame<WeekdayRow>({
     title: "Day of the week",
+    subtitle: `Nights grouped by the weekday they end on. ${yearBars(
+      nightsInRange(allNights(nightTable, selection.classes), selection)
+        .filter((night) => night.size !== null)
+        .map((night) => night.date),
+    )}`,
     howToRead:
       "Nights are grouped by the weekday of the date they end on. The first panel is the median night size, the " +
       "second how many nights were massive. These describe the months shown; they don’t show why days differ, or " +
-      `that a difference would repeat. ${MASSIVE_DEFINITION}${yearBars(
-        nightsInRange(allNights(nightTable, selection.classes), selection)
-          .filter((night) => night.size !== null)
-          .map((night) => night.date),
-      )}` +
+      `that a difference would repeat. ${MASSIVE_DEFINITION}` +
       (subset ? " The massive count still comes from all counted classes." : ""),
     description: rows.length
       ? "Two bar charts by weekday of the date each night ends on. " +
@@ -239,7 +252,8 @@ export function weekdayChart(selection: Selection, options: { fixed?: FixedView 
     rows,
     coverage: (row) => ({ from: row.from, to: row.to }),
     pointer: "xy",
-    footnote: strikeFootnote(
+    source: strikeSource(),
+    footnote: footnote(
       "A median over several years mixes years in which a typical night had very different sizes. " +
         (options.fixed ? "" : "Narrow the months to look at one year. ") +
         "Massive nights are marked against their own year’s bar.",
@@ -297,9 +311,10 @@ export function massiveGapChart(selection: Pick<Selection, "from" | "to">): HTML
   const gaps = rows.flatMap((row) => (row.gap_days === null ? [] : [row.gap_days]));
   return chartFrame<GapRow>({
     title: "Days between massive nights",
+    subtitle: `Days from each massive night back to the one before. ${yearBars(rows.map((row) => row.date))}`,
     howToRead:
       "Each point is a massive night, placed by its date. Its height is the number of days since the massive night " +
-      `before it. ${MASSIVE_DEFINITION}${yearBars(rows.map((row) => row.date))} Because the bar differs by year, a change in ` +
+      `before it. ${MASSIVE_DEFINITION} Because the bar differs by year, a change in ` +
       "gaps doesn’t compare attacks of the same size. The weapon-class filter doesn’t apply here.",
     description: rows.length
       ? `Chart of the days between massive nights: ${rows.length} massive nights in the months shown` +
@@ -321,7 +336,8 @@ export function massiveGapChart(selection: Pick<Selection, "from" | "to">): HTML
     rows,
     coverage: (row) => ({ from: row.previous ?? row.date, to: row.date }),
     pointer: "xy",
-    footnote: strikeFootnote(
+    source: strikeSource(),
+    footnote: footnote(
       "A gap is counted from the massive night before, even if that night is outside the months shown. The first " +
         "massive night in the data has no gap, so it has no point; it is in the table.",
       RESTRICTED_BAR_NOTE,
@@ -345,6 +361,7 @@ export function massiveGapChart(selection: Pick<Selection, "from" | "to">): HTML
           Plot.ruleY([0]),
         ],
       });
+      dateBand(plot, RESTRICTED_BAND);
       const targets = plotTargets(plot, drawn, { x: day, y: (r) => r.gap_days });
       return { element: plot, targets };
     },

@@ -1,11 +1,11 @@
 /**
- * What the oblast comparison adds to Plot's drawing and key: the raion-switch
- * band, the names at the lines' ends, and the choice of one line to stand out.
+ * What the oblast comparison adds to Plot's drawing and key: the names at the
+ * lines' ends, and the choice of one line to stand out.
  */
 import type { Plot } from "@observablehq/plot";
 import type { AreaStyle } from "../theme/areaStyles.ts";
 import { areaSymbolPath, svgElement } from "../theme/marks.ts";
-import { endLabel, raionSwitchMonths, spreadLabels, type ComparisonRow } from "./comparisonData.ts";
+import { endLabel, spreadLabels, type ComparisonRow } from "./comparisonData.ts";
 
 /** The part of a Plot drawing these add to. */
 type Drawn = SVGSVGElement & Plot;
@@ -17,36 +17,10 @@ export interface Frame {
 }
 
 const LABEL_GAP = 20;
-const SWITCH_TEXT = "2025: switch to raion alerts";
 
 /** Room to leave right of the plot for the longest name. */
 export function endLabelRoom(names: readonly string[]): number {
   return 40 + 9 * Math.max(0, ...names.map((name) => endLabel(name).length));
-}
-
-/** Shades the months of the raion switch, behind the lines, and names the band above the plot. */
-export function switchBand(plot: Drawn, months: readonly string[], width: number, { top, bottom }: Frame): void {
-  const found = raionSwitchMonths(months);
-  if (!found) return;
-  const x = plot.scale("x")!;
-  const band = x.bandwidth!;
-  // Half the space between bars, so the band's edges fall between months.
-  const half = (x.step! - band) / 2;
-  const from = Number(x.apply(found.first)) - half;
-  const to = Number(x.apply(found.last)) + band + half;
-  plot.prepend(
-    svgElement("rect", { x: from, y: top, width: to - from, height: bottom - top, class: "comparison-switch-band" }),
-  );
-  // Centered on the band, but kept inside the drawing when the band is narrow or near an edge.
-  const reach = SWITCH_TEXT.length * 3.9;
-  const label = svgElement("text", {
-    x: Math.max(reach, Math.min((from + to) / 2, width - reach)),
-    y: top - 8,
-    "text-anchor": "middle",
-    class: "comparison-switch-label",
-  });
-  label.textContent = SWITCH_TEXT;
-  plot.append(label);
 }
 
 /** Writes each oblast's name after its line, with its symbol, moved apart where lines end close together. */

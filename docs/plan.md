@@ -124,10 +124,10 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **B:** intercept rate over time by class, with the low-count gaps; saturation scatter with class coloring and hover details for each night; before/after panels for selected annotations.
   - **E:** choropleth of alert hours with a month slider; line chart comparing up to three oblasts; alert hours against launches over time.
 - **Every chart has:**
-  - a "How to read this" note (one or two sentences)
+  - a one-line subtitle, with a "How to read this" note and methods collapsed under the chart (#58)
   - hover tooltips
   - a "Show as table" toggle (for accessibility, and to show the actual numbers)
-  - the data-quality badges that apply to it
+  - the data-quality badges that apply to it, as labels that open the full text; each tab also lists them once at the top (#58)
 - **Data & Methods page:** sources and licenses, the snapshot date, the taxonomy table, definitions, the known gaps listed in §4, how to cite, and a changelog.
 
 ---
@@ -322,9 +322,17 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Tab E redesign (#68, Nov 26, 2026; built by the coding agent, not yet reviewed by the owner). This adds to the #18 and #19 notes above:
   - **Sparkline:** above the map's month slider, the mean alert hours across areas for each month the slider offers, from zero, with the chosen month marked. It isn't a control, and it's left out with only one month and on stop 9. The map's badges cover its months too. Its figures are in the launches and alert hours table.
   - **Comparison:** each line's name is written at its end. All lines are drawn alike until the reader points at or presses an oblast in the key, which draws the others lighter. Stop 10 has the names and the band but no key buttons.
-  - **Raion-switch band:** January to December 2025 on the comparison. The "Alert areas changed" badge and the note under the title still say later months are only partly comparable.
+  - **Raion-switch band:** the comparison uses the January to November 2025 band from #58, which merged first. An earlier January to December band on this branch was dropped. The "How to read" note still says later months are only partly comparable.
   - **Crosshair:** one line through both launches and alert hours panels at the month in use, by pointer or keyboard, with a ring on its alert hours. A month without a figure has no ring.
 - Comparison line focus (owner, Nov 26, 2026, #68): all oblast lines look alike until the reader picks one; no oblast stands out by default. The coding agent had built it this way and asked, and the owner chose to keep it. This doesn't review the rest of the tab E redesign above.
+
+- Data notes, badges and bands (#58, Nov 26, 2026). The layout is the owner's, from #58; the coding agent built it, and the owner hasn't reviewed the build or these choices:
+  - **Notes strip:** a collapsed line at the top of each tab names each badge its charts show, once, and opens to the full text. It reads the badges on the page, so it follows filter and chart changes. It replaces the Defense tab's separate sentence about electronic warfare.
+  - **Badges:** each is its label, which opens the full text in a popover, including on guided stops. Which badges a chart gets hasn't changed.
+  - **Notes under charts:** “How to read this” and the methods notes are collapsed together under each chart. Source and credit lines stay visible. The agent wrote the one-line subtitles. Where a chart marks massive nights, the subtitle or drawing still gives each year's bar, as the data audit asks.
+  - **Restricted band:** on the monthly launch, class-mix, intercept-rate, launches-and-alerts (launch panel), gaps, one-year strip and calendar charts, labeled “missile counts restricted”. On monthly axes it shades all of August 2026, whose figures include the restricted days. On date axes and the calendar it starts at Aug 11 (the calendar by whole weeks). It replaces the dashed marker on the launches-and-alerts chart.
+  - **Raion band:** on the alert-hour line charts, labeled “move to raion alerts”, from January to November 2025, the months in which the audit found areas switching. The badge still applies to every month from January 2025.
+  - **Alerts map:** on wide screens the tab now puts the map beside its slider and badges, as stop 9 does, so it starts on the first screen at 1280 × 720.
 
 **Open**
 - Terms of the sources behind the alert data (#26): the dataset is MIT, but it's collected from Telegram channels, including a volunteer one (eTryvoga), whose terms we don't know ([data audit](data-audit.md#alerts-license)). The site uses only the official-channel file.

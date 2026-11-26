@@ -10,7 +10,6 @@ import {
   comparisonRows,
   DEFAULT_COMPARISON,
   endLabel,
-  raionSwitchMonths,
   spreadLabels,
 } from "../src/alerts/comparisonData.ts";
 import { parseAreas } from "../src/buildData.ts";
@@ -133,13 +132,6 @@ test("figures drawn beside a chart's rows add their badges once, in the usual or
     combinedFlags(["alert_regions_excluded"], ["alert_granularity_change", "alert_end_assumed", "alert_regions_excluded"]),
     ["alert_end_assumed", "alert_regions_excluded", "alert_granularity_change"],
   );
-});
-
-test("the raion-switch band covers only the shown months of 2025", () => {
-  assert.deepEqual(raionSwitchMonths(alerts.months), { first: "2025-01", last: "2025-12" });
-  assert.deepEqual(raionSwitchMonths(["2025-11", "2025-12", "2026-01"]), { first: "2025-11", last: "2025-12" });
-  assert.equal(raionSwitchMonths(["2024-11", "2024-12"]), undefined);
-  assert.equal(raionSwitchMonths(["2026-01"]), undefined);
 });
 
 test("line-end names stay unambiguous", () => {

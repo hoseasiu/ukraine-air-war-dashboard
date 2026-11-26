@@ -2,13 +2,15 @@
 import * as Plot from "@observablehq/plot";
 import { chartFrame, formatMonth, type ChartSpec, type Target } from "../chart/chartFrame.ts";
 import { monthPeriod, type ColumnSpec } from "../chart/flags.ts";
+import { monthBand } from "../chart/periodBandMarks.ts";
+import { RESTRICTED_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { drawMarkers, eventKey, MARKER_ROW } from "../annotations/eventMarkers.ts";
 import { placeMarkers } from "../annotations/markerLayout.ts";
 import { annotations, formatDate, monthlyTable } from "../data.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
 import { classFillScale, plotDefaults } from "../theme/plot.ts";
-import { chartSvg, classLabels, create, monthAxisTicks, percent, strikeFootnote, svgText, type FixedView } from "./shared.ts";
+import { chartSvg, classLabels, create, monthAxisTicks, percent, footnote, strikeSource, svgText, type FixedView } from "./shared.ts";
 import { monthRows, monthsShown, type MonthChartRow, type Selection } from "./strikeData.ts";
 
 const BASE_COLUMNS: ColumnSpec[] = [
@@ -53,6 +55,9 @@ export function monthlyLaunchChart(selection: Selection, options: MonthlyChartOp
   const markerSpace = markers.length ? (Math.max(...markers.map((marker) => marker.row)) + 1) * MARKER_ROW : 0;
   const chart = chartFrame<MonthChartRow>({
     title: only ? `Monthly launches: ${only}` : "Monthly launches by weapon class",
+    subtitle: only
+      ? "Published launches in this class, month by month."
+      : "Published launches in each month, stacked by weapon class.",
     howToRead:
       (only
         ? "Each bar is one month’s published launches in this class, daytime reports included. "
@@ -71,7 +76,8 @@ export function monthlyLaunchChart(selection: Selection, options: MonthlyChartOp
     coverage: (row) => monthPeriod(row.month),
     legend: "bar",
     pointer: "x",
-    footnote: strikeFootnote(NOT_ZERO),
+    source: strikeSource(),
+    footnote: footnote(NOT_ZERO),
     draw(data, width) {
       const plot = Plot.plot({
         ...plotDefaults,
@@ -99,6 +105,8 @@ export function monthlyLaunchChart(selection: Selection, options: MonthlyChartOp
       const totals = new Map<string, number>();
       for (const row of data) totals.set(row.month, (totals.get(row.month) ?? 0) + (row.launched ?? 0));
       const targets = plotTargets(plot, data, { x: (r) => r.month, y: (r) => totals.get(r.month) });
+      // With markers, the label goes above them, on the axis title's line.
+      monthBand(plot, months, RESTRICTED_BAND, markers.length ? 14 : undefined);
       drawMarkers(plot, markers);
       return { element: plot, targets };
     },
@@ -117,6 +125,7 @@ export function classMixChart(selection: Selection): HTMLElement {
   const months = monthsShown(monthlyTable, selection.from, selection.to);
   const spec: ChartSpec<MonthChartRow> = {
     title: "Class mix over time",
+    subtitle: "Each class’s share of the month’s published launches. Each panel has its own scale.",
     howToRead:
       "One panel for each weapon class: its share of each month’s published launches. " +
       "Each panel has its own vertical scale, so compare shapes across panels and read heights from each axis. " +
@@ -149,7 +158,8 @@ export function classMixChart(selection: Selection): HTMLElement {
     rows,
     coverage: (row) => monthPeriod(row.month),
     pointer: "xy",
-    footnote: strikeFootnote(NOT_ZERO, "Where missile counts are unpublished, the other classes’ shares are higher than they would otherwise be."),
+    source: strikeSource(),
+    footnote: footnote(NOT_ZERO, "Where missile counts are unpublished, the other classes’ shares are higher than they would otherwise be."),
     draw(data, width) {
       const perRow = width >= 900 ? 3 : width >= 600 ? 2 : 1;
       const panelWidth = Math.floor(width / perRow);
@@ -170,13 +180,15 @@ export function classMixChart(selection: Selection): HTMLElement {
           height: PANEL_HEIGHT,
           marginLeft: 52,
           marginRight: 12,
-          marginTop: 12,
+          // Room for the band's label.
+          marginTop: 22,
           marginBottom: 30,
           x: { type: "band", domain: months, padding: 0.1, label: null, ...monthAxisTicks(months, panelWidth - 64) },
           y: { label: null, domain: [0, most || 1], nice: true, ticks: 4, tickFormat: "%", grid: true },
           color: classFillScale(classLabels),
           marks: [Plot.barY(own, { x: "month", y: "share", fill: "class" }), Plot.ruleY([0])],
         }) as SVGSVGElement & Plot.Plot;
+        monthBand(plot, months, RESTRICTED_BAND);
         const drawn = own.filter((row) => row.share !== null);
         for (const target of plotTargets(plot, drawn, { x: (r) => r.month, y: (r) => r.share })) {
           targets.push({ ...target, x: target.x + left, y: target.y + top + PANEL_TITLE });

@@ -39,20 +39,16 @@ body:has(.guided) nav a {
 
 .headline .chart-badges {
   margin: 0 0 0.5rem;
-  font-size: 0.8rem;
-  line-height: 1.35;
 }
+
 .stop-view .chart-frame h3 {
   font-size: 1.15rem;
 }
 
-/* Badges sit side by side, so the chart starts higher up. */
-.stop-view .chart-badges {
-  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
-  gap: 0.3rem 1rem;
-  margin-bottom: 0.4rem;
-  font-size: 0.8rem;
-  line-height: 1.35;
+.stop-view .chart-subtitle {
+  max-width: none;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
 }
 
 .stop-view .chart-toggle {
@@ -75,9 +71,8 @@ body:has(.guided) nav a {
   margin-top: 0.25rem;
 }
 
-.stop-view .chart-how-to-read {
-  margin: 0.75rem 0 0;
-  font-size: 0.9rem;
+.stop-view .chart-notes {
+  font-size: 0.85rem;
 }
 
 /* One row for the title, snapshot date and tabs. */
@@ -252,50 +247,5 @@ body:has(.guided) nav a {
   .stop-definition p {
     display: inline;
     margin-left: 0.4em;
-  }
-}
-
-/* The map goes beside its controls and badges, so all of it is on screen. */
-@media (min-width: 62rem) {
-  .stop-view .chart-frame:has(.alert-map) {
-    display: grid;
-    grid-template-columns: 19rem minmax(0, 1fr);
-    grid-template-rows: auto auto auto auto 1fr auto auto;
-    column-gap: 1.25rem;
-    align-items: start;
-  }
-
-  .stop-view .chart-frame:has(.alert-map) > * {
-    grid-column: 1;
-    min-width: 0;
-  }
-
-  .stop-view .chart-frame:has(.alert-map) > :is(h3, .chart-how-to-read, .chart-footnote) {
-    grid-column: 1 / -1;
-  }
-
-  .stop-view .chart-frame:has(.alert-map) > :is(.chart-view, .chart-table) {
-    grid-column: 2;
-    grid-row: 2 / span 4;
-  }
-
-  .stop-view .chart-frame:has(.alert-map) .chart-badges {
-    grid-template-columns: 1fr;
-  }
-
-  /* Room for the points near the map's lower edge, so it doesn't get a scrollbar. */
-  .stop-view .chart-frame:has(.alert-map) .chart-scroll {
-    padding-bottom: 0.75rem;
-  }
-
-  .stop-view .chart-frame:has(.alert-map) .chart-toggle {
-    justify-self: start;
-  }
-}
-
-/* On a short screen, three badges fit in one row. */
-@media (max-height: 850px) {
-  .stop-view .chart-badges {
-    grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
   }
 }

@@ -1,13 +1,15 @@
 /** One night set among all the nights of its year, for the one-night breakdown (plan §2 A3). */
 import * as Plot from "@observablehq/plot";
 import { liveChartFrame, type ChartSpec } from "../chart/chartFrame.ts";
+import { dateBand } from "../chart/periodBandMarks.ts";
+import { RESTRICTED_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { formatDate, nightTable } from "../data.ts";
 import { plotDefaults } from "../theme/plot.ts";
-import { barText, barValue, count, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, strikeFootnote } from "./shared.ts";
+import { barText, barValue, count, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, footnote, strikeSource } from "./shared.ts";
 import { yearNightRows, type YearNightRow } from "./strikeData.ts";
 
-const HEIGHT = 150;
+const HEIGHT = 164;
 
 const day = (date: string) => new Date(`${date}T00:00:00Z`);
 
@@ -19,6 +21,7 @@ function spec(date: string): ChartSpec<YearNightRow> {
   const bar = barText(chosen.massive_above);
   return {
     title: `That night among ${year}’s nights`,
+    subtitle: `The thick bar is the chosen night. The dashed line is ${year}’s massive bar: more than ${bar}.`,
     howToRead:
       `Each thin bar is a night in ${year}, placed by its date; its height is the weapons launched. The thick black ` +
       `bar under the triangle is the night ending ${formatDate(date)}. The dashed line is ${year}’s massive bar: ` +
@@ -43,7 +46,8 @@ function spec(date: string): ChartSpec<YearNightRow> {
     rows,
     coverage: (row) => ({ from: row.date, to: row.date }),
     pointer: "x",
-    footnote: strikeFootnote(
+    source: strikeSource(),
+    footnote: footnote(
       "A night’s size is the sum of its published launch counts, so it can leave some out. A date with no bar has " +
         "no night with a published count: it may have been quiet or unreported. A year’s bar uses all its nights, " +
         "and the latest year’s can still change.",
@@ -67,7 +71,8 @@ function spec(date: string): ChartSpec<YearNightRow> {
         marginLeft: 48,
         // At least half a tooltip button, so one on Dec 31 doesn't make the chart scroll.
         marginRight: 14,
-        marginTop: 22,
+        // Room for the band's label above the chosen night's.
+        marginTop: 36,
         marginBottom: 26,
         x: { type: "utc", domain: [start, end], label: null, ticks: width >= 700 ? 12 : 4, tickFormat: "%b" },
         y: { domain: [0, top], label: null, ticks: 3, grid: true },
@@ -91,6 +96,7 @@ function spec(date: string): ChartSpec<YearNightRow> {
           Plot.ruleY([0]),
         ],
       });
+      dateBand(plot, RESTRICTED_BAND, 12);
       const targets = plotTargets(plot, data, { x, y: (row) => row.total });
       return { element: plot, targets };
     },

@@ -7,15 +7,17 @@
  */
 import * as Plot from "@observablehq/plot";
 import { chartFrame, formatMonth, type Drawing, type Target } from "../chart/chartFrame.ts";
-import { BALLISTIC_RESTRICTION_FROM, monthPeriod } from "../chart/flags.ts";
+import { monthPeriod } from "../chart/flags.ts";
+import { monthBand } from "../chart/periodBandMarks.ts";
+import { RAION_BAND, RESTRICTED_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
-import { alertMonthly, formatDate, monthlyTable, weaponClasses } from "../data.ts";
+import { alertMonthly, monthlyTable, weaponClasses } from "../data.ts";
 import { COMBINED_LAUNCH_FILL } from "../theme/areaStyles.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
 import { classFill } from "../theme/marks.ts";
 import { plotDefaults } from "../theme/plot.ts";
 import { alertLaunchRows, type AlertLaunchRow } from "./alertLaunchData.ts";
-import { monthAxisTicks, strikeFootnote } from "../strikes/shared.ts";
+import { footnote, monthAxisTicks, strikeSource } from "../strikes/shared.ts";
 import { alertCredit, alertRangeNote } from "./notes.ts";
 import "./alertsAndLaunches.css";
 
@@ -67,6 +69,9 @@ function marker(months: readonly string[], month: string, text: string, plotWidt
   ];
 }
 
+/** The alert-hours panel is taller than the launch panel, for its second line of labels. */
+const HOURS_HEIGHT = 266;
+
 /** A panel with nothing to draw says so, rather than showing a scale with no figures on it. */
 function emptyPanel(values: (number | null)[], text: string): { ticks?: []; marks: Plot.Markish[] } {
   if (values.some((value) => value !== null)) return { marks: [] };
@@ -88,7 +93,6 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
     ...monthAxisTicks(months, plotWidth),
   };
   const top = (values: (number | null)[]) => [0, Math.max(1, ...values.filter((value) => value !== null))];
-  const restricted = months.find((month) => monthPeriod(month).to >= BALLISTIC_RESTRICTION_FROM);
   const lastAlert = alertMonthly.months.at(-1)!;
   const afterAlerts = months.find((month) => month > lastAlert);
   // One class keeps its own fill; a sum of several takes a color that belongs to none.
@@ -105,15 +109,14 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
       Plot.barY(rows, { x: "month", y: "launched", fill }),
       Plot.ruleY([0]),
       ...noLaunches.marks,
-      ...(restricted
-        ? marker(months, restricted, `Missile reporting restricted from ${formatDate(BALLISTIC_RESTRICTION_FROM)}`, plotWidth)
-        : []),
     ],
   });
 
   const hours = Plot.plot({
     ...shared,
-    marginTop: 40,
+    // Two lines above the plot: the band's label, then the end of the alert figures.
+    marginTop: 56,
+    height: HOURS_HEIGHT,
     x,
     y: { label: "Alert hours, mean across areas", domain: top(rows.map((row) => row.hours)), nice: true, grid: true, ticks: noHours.ticks },
     marks: [
@@ -128,6 +131,9 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
     ],
   });
 
+  monthBand(launches, months, RESTRICTED_BAND);
+  monthBand(hours, months, RAION_BAND, 28);
+
   const element = document.createElement("div");
   element.className = "alert-launch-panels";
   element.style.width = `${width}px`;
@@ -136,12 +142,13 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
   // One target per month, listing both figures, at the top of its bar. A month
   // without a bar still gets one, so its missing figure can be read.
   const targets = plotTargets(launches, rows, { x: (r) => r.month, y: (r) => r.launched ?? 0 });
+
   // One line down both panels marks the month in use, with a ring on its alert hours.
   // The panels are stacked blocks, so the second starts where the first ends.
   const crosshair = document.createElement("div");
   crosshair.className = "alert-launch-crosshair";
   crosshair.style.top = `${shared.marginTop}px`;
-  crosshair.style.height = `${shared.height * 2 - shared.marginTop - plotDefaults.marginBottom}px`;
+  crosshair.style.height = `${shared.height + HOURS_HEIGHT - shared.marginTop - plotDefaults.marginBottom}px`;
   crosshair.hidden = true;
   const ring = document.createElement("div");
   ring.className = "alert-launch-ring";
@@ -163,8 +170,8 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
   return { element, targets, mark };
 }
 
-function footnote(settings: AlertLaunchSettings, hasHours: boolean): HTMLElement {
-  const note = strikeFootnote(
+function methods(settings: AlertLaunchSettings, hasHours: boolean): HTMLElement {
+  return footnote(
     ...(hasHours ? [] : [alertRangeNote()]),
     `Weapon classes in the launch panel: ${classNames(settings.classes) || "none (choose one in the filters)"}. ` +
       "Daytime reports are included. Reconnaissance, tactical and unidentified UAVs and bombs are left out. " +
@@ -172,8 +179,12 @@ function footnote(settings: AlertLaunchSettings, hasHours: boolean): HTMLElement
     "Alert hours are the mean of the oblasts and Kyiv city in alert totals, each counted once. The oblast " +
       "filter doesn’t change them, because the launch figures aren’t broken down by oblast.",
   );
-  note.append(alertCredit());
-  return note;
+}
+
+function sources(): HTMLElement {
+  const lines = document.createElement("div");
+  lines.append(strikeSource(), alertCredit());
+  return lines;
 }
 
 export function alertsAndLaunches(settings: AlertLaunchSettings): HTMLElement {
@@ -183,6 +194,7 @@ export function alertsAndLaunches(settings: AlertLaunchSettings): HTMLElement {
 
   return chartFrame<AlertLaunchRow>({
     title: `Launches and alert hours by month (launches: ${chosen})`,
+    subtitle: "Reported launches above mean alert hours. Side by side doesn’t show that one caused the other.",
     howToRead:
       "The top panel shows launches reported across the country, and the bottom panel the hours under air-raid " +
       "alert in the same month for the average area. The panels have separate scales, so compare when each " +
@@ -214,7 +226,8 @@ export function alertsAndLaunches(settings: AlertLaunchSettings): HTMLElement {
     ],
     rows,
     coverage: (row) => monthPeriod(row.month),
-    footnote: footnote(settings, hasHours || !rows.length),
+    source: sources(),
+    footnote: methods(settings, hasHours || !rows.length),
     pointer: "x",
     draw: (data, width) => draw(data, width, settings.classes),
   });
