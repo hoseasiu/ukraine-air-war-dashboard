@@ -39,9 +39,9 @@ pipeline/audit/   rerunnable audit scripts (read raw data, write nothing)
 pipeline/reference/ rebuilds generated reference files
 tests/            pipeline tests
 site/             Vite + TypeScript front end
-site/src/theme/   weapon-class styles (the only class color definitions), patterns, Plot defaults and the alert-hours scale
+site/src/theme/   weapon-class styles (the only class color definitions), oblast line styles, patterns, Plot defaults and the alert-hours scale
 site/src/chart/   the shared chart frame and its data-quality flag rules
-site/src/alerts/  the alert-hours map and the checks on its table and boundaries
+site/src/alerts/  tab E charts (alert-hours map, oblast comparison, alerts and launches) and the checks on their data
 site/src/filters/ global filters: URL state and controls
 site/src/glossary/ term definitions, term matching and popovers
 site/src/teaching/ discussion prompts for tabs and guided stops
@@ -75,11 +75,11 @@ Site commands run from `site/` and need Node 22.12 or later:
 | `npm ci` | Installs the locked dependencies. Run once per clone or worktree. |
 | `npm run dev` | Serves the site locally with live reload. |
 | `npm run typecheck` | Type-checks the site. CI runs it. |
-| `npm test` | Tests the data-quality flag rules, the filters’ URL state, glossary term matching and the alert map’s data. CI runs it. |
-| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `oblasts.csv`, `alert_hours_monthly.json` or boundary file (every included area needs every month, and every area one boundary). CI runs it. |
+| `npm test` | Tests the data-quality flag rules, the filters’ URL state, glossary term matching and tab E’s chart data. CI runs it. |
+| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `oblasts.csv`, `alert_hours_monthly.json`, `monthly_by_class.json` or boundary file (every included area needs every month, and every area one boundary). CI runs it. |
 | `npm run preview` | Serves the built site locally. |
 
-Site tests cover only the flag rules, the filters' URL state, glossary matching and the alert map's data, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
+Site tests cover only the flag rules, the filters' URL state, glossary matching and tab E's chart data, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
 
 ## Site notes
 
@@ -93,6 +93,7 @@ Site tests cover only the flag rules, the filters' URL state, glossary matching 
 - Pipeline outputs can add a badge with a boolean (or 0/1) row column named for the flag: `destroyed_includes_ew`, `ballistic_restricted`, `classes_not_split`, `alert_end_assumed`, `alert_regions_excluded` or `alert_granularity_change`. Send unpublished or suppressed values as `null`, never 0. `intercept_rate` is a fraction.
 - A chart that changes in place, such as the map under its month slider, uses `liveChartFrame()` and calls `update()`. That keeps the table toggle and keyboard focus and works the badges out again. Put its controls in `controls`, a scale key in `scaleKey` and credits in `footnote`.
 - The alert map ([alertMap.ts](site/src/alerts/alertMap.ts)) takes its months and outlined oblasts as settings and reads no filters, so a guided stop can use it (#22). Keep the boundary credit with it.
+- The oblast comparison ([oblastComparison.ts](site/src/alerts/oblastComparison.ts)) and the launches and alert hours panels ([alertsAndLaunches.ts](site/src/alerts/alertsAndLaunches.ts)) also take settings and read no filters (#22 can use them). With no oblast chosen, the page passes `DEFAULT_COMPARISON`; change it there when the owner picks. Oblast lines take their styles from [areaStyles.ts](site/src/theme/areaStyles.ts); rerun the validator command there after changing a color.
 - Chart tooltips handle arrow, Home, End and Escape keys while in use and mark them handled. Page-level shortcuts should ignore events with `defaultPrevented`.
 - After changing a class color, rerun the dataviz palette validator; the command is in `classStyles.ts`. CI doesn't run it.
 
