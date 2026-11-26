@@ -30,11 +30,12 @@ These issues may have no formal dependency on each other but are likely to edit 
 
 | Shared area | Issues |
 |---|---|
-| App shell, routing, global state | #11, #12, #20 |
+| App shell, routing, global state | #11, #12, #20, #60 |
 | Python project config and mapping module | #7, #8 |
-| Tab A page layout | #13, #14 |
-| Tab B page layout | #16, #17 |
-| Tab E page layout | #18, #19 |
-| Guided stop definitions | #21, #22 |
-| Chart frame and glossary hooks | #12, #24 |
+| Tab A page layout | #13, #14, #62, #63, #64, #69 |
+| Tab B page layout | #16, #17, #65, #66, #67, #69 |
+| Tab E page layout | #18, #19, #68, #69 |
+| Guided stop definitions and views | #21, #22, #70 |
+| Chart frame and glossary hooks | #12, #24, #58 |
+| Site styles and Plot defaults (`styles.css`, `theme/plot.ts`) | #58, #59, #70 |
 | `docs/plan.md` §11, `AGENTS.md` | any issue that records a decision or command |
