@@ -43,13 +43,40 @@ export function defaultFilters(bounds: FilterBounds): Filters {
   return { from: bounds.firstMonth, to: bounds.lastMonth, classes: [...CLASS_IDS], oblasts: [] };
 }
 
-/** Months as consecutive integers, for sliders. */
+/** Months as consecutive integers, for the date range. */
 export function monthNumber(month: string): number {
   return Number(month.slice(0, 4)) * 12 + Number(month.slice(5, 7)) - 1;
 }
 
 export function monthFromNumber(value: number): string {
   return `${Math.floor(value / 12)}-${String((value % 12) + 1).padStart(2, "0")}`;
+}
+
+export interface DatePreset {
+  label: string;
+  from: string;
+  to: string;
+}
+
+/**
+ * The date ranges offered as one-press choices: every month, each calendar year
+ * that the filter covers from January to December, and the latest 12 months
+ * (counting the last one, which can be partial).
+ */
+export function datePresets({ firstMonth, lastMonth }: FilterBounds): DatePreset[] {
+  const years: DatePreset[] = [];
+  const firstJanuary = monthNumber(`${firstMonth.slice(0, 4)}-01`);
+  for (let january = firstJanuary; january + 11 <= monthNumber(lastMonth); january += 12) {
+    if (january < monthNumber(firstMonth)) continue;
+    const from = monthFromNumber(january);
+    years.push({ label: from.slice(0, 4), from, to: monthFromNumber(january + 11) });
+  }
+  const latest = Math.max(monthNumber(lastMonth) - 11, monthNumber(firstMonth));
+  return [
+    { label: "All", from: firstMonth, to: lastMonth },
+    ...years,
+    { label: "Last 12 months", from: monthFromNumber(latest), to: lastMonth },
+  ];
 }
 
 /** YYYY-MM strings sort in date order, so they compare as text. */

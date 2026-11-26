@@ -1,10 +1,75 @@
+/*
+ * The bar sticks to the top of the window. It sits above chart marks and their
+ * point buttons, and below chart tooltips (z-index in chart.css), so it never
+ * covers a tooltip.
+ */
 .filters {
-  display: grid;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  padding: 0.75rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin-bottom: 0.5rem;
+  background: var(--surface);
+}
+
+/* Scrolling to a focused element stops below the bar, with room for the focus outline. */
+html:has(.filters) {
+  scroll-padding-top: calc(var(--filter-bar-height, 3rem) + 0.5rem);
+}
+
+/*
+ * The bar's own controls are already on screen when it's stuck. Without this,
+ * focusing one would scroll the page up to get it out of that padding.
+ */
+.filters * {
+  scroll-margin-top: calc(-1 * (var(--filter-bar-height, 3rem) + 0.5rem));
+}
+
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.4rem 1rem;
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  background: var(--surface);
   border: 1px solid var(--rule);
   border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.filter-summary {
+  font-variant-numeric: tabular-nums;
+}
+
+.filter-action {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* Over the page, so opening it doesn't move the charts. It scrolls if the window is short. */
+.filter-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  display: grid;
+  gap: 0.75rem;
+  max-height: calc(100vh - var(--filter-bar-height, 3rem) - 1rem);
+  max-height: calc(100dvh - var(--filter-bar-height, 3rem) - 1rem);
+  padding: 0.75rem 1rem;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 0.25rem;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 0.2);
+}
+
+.filter-panel[hidden] {
+  display: none;
 }
 
 .filters fieldset {
@@ -19,22 +84,147 @@
   font-weight: 700;
 }
 
-.filter-slider {
-  display: grid;
-  grid-template-columns: 3.5em minmax(0, 28rem) 6em;
+.filter-range-row {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0 1rem;
 }
 
-.filters input[type="range"] {
+.filter-range {
+  --thumb: 1.5rem;
+  position: relative;
+  flex: 1 1 14rem;
+  max-width: 32rem;
+  height: 2rem;
+  /* A finger can still scroll the page up and down from here. */
+  touch-action: pan-y;
+  cursor: pointer;
+}
+
+/* As wide as the distance a thumb's center travels. */
+.filter-rail {
+  position: absolute;
+  top: calc(50% - 0.2rem);
+  right: calc(var(--thumb) / 2);
+  left: calc(var(--thumb) / 2);
+  height: 0.4rem;
+  background: var(--rule-faint);
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+.filter-rail-fill {
+  position: absolute;
+  top: 0;
+  right: calc((1 - var(--range-to, 1)) * 100%);
+  bottom: 0;
+  left: calc(var(--range-from, 0) * 100%);
+  background: var(--accent);
+}
+
+/*
+ * The two sliders lie on top of each other and show only their thumbs. They take
+ * no pointer events: dateRange.ts handles the pointer for both.
+ */
+.filter-range input[type="range"] {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  min-height: 1.75rem;
+  height: 100%;
   margin: 0;
-  accent-color: var(--accent);
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+
+/* The outline goes on the thumb, to show which of the two has focus. */
+.filter-range input[type="range"]:focus-visible {
+  z-index: 1;
+  outline: none;
+}
+
+.filter-range input[type="range"]::-webkit-slider-runnable-track {
+  height: var(--thumb);
+  background: transparent;
+}
+
+.filter-range input[type="range"]::-webkit-slider-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  appearance: none;
+  background: var(--surface);
+  border: 0.3rem solid var(--accent);
+  border-radius: 50%;
+}
+
+.filter-range input[type="range"]::-moz-range-track {
+  background: transparent;
+}
+
+.filter-range input[type="range"]::-moz-range-thumb {
+  box-sizing: border-box;
+  width: var(--thumb);
+  height: var(--thumb);
+  background: var(--surface);
+  border: 0.3rem solid var(--accent);
+  border-radius: 50%;
+}
+
+.filter-range input[type="range"]:focus-visible::-webkit-slider-thumb {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.filter-range input[type="range"]:focus-visible::-moz-range-thumb {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Forced colors replace ours, so name the ones that keep the chosen months visible. */
+@media (forced-colors: active) {
+  .filter-rail {
+    border: 1px solid CanvasText;
+  }
+
+  .filter-rail-fill {
+    background: Highlight;
+  }
 }
 
 .filter-value {
   font-variant-numeric: tabular-nums;
+}
+
+.filter-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filter-preset,
+.filter-reset {
+  min-height: 1.75rem;
+  padding: 0.2rem 0.75rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+/* An underline as well as the fill, so the chosen preset doesn't depend on color. */
+.filter-preset[aria-pressed="true"] {
+  color: var(--surface);
+  background: var(--ink);
+  border-color: var(--ink);
+  text-decoration: underline;
+}
+
+.filter-reset {
+  justify-self: end;
+  border: 2px solid var(--ink);
 }
 
 .filter-classes {
@@ -82,14 +272,8 @@
 
 .filter-limit,
 .filter-excluded,
-.filter-note,
-.filter-summary {
+.filter-notes p {
   margin: 0;
-}
-
-.filter-limit,
-.filter-excluded,
-.filter-note {
   color: var(--ink-secondary);
   font-size: 0.9rem;
 }
@@ -98,30 +282,6 @@
   margin-top: 0.5rem;
 }
 
-.filter-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem 1rem;
-}
-
-.filter-reset {
-  padding: 0.3rem 0.9rem;
-  font: inherit;
-  color: var(--ink);
-  background: var(--surface);
-  border: 2px solid var(--ink);
-  border-radius: 0.25rem;
-  cursor: pointer;
-}
-
-@media (max-width: 30rem) {
-  .filter-slider {
-    grid-template-columns: 3.5em minmax(0, 1fr);
-  }
-
-  .filter-value {
-    grid-column: 2;
-  }
+.filter-notes {
+  margin-bottom: 1rem;
 }

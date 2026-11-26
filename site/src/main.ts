@@ -1,5 +1,5 @@
 import { alertAreas, buildInfo, formatDate } from "./data.ts";
-import { filterControls } from "./filters/controls.ts";
+import { filterControls, filterNotes } from "./filters/controls.ts";
 import {
   defaultFilters,
   filterSearch,
@@ -100,11 +100,11 @@ function render(): void {
       filterControls({
         bounds: filterBounds,
         oblasts: page.filters.oblasts ?? false,
-        notes: page.filters.notes,
         read: readFilters,
         write: update,
         reset: () => update(defaultFilters(filterBounds)),
       }),
+      filterNotes(page.filters.notes),
     );
   }
   main.append(content);

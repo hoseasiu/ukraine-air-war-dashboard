@@ -101,7 +101,8 @@
 
 .chart-tooltip {
   position: absolute;
-  z-index: 1;
+  /* Above the sticky filter bar (filters/filters.css). */
+  z-index: 3;
   width: max-content;
   max-width: 18rem;
   padding: 0.5rem 0.75rem;

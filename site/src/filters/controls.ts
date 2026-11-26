@@ -1,32 +1,26 @@
 /**
- * The filter controls: native sliders, checkboxes and buttons, so they work
- * from the keyboard without custom key handling. They keep no state of their
- * own: they show what they're given and report each change.
+ * The filter controls: a one-line bar that stays on screen and opens a panel of
+ * native sliders, checkboxes and buttons, so they work from the keyboard without
+ * custom key handling. They don't keep the filters: they show what they're given
+ * and report each change.
  */
-import { formatMonth } from "../chart/chartFrame.ts";
 import { alertAreas, excludedAlertAreas, weaponClasses } from "../data.ts";
 import { classFill, svgElement } from "../theme/marks.ts";
-import { MAX_OBLASTS, monthFromNumber, monthNumber, type FilterBounds, type Filters } from "./state.ts";
+import { dateRange, formatRange } from "./dateRange.ts";
+import { disclosure, reserveSpace } from "./disclosure.ts";
+import { create, type Part } from "./dom.ts";
+import { MAX_OBLASTS, type FilterBounds, type Filters } from "./state.ts";
 import "./filters.css";
 
 export interface FilterOptions {
   bounds: FilterBounds;
   /** Shows the oblast picker, which only the alerts tab uses. */
   oblasts: boolean;
-  /** Sentences about what the filters do and don't cover on this tab. */
-  notes: readonly string[];
   /** The filters in the URL. */
   read(): Filters;
   /** Stores new filters and redraws what depends on them. */
   write(filters: Filters): void;
   reset(): void;
-}
-
-function create<K extends keyof HTMLElementTagNameMap>(tag: K, className = "", text = ""): HTMLElementTagNameMap[K] {
-  const element = document.createElement(tag);
-  if (className) element.className = className;
-  if (text) element.textContent = text;
-  return element;
 }
 
 function areaName(id: string): string {
@@ -35,82 +29,16 @@ function areaName(id: string): string {
   return area.name;
 }
 
-/** "Sep 2022 to Nov 2026 · 5 of 6 weapon classes · Lviv oblast" */
+/** "Sep 2022 – Nov 2026 · 5 of 6 classes · Lviv oblast" */
 export function describeFilters(filters: Filters, withOblasts: boolean): string {
-  const parts = [`${formatMonth(filters.from)} to ${formatMonth(filters.to)}`];
+  const parts = [formatRange(filters.from, filters.to)];
   const total = weaponClasses.length;
   const chosen = filters.classes.length;
   parts.push(
-    chosen === total ? "all weapon classes" : chosen ? `${chosen} of ${total} weapon classes` : "no weapon classes",
+    chosen === total ? "all classes" : chosen ? `${chosen} of ${total} classes` : "no classes",
   );
   if (withOblasts) parts.push(filters.oblasts.map(areaName).join(", ") || "no oblasts chosen");
   return parts.join(" · ");
-}
-
-interface Part {
-  element: HTMLElement;
-  show(filters: Filters): void;
-}
-
-function dateRange(options: FilterOptions, commit: (change: Partial<Filters>) => void): Part {
-  const fieldset = create("fieldset", "filter-dates");
-  fieldset.append(create("legend", "", "Months shown"));
-
-  function slider(end: "from" | "to", text: string) {
-    const row = create("div", "filter-slider");
-    const label = create("label", "", text);
-    const input = create("input");
-    input.type = "range";
-    input.id = `filter-${end}`;
-    input.min = String(monthNumber(options.bounds.firstMonth));
-    input.max = String(monthNumber(options.bounds.lastMonth));
-    input.step = "1";
-    label.htmlFor = input.id;
-    // The slider announces the same text itself, so hide the copy from screen readers.
-    const value = create("span", "filter-value");
-    value.setAttribute("aria-hidden", "true");
-    row.append(label, input, value);
-    fieldset.append(row);
-
-    const showMonth = (month: string) => {
-      value.textContent = formatMonth(month);
-      input.setAttribute("aria-valuetext", formatMonth(month));
-    };
-    return { input, showMonth };
-  }
-
-  const from = slider("from", "From");
-  const to = slider("to", "To");
-
-  for (const [end, other, mine] of [
-    ["from", to, from],
-    ["to", from, to],
-  ] as const) {
-    /** One slider stops where it meets the other. */
-    const clamped = () => {
-      const value = Number(mine.input.value);
-      const limit = Number(other.input.value);
-      const allowed = end === "from" ? Math.min(value, limit) : Math.max(value, limit);
-      mine.input.value = String(allowed);
-      return monthFromNumber(allowed);
-    };
-    // "input" fires all through a drag, so the URL and the page wait for "change".
-    mine.input.addEventListener("input", () => mine.showMonth(clamped()));
-    mine.input.addEventListener("change", () => commit({ [end]: clamped() }));
-  }
-
-  return {
-    element: fieldset,
-    show(filters) {
-      for (const [slide, month] of [
-        [from, filters.from],
-        [to, filters.to],
-      ] as const) {
-        slide.input.value = String(monthNumber(month));
-        slide.showMonth(month);
-      }
-    },
-  };
 }
 
 function checkbox(text: string): { label: HTMLLabelElement; input: HTMLInputElement } {
@@ -212,20 +140,30 @@ export function filterControls(options: FilterOptions): HTMLElement {
   const section = create("section", "filters");
   section.setAttribute("aria-label", "Filters");
 
-  const parts: Part[] = [];
-  const summary = create("p", "filter-summary");
+  const toggle = create("button", "filter-toggle");
+  toggle.type = "button";
+  const summary = create("span", "filter-summary");
+  const action = create("span", "filter-action");
+  toggle.append(summary, " ", action);
+
+  const panel = create("div", "filter-panel");
+  panel.id = "filter-panel";
+  toggle.setAttribute("aria-controls", panel.id);
+
   // Screen readers announce a live region only if it was on the page before its text changed.
   const announcer = create("p", "visually-hidden");
   announcer.setAttribute("role", "status");
   const reset = create("button", "filter-reset", "Reset filters");
   reset.type = "button";
 
+  const parts: Part[] = [];
+
   function show(announce: boolean): void {
     const filters = options.read();
     for (const part of parts) part.show(filters);
     const text = describeFilters(filters, options.oblasts);
-    summary.textContent = `Selected: ${text}`;
-    if (announce) announcer.textContent = summary.textContent;
+    summary.textContent = text;
+    if (announce) announcer.textContent = `Selected: ${text}`;
   }
 
   function commit(change: Partial<Filters>): void {
@@ -233,7 +171,7 @@ export function filterControls(options: FilterOptions): HTMLElement {
     show(true);
   }
 
-  parts.push(dateRange(options, commit), classToggles(options, commit));
+  parts.push(dateRange(options.bounds, options.read, commit), classToggles(options, commit));
   if (options.oblasts) parts.push(oblastPicker(options, commit));
 
   reset.addEventListener("click", () => {
@@ -241,12 +179,20 @@ export function filterControls(options: FilterOptions): HTMLElement {
     show(true);
   });
 
-  section.append(...parts.map((part) => part.element));
-  for (const note of options.notes) section.append(create("p", "filter-note", note));
-  const footer = create("div", "filter-footer");
-  footer.append(summary, reset);
-  section.append(footer, announcer);
+  panel.append(...parts.map((part) => part.element), reset);
+  section.append(toggle, panel, announcer);
+  disclosure(section, toggle, panel, (open) => {
+    action.textContent = open ? "Close" : "Edit";
+  });
+  reserveSpace(toggle);
 
   show(false);
   return section;
+}
+
+/** What the filters do and don't cover on a tab. It shows whether or not the panel is open. */
+export function filterNotes(notes: readonly string[]): HTMLElement {
+  const wrapper = create("div", "filter-notes");
+  for (const note of notes) wrapper.append(create("p", "", note));
+  return wrapper;
 }
