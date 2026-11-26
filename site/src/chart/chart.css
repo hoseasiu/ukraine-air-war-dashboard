@@ -151,3 +151,14 @@
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+
+.chart-footnote {
+  max-width: 60rem;
+  margin-top: 0.75rem;
+  color: var(--ink-secondary);
+  font-size: 0.85rem;
+}
+
+.chart-footnote p {
+  margin: 0.25rem 0;
+}

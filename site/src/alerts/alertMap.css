@@ -125,17 +125,6 @@
   pointer-events: none;
 }
 
-.chart-footnote {
-  max-width: 60rem;
-  margin-top: 0.75rem;
-  color: var(--ink-secondary);
-  font-size: 0.85rem;
-}
-
-.chart-footnote p {
-  margin: 0.25rem 0;
-}
-
 @media (max-width: 30rem) {
   .month-slider {
     grid-template-columns: minmax(0, 1fr) 6em;

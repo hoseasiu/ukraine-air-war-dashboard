@@ -44,6 +44,7 @@ site/src/chart/   the shared chart frame and its data-quality flag rules
 site/src/alerts/  the alert-hours map and the checks on its table and boundaries
 site/src/filters/ global filters: URL state and controls
 site/src/glossary/ term definitions, term matching and popovers
+site/src/strikes/ the attacks tab: its charts, and the checks on and sums from the strike tables
 site/src/teaching/ discussion prompts for tabs and guided stops
 site/tests/       site tests
 docs/             spec and data audit
@@ -75,11 +76,11 @@ Site commands run from `site/` and need Node 22.12 or later:
 | `npm ci` | Installs the locked dependencies. Run once per clone or worktree. |
 | `npm run dev` | Serves the site locally with live reload. |
 | `npm run typecheck` | Type-checks the site. CI runs it. |
-| `npm test` | Tests the data-quality flag rules, the filters’ URL state, glossary term matching and the alert map’s data. CI runs it. |
-| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `oblasts.csv`, `alert_hours_monthly.json` or boundary file (every included area needs every month, and every area one boundary). CI runs it. |
+| `npm test` | Tests the data-quality flag rules, the filters’ URL state, glossary term matching, the alert map’s data and the attacks tab’s figures. CI runs it. |
+| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `nights.json` or `monthly_by_class.json` (including a massive label that disagrees with its year's bar), or on a bad `oblasts.csv`, `alert_hours_monthly.json` or boundary file (every included area needs every month, and every area one boundary). CI runs it. |
 | `npm run preview` | Serves the built site locally. |
 
-Site tests cover only the flag rules, the filters' URL state, glossary matching and the alert map's data, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
+Site tests cover only the flag rules, the filters' URL state, glossary matching, the alert map's data and the attacks tab's figures, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
 
 ## Site notes
 
@@ -92,6 +93,9 @@ Site tests cover only the flag rules, the filters' URL state, glossary matching 
 - Every chart goes through `chartFrame()` ([chartFrame.ts](site/src/chart/chartFrame.ts); example: [chartSample.ts](site/src/sample/chartSample.ts)). Declare each number the chart draws as a column with a `measure`, and say what dates it `coverage`s. The frame derives the badges from these; don't add or hide them by hand. A new kind of number or caveat goes in [flags.ts](site/src/chart/flags.ts).
 - Pipeline outputs can add a badge with a boolean (or 0/1) row column named for the flag: `destroyed_includes_ew`, `ballistic_restricted`, `classes_not_split`, `alert_end_assumed`, `alert_regions_excluded` or `alert_granularity_change`. Send unpublished or suppressed values as `null`, never 0. `intercept_rate` is a fraction.
 - A chart that changes in place, such as the map under its month slider, uses `liveChartFrame()` and calls `update()`. That keeps the table toggle and keyboard focus and works the badges out again. Put its controls in `controls`, a scale key in `scaleKey` and credits in `footnote`.
+- The one-night breakdown ([nightBreakdown.ts](site/src/strikes/nightBreakdown.ts)) takes its night and classes as settings and reads no filters, so guided stop 5 can use it (#21). Leave out `choices` for a fixed night.
+- A massive bar is calculated from a whole year. Flag any figure or label that uses a bar with restricted nights in it (`barIsRestricted()` in [strikeData.ts](site/src/strikes/strikeData.ts)).
+- The strike parsers keep only the columns tab A draws. A chart that needs `destroyed` must keep it together with `destroyed_includes_ew`.
 - The alert map ([alertMap.ts](site/src/alerts/alertMap.ts)) takes its months and outlined oblasts as settings and reads no filters, so a guided stop can use it (#22). Keep the boundary credit with it.
 - Chart tooltips handle arrow, Home, End and Escape keys while in use and mark them handled. Page-level shortcuts should ignore events with `defaultPrevented`.
 - After changing a class color, rerun the dataviz palette validator; the command is in `classStyles.ts`. CI doesn't run it.
