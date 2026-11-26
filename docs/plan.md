@@ -276,12 +276,16 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **Seasons:** no seasonal pattern is charted or claimed. The [data audit](data-audit.md#what-each-question-can-support) found that about four winters can't support a firm one; the calendar says so.
   - **Restriction flag:** the 2026 massive bar uses nights from Aug 11 on, so anything that shows it, or labels a night with it, is flagged even for earlier 2026 nights.
 - Glossary and discussion prompts (#24): on Nov 25, 2026 the owner approved the wording of the coding agent's drafts in [terms.ts](../site/src/glossary/terms.ts) and [prompts.ts](../site/src/teaching/prompts.ts). The "salvo" and "reporting window" definitions may need another look once salvo sizes and daytime reports are settled. #5 settled both; the agent found that the two definitions still read correctly and didn't change them.
+- Tab E comparison and launches (#19; built by the coding agent, not yet reviewed by the owner):
+  - **Comparison:** monthly alert hours, one line per oblast, on one scale from zero. The month and oblast filters apply. With no oblast chosen it shows Kharkiv oblast, Kyiv city and Lviv oblast, which doesn't settle the question under Open. An oblast keeps its line color while others are added or removed on the same visit. The three colors are separate from the weapon-class colors.
+  - **Launches and alert hours:** two aligned panels, each with its own scale, with no correlation, ratio or trend line. Alert hours are the mean of the 24 areas in alert totals; the oblast filter doesn't change them, because monthly launches aren't broken down by oblast. The month filter applies to both panels and the class toggles to launches. A total over only some classes carries the mixed-rows badge.
+  - Launches run to the snapshot month, so the restriction flag appears. Alert hours stop at July 2026 and are gaps after that, labeled, never zero. A month with no published launch count has no bar.
 
 **Open**
 - Terms of the sources behind the alert data (#26): the dataset is MIT, but it's collected from Telegram channels, including a volunteer one (eTryvoga), whose terms we don't know ([data audit](data-audit.md#alerts-license)). The site uses only the official-channel file.
 - Sources for the glossary (#24). The owner approved the wording (see Settled) without answering this separately: the general descriptions of weapons, EW and decoys in [terms.ts](../site/src/glossary/terms.ts) have no cited source. Suggested: decide before shipping whether they need citations (§9 Phase 5 asks that numbers trace to a source), alongside the Data & Methods page (#23).
 - Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January). The 2026 massive-night bar and labels can change with it (#28).
-- Which three oblasts to compare in stop 10 (suggested: Kharkiv, Kyiv city, Lviv).
+- Which three oblasts to compare in stop 10 (suggested: Kharkiv, Kyiv city, Lviv). The tab E comparison shows these three until the owner picks (#19).
 - Missiles from August 2026 outside class rates (#5; for #16 and #21). The owner ended missile-class intercept rates at July 2026. This doesn't say what an all-class share (stop 1's "share intercepted") does with missile and mixed rows after July, or whether B2's destroyed counts for those nights have the same bias. Suggested: compute any all-class share through July 31, 2026 and say so, and keep later nights in B2 with the restriction flag and a note.
 
 ---
