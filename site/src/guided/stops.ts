@@ -2,9 +2,10 @@
  * The guided-mode stops (docs/plan.md §5), as data. A stop's number and its
  * #stop-N hash come from its position in STOPS.
  *
- * Stops 1–6 are here (#21); #22 adds 7–12. The captions and titles are drafts
- * for the owner to edit and haven't been approved. Leave counts out of them, so
- * a data refresh can't make them wrong.
+ * Stops 1–6 are here (#21); #22 adds 7–12. The owner approved the titles and
+ * captions of stops 1–6 on Nov 25, 2026 (#21); a change to one needs their
+ * review again. Leave counts out of them, so a data refresh can't make them
+ * wrong.
  */
 import { STOP_PROMPTS } from "../teaching/prompts.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
