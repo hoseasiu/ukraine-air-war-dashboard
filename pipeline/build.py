@@ -8,7 +8,7 @@ import json
 from datetime import date
 
 from pipeline.alerts import OFFICIAL, build_tables
-from pipeline.budget import BUDGET_BYTES, check_budget, reference_sizes
+from pipeline.budget import BUDGET_BYTES, check_budget, font_sizes, reference_sizes
 from pipeline.columns import read_raw
 from pipeline.errors import PipelineError
 from pipeline.gazetteer import load_gazetteer
@@ -140,6 +140,7 @@ def build(raw_dir, out_dir, alert_checksums=ALERTS_SHA256, reference_dir=REFEREN
     }
     sizes = {name: len(content.encode("utf-8")) for name, content in outputs.items()}
     sizes.update(reference_sizes(reference_dir))
+    sizes.update(font_sizes())
     check_budget(sizes)
 
     out_dir.mkdir(parents=True, exist_ok=True)

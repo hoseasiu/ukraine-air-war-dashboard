@@ -146,7 +146,13 @@
 }
 
 .night-breakdown {
-  margin: 2rem 0;
+  max-width: var(--narrow-chart-width);
+  margin: var(--space-3) 0;
+}
+
+/* A stop keeps the screen's width, so its table of places stays short. */
+.stop-view .night-breakdown {
+  max-width: none;
 }
 
 .night-breakdown .chart-frame {

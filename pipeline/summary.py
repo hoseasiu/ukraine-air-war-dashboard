@@ -115,7 +115,7 @@ def _checks(reconciliation, sizes, budget):
     ]
     lines += [
         "  Every model string has a class, and no official alert ends before it starts.",
-        f"  Site data: {sum(sizes.values()):,} of {budget:,} bytes "
+        f"  Site data and font: {sum(sizes.values()):,} of {budget:,} bytes "
         f"({len(sizes)} files, before compression).",
     ]
     return lines

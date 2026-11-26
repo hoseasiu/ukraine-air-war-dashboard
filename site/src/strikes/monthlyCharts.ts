@@ -9,7 +9,7 @@ import { drawMarkerRules, drawMarkers, eventKey, MARKER_ROW } from "../annotatio
 import { placeMarkers } from "../annotations/markerLayout.ts";
 import { annotations, formatDate, monthlyTable } from "../data.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
-import { classFillScale, plotDefaults } from "../theme/plot.ts";
+import { classFillScale, plotDefaults, titledScale } from "../theme/plot.ts";
 import { chartSvg, classLabels, create, monthAxisTicks, percent, footnote, strikeSource, svgText, type FixedView } from "./shared.ts";
 import { launchPanels, monthRows, monthsShown, type MonthChartRow, type Selection } from "./strikeData.ts";
 
@@ -62,7 +62,7 @@ function monthBars(data: readonly MonthChartRow[], { months, width, height, marg
     marginTop,
     marginBottom: monthLabels ? 32 : 8,
     x: { type: "band", domain: months, padding: 0.15, label: null, ...ticks, ...(monthLabels ? {} : { axis: null }) },
-    y: { label: "Published launches", grid: true },
+    y: titledScale({ label: "Published launches", grid: true }),
     color: classFillScale(classLabels),
     marks: [
       Plot.barY(data, {

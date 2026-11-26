@@ -13,7 +13,7 @@ import { plotTargets } from "../chart/plotTargets.ts";
 import { alertAreas, alertMonthly, excludedAlertAreas } from "../data.ts";
 import { AREA_STYLES } from "../theme/areaStyles.ts";
 import { areaSymbolPath, svgElement } from "../theme/marks.ts";
-import { plotDefaults } from "../theme/plot.ts";
+import { plotDefaults, titledScale } from "../theme/plot.ts";
 import { assignStyles, comparisonRows, type ComparisonRow } from "./comparisonData.ts";
 import { endLabelRoom, endLabels, focusControl, type FocusControl } from "./comparisonMarks.ts";
 import { monthAxisTicks, type FixedView } from "../strikes/shared.ts";
@@ -90,7 +90,12 @@ function draw(
       ...monthAxisTicks(months, width - marginLeft - marginRight),
     },
     // Starts at zero, so the lines' heights compare fairly.
-    y: { label: "Alert hours in the month, average per raion", domain: [0, Math.max(1, ...rows.map((row) => row.hours))], nice: true, grid: true },
+    y: titledScale({
+      label: "Alert hours in the month, average per raion",
+      domain: [0, Math.max(1, ...rows.map((row) => row.hours))],
+      nice: true,
+      grid: true,
+    }),
     symbol: { type: "identity" },
     marks: [
       Plot.ruleY([0]),
