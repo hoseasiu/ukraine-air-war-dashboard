@@ -1,0 +1,72 @@
+{
+  "table": "strike_reconciliation",
+  "source": {
+    "url": "https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine",
+    "license": "CC BY-NC-SA 4.0",
+    "file": "missile_attacks_daily.csv"
+  },
+  "first_day": "2022-09-28",
+  "last_day": "2026-11-21",
+  "restriction_from": "2026-08-11",
+  "raw_daily_file": {
+    "rows": 4399,
+    "launched_as_published": 160663,
+    "destroyed_as_published": 126867
+  },
+  "buckets": {
+    "excluded_class": {
+      "rows": 1567,
+      "launched_as_published": 17355,
+      "destroyed_as_published": 17314
+    },
+    "not_a_national_account": {
+      "rows": 441,
+      "launched_as_published": 1954,
+      "destroyed_as_published": 1571
+    },
+    "hidden": {
+      "rows": 35,
+      "launched_as_published": 4,
+      "destroyed_as_published": 55
+    },
+    "in_monthly_totals": {
+      "rows": 2356,
+      "launched_as_published": 141350,
+      "destroyed_as_published": 107927
+    }
+  },
+  "excluded_class_rows": {
+    "guided_bomb": {
+      "rows": 6,
+      "launched_as_published": 33,
+      "destroyed_as_published": 11
+    },
+    "other_uav": {
+      "rows": 1561,
+      "launched_as_published": 17322,
+      "destroyed_as_published": 17303
+    }
+  },
+  "within_monthly_totals": {
+    "daytime_reports_not_in_nights": {
+      "rows": 50,
+      "launched_as_published": 6804,
+      "destroyed_as_published": 5992
+    },
+    "rows_with_blank_launched": 3,
+    "rows_with_blank_destroyed": 6,
+    "rows_with_destroyed_above_launched": 1
+  },
+  "table_totals": {
+    "nights": {
+      "launched": 134546,
+      "destroyed": 101935,
+      "launched_with_outcome": 134485
+    },
+    "monthly_by_class": {
+      "launched": 141350,
+      "destroyed": 107788,
+      "launched_with_outcome": 141208
+    }
+  }
+}

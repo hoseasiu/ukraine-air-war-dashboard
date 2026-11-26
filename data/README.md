@@ -13,7 +13,7 @@ With the two Kaggle files in `raw/` (below), run this from the repo root. It wor
 uv run python -m pipeline
 ```
 
-It downloads the alert files if they're missing, checks the inputs and writes `processed/manifest.json` (snapshot date, plus each raw file's row count, size and SHA-256), `processed/build_info.json` and the two [alert tables](#alert-tables). It builds no strike tables yet (#7). The same inputs give the same bytes, so after a rebuild `git diff data/processed` shows what changed. See [processed/LICENSE.md](processed/LICENSE.md) for the license of those files.
+It downloads the alert files if they're missing, checks the inputs and writes `processed/manifest.json` (snapshot date, plus each raw file's row count, size and SHA-256), `processed/build_info.json`, the two [alert tables](#alert-tables) and the [strike tables](#strike-tables). The same inputs give the same bytes, so after a rebuild `git diff data/processed` shows what changed. See [processed/LICENSE.md](processed/LICENSE.md) for the license of those files.
 
 ## Snapshot date
 
@@ -50,6 +50,53 @@ The three flag names are the site's [chart-frame row flags](../site/src/chart/fl
 For the calendar view, stored as series to keep it small. `hours` maps each area to one number per day, in order from `first_day` to `last_day` (hours, average per raion). `flags` holds `alert_regions_excluded`, `alert_granularity_change_from` (a date) and `alert_end_assumed_days` (for each area, the flagged dates). A chart that builds rows from this file should set the three row flags from these.
 
 Hours are rounded to 0.01, so a month's daily values can differ slightly from its monthly total.
+
+## Strike tables
+
+Built by [pipeline/strikes.py](../pipeline/strikes.py) from `missile_attacks_daily.csv`, with the [definitions](../docs/data-audit.md#definitions) and the [weapon classes](reference/README.md#weapon-classes). Only counted classes and national military reports are in `nights` and `monthly_by_class`. All three files below are **CC BY-NC-SA 4.0** ([notice](processed/LICENSE.md)).
+
+Each file starts with the source, `first_day` and `last_day` (the first and last report end dates in the raw file, so the first and last months can be partial) and `restriction_from`.
+
+### `nights.json`
+
+One object per night and class in `rows`. **A night is keyed by the Kyiv date its reports end on:** a report from the evening of March 4 to the morning of March 5 belongs to March 5. [Daytime reports](../docs/data-audit.md#which-rows-count) are left out, so nights don't add up to monthly totals. A class with no report that night has no row, and a date with no row may be quiet or unreported.
+
+`massive.years` has each calendar year's bar (`massive_above`: a massive night had **more** weapons launched than this), `n_nights`, `n_massive`, and the first and last night used. Show the year's bar wherever "massive" appears, and don't chart massive nights per year as a trend. A night's size is the sum of its rows' known `launched`.
+
+| Column | Meaning |
+|---|---|
+| `date` | The date the night's reports end, `YYYY-MM-DD`. |
+| `class` | Class id from [`weapon_classes.csv`](reference/weapon_classes.csv). `mixed` rows aren't split. |
+| `launched` | Sum of the published launch counts. `null` if none is known, never 0 for unknown. With `n_unknown_launched` above 0, it leaves some reports out. |
+| `destroyed` | Reported destroyed, **including electronic warfare**, over the rows where both counts are usable. `null` if there are none. |
+| `launched_with_outcome` | Launches in those same rows. The number not reported destroyed is `launched_with_outcome − destroyed`. **Don't use `launched − destroyed`:** `launched` can include rows with no usable destroyed count. Neither is a count of hits. |
+| `n_models` | Distinct raw model strings reported, including those with unknown counts. A combined string counts once, so it isn't a count of weapon types. |
+| `n_unknown_launched` | Rows whose launch count is `hidden` or blank. |
+| `is_massive` | The same on every row of a date. `null` if no count that night is known; such a night isn't in the year's bar. The current snapshot has none. |
+| `launch_places` | Distinct `launch_place` entries as reported. One entry can name several places. **There are no counts by place**, and counts can't be divided among them. |
+| `launch_place_missing` | At least one report in the row names no place, so the list may be incomplete. |
+| `destroyed_includes_ew` | True when the row has a `destroyed` figure. |
+| `ballistic_restricted` | True from the night of Aug 11, 2026, **for every class**. |
+
+For B2, a night after the restriction can be missing missiles from its size, its mix and its destroyed counts. How to treat missile outcomes from August 2026 there is [still open](../docs/plan.md#11-decisions).
+
+### `monthly_by_class.json`
+
+One object per month and class in `rows`, by the month each report ends in, **daytime reports included**. A class with no report in a month has no row. The columns `launched`, `destroyed`, `launched_with_outcome`, `n_models`, `n_unknown_launched` and `destroyed_includes_ew` mean what they do above. `ballistic_restricted` is true for August 2026 and later, all of August included.
+
+| Column | Meaning |
+|---|---|
+| `month` | `YYYY-MM`. |
+| `intercept_rate` | `destroyed ÷ launched_with_outcome`, a fraction to four decimals. `null` is a gap, never 0. **Use this column; don't divide the counts yourself**, or the suppressed months come back. Show both counts with it, and the EW caveat. |
+| `intercept_rate_gap` | `null` when there's a rate. Otherwise, the first that applies: `no_class_rate` (mixed), `missile_reporting_restricted` (missile classes from August 2026) or `below_minimum` (under 10 launches with an outcome). |
+
+The header's `intercept_rate` gives the minimum, the missile classes and the first month they have no rate.
+
+### `strike_reconciliation.json`
+
+Accounts for every raw row. `buckets` don't overlap and add up to `raw_daily_file`: excluded classes (listed by class in `excluded_class_rows`, over all accounts), counted classes from other accounts, `hidden` rows, and rows in monthly totals. Their `_as_published` sums include counts the tables treat as unknown, so they're for checking and for Data & Methods, **not for charting**. `within_monthly_totals` shows what nights leave out and which counts are blank or impossible. The build stops if the buckets don't add up to the raw sums, or if either table's totals differ from sums taken directly from the raw rows.
+
+The build also stops on a model string with no class, a source account not listed in `pipeline/strikes.py`, a `hidden` row before Aug 11, 2026, an unknown `status_data` value, an unreadable time or count, or a new non-English `launch_place`.
 
 ## Current raw files
 

@@ -14,6 +14,7 @@ REFERENCE_DIR = ROOT / "data" / "reference"
 # Kaggle needs a login, so a person downloads these. They aren't pinned: a snapshot
 # refresh replaces them, and the manifest records which files a build used.
 KAGGLE_URL = "https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine"
+KAGGLE_LICENSE = "CC BY-NC-SA 4.0"
 KAGGLE_DAILY = "missile_attacks_daily.csv"
 KAGGLE_REFERENCE = "missiles_and_uavs.csv"
 KAGGLE_FILES = (KAGGLE_DAILY, KAGGLE_REFERENCE)
