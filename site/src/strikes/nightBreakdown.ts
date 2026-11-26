@@ -15,7 +15,7 @@ import { withTerms } from "../glossary/popover.ts";
 import type { ClassId } from "../theme/classStyles.ts";
 import { classFillScale, plotDefaults } from "../theme/plot.ts";
 import { nightContext } from "./nightContext.ts";
-import { barText, barValue, classLabels, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, strikeFootnote } from "./shared.ts";
+import { barText, barValue, classLabels, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, footnote, strikeSource } from "./shared.ts";
 import { barIsRestricted, breakdownRows, type BreakdownRow } from "./strikeData.ts";
 
 export interface NightBreakdownSettings {
@@ -59,9 +59,10 @@ function spec(
   return {
     controls,
     title: `What was in one night: ${formatDate(date)}`,
+    subtitle: sentence,
     howToRead:
       `Each bar is the published launches in one weapon class for the night ending ${formatDate(date)}. ` +
-      `${sentence} ${MASSIVE_DEFINITION}`,
+      MASSIVE_DEFINITION,
     description:
       `Bar chart of launches by weapon class for the night ending ${formatDate(date)}. ${sentence} ` +
       (rows.length
@@ -93,7 +94,8 @@ function spec(
     rows,
     coverage: { from: date, to: barIsRestricted(nightTable, year) ? nightTable.lastDay : date },
     pointer: "shape",
-    footnote: strikeFootnote(
+    source: strikeSource(),
+    footnote: footnote(
       "A night is the reports ending on one Kyiv date, without daytime reports. A class with no bar or row had no " +
         "report this night. Launches reported jointly for different classes are in “mixed” and aren’t split.",
       RESTRICTED_BAR_NOTE,

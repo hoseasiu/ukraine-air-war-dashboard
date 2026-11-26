@@ -16,7 +16,8 @@ import {
   count,
   create,
   NOTHING_SHOWN,
-  strikeFootnote,
+  footnote,
+  strikeSource,
   svgText,
   type FixedView,
 } from "../strikes/shared.ts";
@@ -136,6 +137,7 @@ export function saturationChart(selection: Selection, fixed?: FixedView, view: S
 
   const spec = (split: boolean): ChartSpec<SaturationRow> => ({
     title: "Salvo size and weapons not reported destroyed, night by night",
+    subtitle: "A point for each night: weapons launched, against those not reported destroyed (not a count of hits).",
     howToRead:
       "Each point is one attack night: weapons launched across, and the number not reported destroyed up. That " +
       "number isn’t a count of hits. It tends to be higher on larger nights even if the share reported destroyed " +
@@ -186,7 +188,8 @@ export function saturationChart(selection: Selection, fixed?: FixedView, view: S
         ? periodKey(earlier.length > 0, later.length > 0)
         : undefined,
     pointer: "xy",
-    footnote: strikeFootnote(
+    source: strikeSource(),
+    footnote: footnote(
       ...(later.length ? [AFTER_NOTE] : []),
       "A night is the reports ending on one Kyiv date, without daytime reports. Its size is the sum of published " +
         "launch counts, so it can leave some out. A night with no published count is not shown. A night where " +

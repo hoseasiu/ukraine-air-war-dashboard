@@ -1,15 +1,15 @@
 /**
- * The wrapper every chart goes through. It adds the "How to read this" note,
- * the data-quality badges, a text description, tooltips that work with a mouse,
- * touch or keyboard, and the "Show as table" toggle.
+ * The wrapper every chart goes through. It adds a one-line subtitle, the
+ * data-quality badges, a text description, tooltips that work with a mouse,
+ * touch or keyboard, the "Show as table" toggle, the collapsed "How to read"
+ * notes and the source line.
  *
  * Badges come from chartFlags(); a chart has no option to leave one out. That
  * only holds if the chart draws the figures its columns declare, so don't draw
  * a number that isn't in a column.
  */
 import { formatDate, weaponClasses } from "../data.ts";
-import { withTerms } from "../glossary/popover.ts";
-import type { TermId } from "../glossary/terms.ts";
+import { popover, withTerms } from "../glossary/popover.ts";
 import { CLASS_IDS, CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { classFill, classSymbolPath, svgElement } from "../theme/marks.ts";
 import { chartFlags, FLAG_TEXT, rowFlags, type ColumnSpec, type FlagId, type FlagInput } from "./flags.ts";
@@ -36,7 +36,9 @@ export interface Drawing<Row> {
 
 export interface ChartSpec<Row extends object> extends FlagInput<Row> {
   title: string;
-  /** One or two sentences, always visible. */
+  /** One short line under the title, always visible. */
+  subtitle: string;
+  /** How to read the chart, in the collapsed notes under it. */
   howToRead: string;
   /** Text alternative: what kind of chart this is and what it plots. */
   description: string;
@@ -46,8 +48,12 @@ export interface ChartSpec<Row extends object> extends FlagInput<Row> {
   legend?: "bar" | "line" | "point";
   /** A key for a scale other than weapon classes, shown above the drawing. */
   scaleKey?: HTMLElement;
-  /** A source or credit line, shown under both the chart and the table. */
+  /** Sources and credits, always visible under both the chart and the table. */
+  source: HTMLElement;
+  /** Methods notes, collapsed with "How to read". */
   footnote?: HTMLElement;
+  /** Says why there is nothing to draw, in place of "No data for this selection." */
+  emptyText?: string;
   /**
    * Controls that change what the chart shows, such as a month slider. They stay
    * above the badges, so a badge that comes or goes doesn't move them.
@@ -139,16 +145,18 @@ function tooltipContent<Row extends object>(
   };
 }
 
-/** The data-quality badges. A figure outside a chart gets its flags from chartFlags() too. */
+/**
+ * The data-quality badges: each is its short label, which opens the caveat in
+ * full. A figure outside a chart gets its flags from chartFlags() too.
+ */
 export function flagList(flags: readonly FlagId[]): HTMLUListElement {
   const list = create("ul", "chart-badges");
   list.setAttribute("aria-label", "Data-quality notes");
-  // Shared, so a term repeated across badges is marked once.
-  const seen = new Set<TermId>();
   for (const id of flags) {
     const item = create("li");
     item.dataset.flag = id;
-    item.append(create("strong", "", FLAG_TEXT[id].label), " ", ...withTerms(FLAG_TEXT[id].text, seen));
+    const { label, text } = FLAG_TEXT[id];
+    item.append(...popover("chart-badge", label, label, withTerms(text)));
     list.append(item);
   }
   return list;
@@ -216,8 +224,8 @@ export interface LiveChart<Row extends object> {
   element: HTMLElement;
   /**
    * Shows new figures in the same frame, keeping the table toggle and keyboard
-   * focus. Badges are worked out again. The controls, footnote and pointer mode
-   * stay as they were first given.
+   * focus. Badges are worked out again, and a "chart-flags" event bubbles up. The
+   * controls, footnote, source and pointer mode stay as they were first given.
    */
   update(spec: ChartSpec<Row>): void;
 }
@@ -236,12 +244,12 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
 
   const title = create("h3");
   title.id = `${id}-title`;
-  const howToRead = create("p", "chart-how-to-read");
+  const subtitle = create("p", "chart-subtitle");
   const description = create("p", "visually-hidden");
   description.id = `${id}-description`;
   // Badges sit above both views, so the table and any screenshot carry them too.
   const badgeSlot = create("div");
-  const empty = create("p", "chart-empty", "No data for this selection.");
+  const empty = create("p", "chart-empty");
 
   const toggle = create("button", "chart-toggle", "Show as table");
   toggle.type = "button";
@@ -263,10 +271,23 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
   tableView.setAttribute("aria-labelledby", `${id}-title`);
   toggle.setAttribute("aria-controls", tableView.id);
 
-  figure.append(title, howToRead, description);
+  // One row, so the badges and the toggle take little height.
+  const bar = create("div", "chart-bar");
+  bar.append(badgeSlot, toggle);
+
+  const notes = create("details", "chart-notes");
+  const notesName = create("span", "visually-hidden");
+  const summary = create("summary", "", "How to read this chart, and methods");
+  summary.append(notesName);
+  const howToRead = create("p", "chart-how-to-read");
+  notes.append(summary, howToRead);
+  if (initial.footnote) notes.append(initial.footnote);
+  const source = create("div", "chart-source");
+  source.append(initial.source);
+
+  figure.append(title, subtitle, description);
   if (initial.controls) figure.append(initial.controls);
-  figure.append(badgeSlot, empty, toggle, chartView, tableView);
-  if (initial.footnote) figure.append(initial.footnote);
+  figure.append(bar, empty, chartView, tableView, notes, source);
 
   let spec = initial;
   let flags: FlagId[] = [];
@@ -295,7 +316,7 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
   }
 
   function update(next: ChartSpec<Row>): void {
-    for (const field of ["title", "howToRead", "description"] as const) {
+    for (const field of ["title", "subtitle", "howToRead", "description"] as const) {
       if (!next[field].trim()) throw new Error(`A chart needs a ${field}`);
     }
     // Worked out first, so a chart that can't be flagged correctly never renders.
@@ -303,7 +324,11 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
     spec = next;
 
     title.textContent = spec.title;
-    howToRead.replaceChildren(create("strong", "", "How to read this: "), ...withTerms(spec.howToRead));
+    subtitle.replaceChildren(...withTerms(spec.subtitle));
+    howToRead.replaceChildren(...withTerms(spec.howToRead));
+    // Read out after the summary, so one chart's notes can be told from another's.
+    notesName.textContent = `: ${spec.title}`;
+    empty.textContent = spec.emptyText ?? "No data for this selection.";
     description.textContent = spec.description;
     badgeSlot.replaceChildren(...(flags.length ? [flagList(flags)] : []));
 
@@ -317,6 +342,7 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
     // A hidden table is built when it's first shown.
     tableView.replaceChildren(...(hasRows && showingTable() ? [table(spec)] : []));
     redraw();
+    figure.dispatchEvent(new CustomEvent("chart-flags", { bubbles: true }));
   }
 
   update(initial);
