@@ -324,9 +324,9 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **Comparison:** each line's name is written at its end. All lines are drawn alike until the reader points at or presses an oblast in the key, which draws the others lighter. Stop 10 has the names and the band but no key buttons.
   - **Raion-switch band:** January to December 2025 on the comparison. The "Alert areas changed" badge and the note under the title still say later months are only partly comparable.
   - **Crosshair:** one line through both launches and alert hours panels at the month in use, by pointer or keyboard, with a ring on its alert hours. A month without a figure has no ring.
+- Comparison line focus (owner, Nov 26, 2026, #68): all oblast lines look alike until the reader picks one; no oblast stands out by default. The coding agent had built it this way and asked, and the owner chose to keep it. This doesn't review the rest of the tab E redesign above.
 
 **Open**
-- "Lighter non-focus lines" on the oblast comparison (#68): the issue doesn't say which line is in focus. The agent made it the reader's choice, with no line set apart at rest. Is that right, or should one oblast (for example a chosen or frontline one) stand out by default?
 - Terms of the sources behind the alert data (#26): the dataset is MIT, but it's collected from Telegram channels, including a volunteer one (eTryvoga), whose terms we don't know ([data audit](data-audit.md#alerts-license)). The site uses only the official-channel file.
 - Sources for the glossary (#24). The owner approved the wording (see Settled) without answering this separately: the general descriptions of weapons, EW and decoys in [terms.ts](../site/src/glossary/terms.ts) have no cited source. Suggested: decide before shipping whether they need citations (§9 Phase 5 asks that numbers trace to a source), alongside the Data & Methods page (#23).
 - Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January). The 2026 massive-night bar and labels can change with it (#28).
