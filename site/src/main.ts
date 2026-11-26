@@ -1,4 +1,13 @@
-import { buildInfo, formatDate } from "./data.ts";
+import { alertAreas, buildInfo, formatDate } from "./data.ts";
+import { filterControls } from "./filters/controls.ts";
+import {
+  defaultFilters,
+  filterSearch,
+  FIRST_MONTH,
+  parseFilters,
+  type FilterBounds,
+  type Filters,
+} from "./filters/state.ts";
 import { createGuidedMode, FIRST_STOP_HASH, parseStopHash } from "./guided/engine.ts";
 import { PAGES, type Page } from "./pages.ts";
 import { installPatterns } from "./theme/marks.ts";
@@ -33,8 +42,22 @@ const links = new Map<Page, HTMLAnchorElement>(PAGES.map((page) => [page, navLin
 const guidedLink = navLink(FIRST_STOP_HASH, "Guided mode");
 const guided = createGuidedMode(main);
 
+const filterBounds: FilterBounds = {
+  firstMonth: FIRST_MONTH,
+  lastMonth: buildInfo.snapshotDate.slice(0, 7),
+  oblastIds: alertAreas.filter((area) => area.inAlertTotals).map((area) => area.id),
+};
+
+const readFilters = () => parseFilters(window.location.search, filterBounds);
+
+/** Replaces the history entry, so Back doesn't step through every filter change. */
+function writeFilters(filters: Filters): void {
+  const { pathname, search, hash } = window.location;
+  window.history.replaceState(window.history.state, "", pathname + filterSearch(filters, filterBounds, search) + hash);
+}
+
 // Routes are URL hashes, so static hosting needs no rewrite rules. Following a
-// hash link keeps the query string, which is free for filter state.
+// hash link keeps the query string, which holds the filters.
 function currentPage(): Page {
   const id = window.location.hash.slice(1);
   return PAGES.find((page) => page.id === id) ?? PAGES[0];
@@ -61,7 +84,31 @@ function render(): void {
   heading.textContent = page.heading;
   heading.tabIndex = -1;
   main.replaceChildren(heading);
-  page.render(main);
+
+  const content = document.createElement("div");
+  const draw = () => {
+    content.replaceChildren();
+    page.render(content, readFilters());
+  };
+  if (page.filters) {
+    // Only the content is redrawn on a change, so focus stays on the control.
+    const update = (filters: Filters) => {
+      writeFilters(filters);
+      draw();
+    };
+    main.append(
+      filterControls({
+        bounds: filterBounds,
+        oblasts: page.filters.oblasts ?? false,
+        notes: page.filters.notes,
+        read: readFilters,
+        write: update,
+        reset: () => update(defaultFilters(filterBounds)),
+      }),
+    );
+  }
+  main.append(content);
+  draw();
   document.title = `${page.heading} · ${SITE_TITLE}`;
 }
 
