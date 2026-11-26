@@ -1,7 +1,7 @@
 """The data build.
 
-It checks the inputs and writes the manifest, the snapshot date and the alert tables.
-The strike tables (#7) are added here.
+It checks the inputs and writes the manifest, the snapshot date, the alert tables
+and the strike tables.
 """
 
 import json
@@ -17,12 +17,15 @@ from pipeline.sources import (
     ALERTS_SHA256,
     KAGGLE_DAILY,
     KAGGLE_FILES,
+    KAGGLE_LICENSE,
     KAGGLE_URL,
     REFERENCE_DIR,
     fetch_alerts,
     require_kaggle,
     sha256_of,
 )
+from pipeline.strikes import build_strike_tables
+from pipeline.weapon_classes import load_weapon_classes
 
 # `time_end` comes as a date, with or without a time of day, sometimes with trailing spaces.
 TIME_END = r"\d{4}-\d{2}-\d{2}( \d{2}:\d{2})?"
@@ -107,12 +110,15 @@ def build(raw_dir, out_dir, alert_checksums=ALERTS_SHA256, reference_dir=REFEREN
         "license": "MIT",
     }
     monthly, daily = build_tables(alerts[OFFICIAL], load_gazetteer(reference_dir), alert_source)
+    kaggle_source = {"url": KAGGLE_URL, "license": KAGGLE_LICENSE}
+    nights, monthly_by_class, reconciliation = build_strike_tables(
+        kaggle[KAGGLE_DAILY], load_weapon_classes(reference_dir), kaggle_source
+    )
     manifest = {
         "snapshot_date": snapshot,
         "sources": {
             "kaggle": {
-                "url": KAGGLE_URL,
-                "license": "CC BY-NC-SA 4.0",
+                **kaggle_source,
                 "files": [describe(raw_dir, name, frame) for name, frame in kaggle.items()],
             },
             "alerts": {
@@ -128,7 +134,11 @@ def build(raw_dir, out_dir, alert_checksums=ALERTS_SHA256, reference_dir=REFEREN
     write_json(out_dir / "build_info.json", {"snapshot_date": snapshot})
     write_table(out_dir / "alert_hours_monthly.json", monthly)
     write_table(out_dir / "alert_daily.json", daily)
+    write_table(out_dir / "nights.json", nights)
+    write_table(out_dir / "monthly_by_class.json", monthly_by_class)
+    write_json(out_dir / "strike_reconciliation.json", reconciliation)
     print(
         f"Snapshot date: {snapshot}. Alert figures run {monthly['first_day']} to "
-        f"{monthly['last_day']}. No strike tables yet (#7)."
+        f"{monthly['last_day']}. Strike figures run {nights['first_day']} to "
+        f"{nights['last_day']}."
     )
