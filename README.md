@@ -26,9 +26,13 @@ This is a retrospective teaching tool built on a frozen data snapshot. It shows 
 | [Ukrainian air raid sirens dataset](https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset) (Vadimkin) | Alert hours | MIT |
 | [Ukraine administrative boundaries](https://data.humdata.org/dataset/cod-ab-ukr) (State Scientific Production Enterprise "Kartographia", via OCHA) | Map outlines, simplified | [CC BY-IGO](https://creativecommons.org/licenses/by/3.0/igo/legalcode) |
 
-Processed data derived from the Kaggle dataset may be shared only under CC BY-NC-SA 4.0: credit Petro Ivaniuk and link the dataset and license, say what was changed, keep use noncommercial and license adaptations the same way. This doesn't set a license for the code, which has none yet (#26). See the [data audit](docs/data-audit.md).
+Processed data derived from the Kaggle dataset may be shared only under CC BY-NC-SA 4.0: credit Petro Ivaniuk and link the dataset and license, say what was changed, keep use noncommercial and license adaptations the same way. See the [data audit](docs/data-audit.md).
 
 Raw files aren't committed. See [data/README.md](data/README.md) to set them up.
+
+## License
+
+The code is [MIT](LICENSE) and our writing is CC BY 4.0. Material from the data sources keeps its own terms, some of them noncommercial, so read [LICENSING.md](LICENSING.md) before reusing anything.
 
 ## Stack
 

@@ -6,6 +6,7 @@ on:
       - site/**
       - data/processed/**
       - data/reference/weapon_classes.csv
+      - LICENSE
       - .github/workflows/site.yml
   push:
     branches: [main]
@@ -13,6 +14,7 @@ on:
       - site/**
       - data/processed/**
       - data/reference/weapon_classes.csv
+      - LICENSE
       - .github/workflows/site.yml
 
 permissions:
