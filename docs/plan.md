@@ -243,6 +243,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Issue dependencies: GitHub's "blocked by" links are the only record. A GitHub Action generates a graph and list from them in #31, which replaces the hand-kept table in `DEPENDENCIES.md`.
 - Alert coverage (owner, Nov 25, 2026, #2): alert figures end at July 2026, because the official file stops Sept 7, 2026 and August is incomplete. No volunteer-only view for later months. Check upstream again at the snapshot refresh (#28). This overrides §3's snapshot date for alert data and affects E1–E3 and stops 9 and 10.
 - Alert roll-up (owner, Nov 25, 2026, #2): drop exact duplicates, exclude Luhansk and Crimea, leave out hromada rows, and average each oblast's raions (each raion's rows plus oblast-wide rows), splitting at Kyiv-time midnight. An oblast alert-hour is then an hour for the average raion, and months after the 2025 switch are only partly comparable. Full rule and limits: [data-audit.md](data-audit.md#roll-up-rule).
+- Pipeline (#6): one command, `uv run python -m pipeline`, stands in for `make data`. The coding agent defined `snapshot_date` as the latest `time_end` date in the daily strike file, so it doesn't depend on file timestamps. This doesn't settle the snapshot cutoff below.
 
 **Open**
 - Definition of a "massive" night: percentile or fixed threshold (decide in Phase 0).
