@@ -55,9 +55,9 @@ Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` instal
 
 | Command | What it does |
 |---|---|
-| `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json`, `build_info.json` and the [alert tables](data/README.md#alert-tables). #7 adds the strike tables. |
+| `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json`, `build_info.json`, the [alert tables](data/README.md#alert-tables) and the [strike tables](data/README.md#strike-tables). |
 | `uv run python -m pipeline fetch` | Only downloads and verifies the pinned alert files. |
-| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and checks on the committed alert tables, the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. |
+| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and checks on the committed alert and strike tables, the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. |
 | `uv run ruff check .` | Lints the Python, apart from `.github/`. |
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
@@ -115,6 +115,14 @@ From the gazetteer (#4). Read [data/reference/gazetteer.md](data/reference/gazet
 - Match area names exactly through `oblast_aliases.csv`. `Kyiv` is the city. `Ukraine` in `affected region` is nationwide, not an oblast.
 - Join map data on `iso_3166_2`. The boundary source's P-codes differ from ISO codes for several areas.
 - The boundary rings are wound for d3-geo, not RFC 7946. Show the boundary credit with the map (CC BY-IGO).
+
+From the strikes pipeline (#7). Read the [table notes](data/README.md#strike-tables) before charting strikes.
+
+- Nights leave out daytime reports and monthly figures include them, so the two don't add up to each other.
+- Not reported destroyed is `launched_with_outcome − destroyed`, never `launched − destroyed`.
+- Use `intercept_rate`; don't divide the counts, or suppressed months come back.
+- A null count is unknown. A missing class row means no report, not zero.
+- A new source account or model string stops the build until someone sorts it.
 
 From the alerts audit (#2), at upstream commit `1a34978`. Read the [alerts section](docs/data-audit.md#alerts-ukrainian-air-raid-sirens-dataset) before using alert data.
 

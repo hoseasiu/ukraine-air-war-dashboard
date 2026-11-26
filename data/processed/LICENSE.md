@@ -4,7 +4,9 @@
 
 Files here that are derived from the strike data are adapted from [Massive Missile Attacks on Ukraine](https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine) by Petro Ivaniuk, and are licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). You must give credit, note your changes, use them only for noncommercial purposes, and share adaptations under the same license.
 
-**Changes made:** `manifest.json` and `build_info.json` hold only facts about the source files (names, row counts, sizes, checksums) and the latest report end date. They contain no rows from the dataset. Describe each new table's changes here when it's added.
+**Changes made:** `manifest.json` and `build_info.json` hold only facts about the source files (names, row counts, sizes, checksums) and the latest report end date. They contain no rows from the dataset.
+
+`nights.json`, `monthly_by_class.json` and `strike_reconciliation.json` are adapted from `missile_attacks_daily.csv`, so this license covers them. **Changes made:** raw model names are grouped into our [weapon classes](../reference/README.md#weapon-classes); only national military reports in counted classes are used; counts are added by attack night (the date a report ends, without daytime reports) and by month; unpublished and blank counts are treated as unknown; destroyed counts use only rows where both counts are usable; we added massive-night labels, intercept rates and data-quality flags; and launch places are listed as reported, apart from one Cyrillic letter replaced with the Latin letter it resembles. The reconciliation file totals the rows used and left out. Details: [columns](../README.md#strike-tables). Describe each new table's changes here when it's added.
 
 ## Alert data: MIT
 

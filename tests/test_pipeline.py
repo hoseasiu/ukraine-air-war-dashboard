@@ -31,9 +31,11 @@ def raw(tmp_path):
     folder = tmp_path / "raw"
     folder.mkdir()
     write_csv(folder / KAGGLE_DAILY, list(COLUMNS[KAGGLE_DAILY]), [
-        {"time_end": "2030-03-02 09:00", "model": "Тест"},
-        {"time_end": "2030-03-04  "},
-        {"time_end": "2030-03-01"},
+        {
+            "time_start": "2030-02-28", "time_end": end, "model": "Тест",
+            "launched": "12.0", "destroyed": "6.0", "source": "kpszsu/posts/1",
+        }
+        for end in ("2030-03-02 09:00", "2030-03-04  ", "2030-03-01")
     ])
     for name in (KAGGLE_REFERENCE, ALERTS[1]):
         write_csv(folder / name, list(COLUMNS[name]), [{}])
@@ -61,6 +63,11 @@ def reference(tmp_path):
               [{"alias": "Testova", "iso_3166_2": "UA-05"}])
     write_csv(folder / "raions.csv", ["iso_3166_2", "raion"],
               [{"iso_3166_2": "UA-05", "raion": "North"}])
+    write_csv(folder / "weapon_classes.csv",
+              ["class", "counts_in_totals", "own_intercept_rate"],
+              [{"class": "mixed", "counts_in_totals": "yes", "own_intercept_rate": "no"}])
+    write_csv(folder / "model_classes.csv", ["model", "class"],
+              [{"model": "Тест", "class": "mixed"}])
     return folder
 
 
@@ -89,7 +96,10 @@ def test_build_is_reproducible(raw, reference, tmp_path):
     out = tmp_path / "processed"
     build(raw, out, checksums(raw), reference)
     first = {p.name: p.read_bytes() for p in out.iterdir()}
-    assert {"alert_hours_monthly.json", "alert_daily.json"} <= set(first)
+    assert {
+        "alert_hours_monthly.json", "alert_daily.json", "nights.json",
+        "monthly_by_class.json", "strike_reconciliation.json",
+    } <= set(first)
     build(raw, out, checksums(raw), reference)
     assert {p.name: p.read_bytes() for p in out.iterdir()} == first
     assert all(b"\r" not in content for content in first.values())
@@ -98,6 +108,13 @@ def test_build_is_reproducible(raw, reference, tmp_path):
 def test_bad_alerts_leave_no_outputs(raw, reference, tmp_path):
     write_csv(raw / ALERTS[0], list(COLUMNS[ALERTS[0]]), [{}])
     with pytest.raises(PipelineError):
+        build(raw, tmp_path / "processed", checksums(raw), reference)
+    assert not (tmp_path / "processed").exists()
+
+
+def test_unmapped_model_fails_the_build_and_leaves_no_outputs(raw, reference, tmp_path):
+    write_csv(reference / "model_classes.csv", ["model", "class"])
+    with pytest.raises(PipelineError, match="no class in model_classes.csv"):
         build(raw, tmp_path / "processed", checksums(raw), reference)
     assert not (tmp_path / "processed").exists()
 
