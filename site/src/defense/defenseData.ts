@@ -166,6 +166,10 @@ export interface RateChartRow {
 
 export const RATE_SHOWN = "Rate shown";
 
+/** The status of a month with a report but too few launches for a rate. */
+export const tooFewStatus = (minLaunched: number): string =>
+  `Gap: fewer than ${minLaunched} launches with an outcome`;
+
 /**
  * One row for every month shown and every selected class that can have a rate,
  * so a month with no report breaks a line the same way a suppressed one does.
@@ -185,7 +189,7 @@ export function rateRows(table: RateTable, selection: Selection): RateChartRow[]
         : !row
           ? "Gap: no report for this class"
           : row.intercept_rate_gap === "below_minimum"
-            ? `Gap: fewer than ${table.minLaunched} launches with an outcome`
+            ? tooFewStatus(table.minLaunched)
             : RATE_SHOWN;
       return {
         month,
