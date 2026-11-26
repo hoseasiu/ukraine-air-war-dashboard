@@ -43,6 +43,7 @@ site/             Vite + TypeScript front end
 site/src/theme/   weapon-class styles (the only class color definitions), oblast line styles, patterns, Plot defaults and the alert-hours scale
 site/src/chart/   the shared chart frame and its data-quality flag rules
 site/src/alerts/  tab E charts (alert-hours map, oblast comparison, alerts and launches) and the checks on their data
+site/src/annotations/ reading the event annotations: only verified, owner-approved rows
 site/src/filters/ global filters: URL state and controls
 site/src/defense/ the defense tab: its charts, and the checks on and rows from the destroyed counts and rates
 site/src/glossary/ term definitions, term matching and popovers
@@ -80,8 +81,8 @@ Site commands run from `site/` and need Node 22.12 or later:
 | `npm ci` | Installs the locked dependencies. Run once per clone or worktree. |
 | `npm run dev` | Serves the site locally with live reload. |
 | `npm run typecheck` | Type-checks the site. CI runs it. |
-| `npm test` | Tests the data-quality flag rules, the filters’ URL state, glossary term matching, tab E’s chart data and the attacks and defense tabs’ figures. CI runs it. |
-| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `nights.json` or `monthly_by_class.json` (including a massive label that disagrees with its year's bar), or on a bad `oblasts.csv`, `alert_hours_monthly.json` or boundary file (every included area needs every month, and every area one boundary). CI runs it. |
+| `npm test` | Tests the data-quality flag rules, the filters’ URL state, glossary term matching, tab E’s chart data, the attacks and defense tabs’ figures, and the before/after windows and annotation display rule. CI runs it. |
+| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `nights.json` or `monthly_by_class.json` (including a massive label that disagrees with its year's bar), or on a bad `oblasts.csv`, `alert_hours_monthly.json` or boundary file (every included area needs every month, and every area one boundary), or if a before/after panel event isn't verified, approved and cited in `annotations.csv`. CI runs it. |
 | `npm run preview` | Serves the built site locally. |
 
 Site tests cover only the flag rules, the filters' URL state, glossary matching, tab E's chart data and the attacks and defense tabs' figures, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. **Whoever adds a command records it here.**
@@ -103,6 +104,7 @@ Site tests cover only the flag rules, the filters' URL state, glossary matching,
 - A massive bar is calculated from a whole year. Flag any figure or label that uses a bar with restricted nights in it (`barIsRestricted()` in [strikeData.ts](site/src/strikes/strikeData.ts)).
 - The parsers in `strikeData.ts` keep only the columns tab A draws. For destroyed counts and rates, use `rateTable` and `outcomeTable` ([defenseData.ts](site/src/defense/defenseData.ts)), which keep `destroyed_includes_ew`.
 - The defense charts read their rows from `rateRows()` and `saturationRows()`. Both chart functions take only months and classes, so a guided stop can use them (#22). Rate rows withhold missile counts after July 2026, and a night with an outcome missing for some published launches has no saturation point.
+- Show annotations only through `annotations` in `data.ts` ([annotationData.ts](site/src/annotations/annotationData.ts)), which applies the display rule. The before/after panels ([eventPanels.ts](site/src/defense/eventPanels.ts)) take their event, window length and classes as settings and read no filters, so a guided stop can use them (#22). Leave out `onChange` for a fixed view.
 - The alert map ([alertMap.ts](site/src/alerts/alertMap.ts)) takes its months and outlined oblasts as settings and reads no filters, so a guided stop can use it (#22). Keep the boundary credit with it.
 - The oblast comparison ([oblastComparison.ts](site/src/alerts/oblastComparison.ts)) and the launches and alert hours panels ([alertsAndLaunches.ts](site/src/alerts/alertsAndLaunches.ts)) also take settings and read no filters (#22 can use them). With no oblast chosen, the page passes `DEFAULT_COMPARISON`; change it there when the owner picks. Oblast lines take their styles from [areaStyles.ts](site/src/theme/areaStyles.ts); rerun the validator command there after changing a color.
 - Chart tooltips handle arrow, Home, End and Escape keys while in use and mark them handled. Page-level shortcuts should ignore events with `defaultPrevented`.

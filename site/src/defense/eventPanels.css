@@ -1,0 +1,31 @@
+.event-menus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+}
+
+.event-menus label {
+  font-weight: 700;
+}
+
+.event-menus select {
+  font: inherit;
+  font-weight: 400;
+  max-width: 100%;
+  min-height: 2.25rem;
+}
+
+.event-details {
+  margin-top: 0.5rem;
+}
+
+.event-details a {
+  color: var(--accent);
+}
+
+/* The empty 0% to 100% track behind each bar. */
+.event-track {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.35;
+}
