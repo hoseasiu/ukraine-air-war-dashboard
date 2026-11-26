@@ -12,6 +12,8 @@ export const plotDefaults = {
     color: "var(--ink)",
   },
   marginLeft: 64,
+  // Room for the y-axis title above the top tick at this font size.
+  marginTop: 36,
   marginBottom: 44,
 } satisfies PlotOptions;
 

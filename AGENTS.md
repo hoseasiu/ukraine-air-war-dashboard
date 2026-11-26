@@ -39,6 +39,8 @@ pipeline/audit/   rerunnable audit scripts (read raw data, write nothing)
 tests/            pipeline tests
 site/             Vite + TypeScript front end
 site/src/theme/   weapon-class styles (the only color definitions), patterns and Plot defaults
+site/src/chart/   the shared chart frame and its data-quality flag rules
+site/tests/       site tests
 docs/             spec and data audit
 ```
 
@@ -65,10 +67,11 @@ Site commands run from `site/` and need Node 22.12 or later:
 | `npm ci` | Installs the locked dependencies. Run once per clone or worktree. |
 | `npm run dev` | Serves the site locally with live reload. |
 | `npm run typecheck` | Type-checks the site. CI runs it. |
+| `npm test` | Tests the data-quality flag rules. CI runs it. |
 | `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`. CI runs it. |
 | `npm run preview` | Serves the built site locally. |
 
-The site has no tests yet. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
+Site tests cover only the flag rules, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
 
 ## Site notes
 
@@ -76,6 +79,9 @@ The site has no tests yet. CI doesn't run the pipeline tests or linter yet (#9).
 - Guided mode is `#stop-N`. Its stops are data in `site/src/guided/stops.ts`, and a new kind of chart view also needs a case in `views.ts`. A stop's view takes all its settings from that data, and guided mode never reads or writes the query string, which belongs to the exploration filters. #11 should keep it that way.
 - Data is imported at build time through `site/src/data.ts`, never fetched.
 - Charts take colors, patterns, symbols and dashes from `site/src/theme/`. Dashes aren't a Plot scale, so line charts set them per class from `CLASS_STYLES`.
+- Every chart goes through `chartFrame()` ([chartFrame.ts](site/src/chart/chartFrame.ts); example: [chartSample.ts](site/src/sample/chartSample.ts)). Declare each number the chart draws as a column with a `measure`, and say what dates it `coverage`s. The frame derives the badges from these; don't add or hide them by hand. A new kind of number or caveat goes in [flags.ts](site/src/chart/flags.ts).
+- Pipeline outputs can add a badge with a boolean (or 0/1) row column named for the flag: `destroyed_includes_ew`, `ballistic_restricted`, `classes_not_split`, `alert_end_assumed`, `alert_regions_excluded` or `alert_granularity_change`. Send unpublished or suppressed values as `null`, never 0. `intercept_rate` is a fraction.
+- Chart tooltips handle arrow, Home, End and Escape keys while in use and mark them handled. Page-level shortcuts should ignore events with `defaultPrevented`.
 - After changing a class color, rerun the dataviz palette validator; the command is in `classStyles.ts`. CI doesn't run it.
 
 The owner develops on Windows, where `make` isn't installed. The plan's `make data` means "one command rebuilds the data", so provide an entry point that works in PowerShell and on Linux CI. Python 3.12, `uv` and Node 22 are installed on the owner's machine.

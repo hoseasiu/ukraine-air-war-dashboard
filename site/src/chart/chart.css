@@ -1,0 +1,153 @@
+/* The shared chart frame. */
+.chart-frame {
+  margin: 2rem 0;
+}
+
+.chart-frame h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.3rem;
+}
+
+.chart-how-to-read {
+  margin: 0 0 0.75rem;
+  max-width: 60rem;
+}
+
+/* A heavy rule and bold label mark a caveat, so it doesn't depend on color. */
+.chart-badges {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.chart-badges li {
+  max-width: 60rem;
+  padding: 0.15rem 0.75rem;
+  border-left: 0.3rem solid var(--ink);
+}
+
+.chart-toggle {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.35rem 0.9rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chart-toggle[aria-pressed="true"] {
+  color: var(--surface);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chart-scroll {
+  margin-top: 0.75rem;
+  overflow-x: auto;
+}
+
+.chart-stage {
+  position: relative;
+  width: max-content;
+}
+
+.chart-stage > svg {
+  display: block;
+}
+
+.chart-points {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Invisible until focused or picked; then a ring marks the spot. */
+.chart-point {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border: 3px solid transparent;
+  border-radius: 50%;
+}
+
+.chart-point.active {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--surface);
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 1;
+  width: max-content;
+  max-width: 18rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
+}
+
+.chart-tooltip[hidden] {
+  display: none;
+}
+
+.tooltip-heading {
+  font-weight: 700;
+}
+
+.tooltip-group {
+  margin-top: 0.35rem;
+  color: var(--ink-secondary);
+}
+
+.tooltip-note {
+  margin-top: 0.35rem;
+  color: var(--ink-secondary);
+}
+
+.chart-table {
+  max-height: 28rem;
+  margin-top: 0.75rem;
+  overflow: auto;
+}
+
+.chart-table caption {
+  font-size: 0.9rem;
+}
+
+.chart-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+}
+
+.chart-table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
