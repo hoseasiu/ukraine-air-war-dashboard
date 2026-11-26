@@ -233,6 +233,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Build vs. reuse: **build the full plan** (all of Phases 0–6), chosen over a slide deck only or a scoped-down build. §14 records the prior-art review behind that choice.
 - Kaggle license (checked Nov 25, 2026, #1): CC BY-NC-SA 4.0. Processed data may go in a public repo with attribution, a note of changes, noncommercial use and the same license on adapted data. Details are in [data-audit.md](data-audit.md#license-and-redistribution). Visibility and the code license are still the owner's call (#26).
 - Repo: `ukraine-air-war-dashboard` (replaces the name suggested in §8). Private until the data license check and a review are done.
+- Annotation list (#15): on Nov 25, 2026 the owner approved the nine verified rows in [annotations.csv](../data/reference/annotations.csv). The two unverified rows stay off the site.
 - Issue dependencies: GitHub's "blocked by" links are the only record. A GitHub Action generates a graph and list from them in #31, which replaces the hand-kept table in `DEPENDENCIES.md`.
 
 **Open**
@@ -246,7 +247,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - How daytime reports fit "attack night" keyed by end date, given overlapping windows (#1; for #5 and #7).
 - Scope of A5 (#1; for #5): decoys can't be separated. A jet-drone share is possible only from about Aug 28, 2026, with partial coverage in September. This also affects guided stop 3 and the "Shahed-type and decoy" wording.
 - Wording for "since 2022" and "full period" (A1, stops 1 and 2): strike data starts Sept 28, 2022 (#1). Suggested: say "since Sept 28, 2022".
-- Final annotation list (Hosea reviews). Candidates are in [annotations.csv](../data/reference/annotations.csv), all pending (#15). News coverage adds to the ballistic-flag question above: LIGA says the report for Aug 9 already gave no missile count (Meduza, citing Strana, also gives Aug 9), the Air Force confirmed the change publicly on Aug 12, and LIGA says cruise missiles are affected too.
+- News coverage bearing on the ballistic-flag question above (#15): LIGA says the report for Aug 9 already gave no missile count (Meduza, citing Strana, also gives Aug 9), the Air Force confirmed the change publicly on Aug 12, and LIGA says cruise missiles are affected too.
 
 ---
 
