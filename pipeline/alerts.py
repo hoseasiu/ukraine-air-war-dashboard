@@ -27,8 +27,8 @@ TIME_ZONE = "Europe/Kyiv"
 KYIV = ZoneInfo(TIME_ZONE)
 UTC_EPOCH = pd.Timestamp(0, tz="UTC")
 
-# Both ends included. The owner ended alert figures at July 2026 (#2). Starting in
-# April 2022, the official file's first whole month, is still open in plan §11.
+# Both ends included, and both decided by the owner: figures end at July 2026 (#2) and
+# start in April 2022, the official file's first whole month (#8).
 FIRST_DAY = date(2022, 4, 1)
 LAST_DAY = date(2026, 7, 31)
 

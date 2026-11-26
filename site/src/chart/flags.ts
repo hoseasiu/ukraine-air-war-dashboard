@@ -80,7 +80,7 @@ export type Measure = keyof typeof MEASURES;
  */
 export const BALLISTIC_RESTRICTION_FROM = "2026-08-12";
 
-/** The raion switch phased in during 2025 (data audit; the exact wording is open in plan §11). */
+/** The raion switch phased in during 2025 (data audit; the owner accepted this start on #8). */
 export const ALERT_GRANULARITY_CHANGE_FROM = "2025-01-01";
 
 /** An inclusive range of ISO dates, YYYY-MM-DD. */
