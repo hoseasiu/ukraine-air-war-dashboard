@@ -4,7 +4,7 @@ import { chartFrame, formatMonth, type Target } from "../chart/chartFrame.ts";
 import { monthPeriod } from "../chart/flags.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { rateTable } from "../data.ts";
-import { chartSvg, classLabels, monthAxisTicks, percent, strikeFootnote, svgText } from "../strikes/shared.ts";
+import { chartSvg, classLabels, monthAxisTicks, percent, strikeFootnote, svgText, type FixedView } from "../strikes/shared.ts";
 import { monthsShown, type Selection } from "../strikes/strikeData.ts";
 import { CLASS_IDS, CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { classColorScale, classSymbolScale, plotDefaults } from "../theme/plot.ts";
@@ -24,7 +24,8 @@ function summary(rows: readonly RateChartRow[], id: ClassId): string {
   );
 }
 
-export function interceptRateChart(selection: Selection): HTMLElement {
+/** `fixed` is a guided stop's view: panels sized so all of them fit the screen. */
+export function interceptRateChart(selection: Selection, fixed?: FixedView): HTMLElement {
   const rows = rateRows(rateTable, selection);
   const months = monthsShown(rateTable, selection.from, selection.to);
   const classes = CLASS_IDS.filter((id) => rows.some((row) => row.class === id));
@@ -77,10 +78,17 @@ export function interceptRateChart(selection: Selection): HTMLElement {
         "reported.",
     ),
     draw(data, width) {
-      const perRow = width >= 880 ? 2 : 1;
+      // A fixed view takes three panels to a row, so five panels need only two rows.
+      // Where two rows don't fit its height, a wide screen takes them all in one.
+      const oneRow = fixed && width >= 1100 && fixed.height < 2 * (150 + PANEL_TITLE);
+      const perRow = oneRow ? classes.length : fixed && width >= 900 ? 3 : width >= (fixed ? 640 : 880) ? 2 : 1;
       const panelWidth = Math.floor(width / perRow);
-      const panel = PANEL_HEIGHT + PANEL_TITLE;
-      const svg = chartSvg(width, Math.ceil(classes.length / perRow) * panel);
+      const rowCount = Math.ceil(classes.length / perRow);
+      const panelHeight = fixed
+        ? Math.min(240, Math.max(150, Math.floor(fixed.height / rowCount) - PANEL_TITLE))
+        : PANEL_HEIGHT;
+      const panel = panelHeight + PANEL_TITLE;
+      const svg = chartSvg(width, rowCount * panel);
       const targets: Target<RateChartRow>[] = [];
 
       classes.forEach((id, index) => {
@@ -92,8 +100,8 @@ export function interceptRateChart(selection: Selection): HTMLElement {
           ...plotDefaults,
           style: { ...plotDefaults.style, fontSize: "14px" },
           width: panelWidth,
-          height: PANEL_HEIGHT,
-          marginLeft: 52,
+          height: panelHeight,
+          marginLeft: oneRow ? 44 : 52,
           marginRight: 12,
           marginTop: 12,
           marginBottom: 30,
@@ -124,7 +132,7 @@ export function interceptRateChart(selection: Selection): HTMLElement {
         svg.append(svgText(left + 4, top + 20, name, { "font-weight": 700, "font-size": 14 }), plot);
         if (!drawn.length) {
           svg.append(
-            svgText(left + panelWidth / 2, top + PANEL_TITLE + PANEL_HEIGHT / 2, "No month with a rate", {
+            svgText(left + panelWidth / 2, top + PANEL_TITLE + panelHeight / 2, "No month with a rate", {
               "text-anchor": "middle",
               "font-size": 14,
             }),

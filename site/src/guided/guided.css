@@ -204,3 +204,102 @@ body:has(.guided) nav a {
 .stop-view .night-breakdown {
   margin: 0.5rem 0 1rem;
 }
+
+/* A definition the stop turns on, set apart so the room reads it before the chart. */
+.stop-definition {
+  max-width: 52em;
+  margin: 0 0 0.6rem;
+  padding: 0.35rem 0.9rem 0.45rem;
+  border: 3px solid var(--ink);
+  font-size: 1.3rem;
+  line-height: 1.35;
+}
+
+.stop-definition p {
+  margin: 0;
+}
+
+.stop-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+  gap: 1.25rem 2.5rem;
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stop-points li {
+  padding-top: 0.5rem;
+  border-top: 3px solid var(--ink);
+}
+
+.stop-points h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+.stop-points p {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1.4;
+}
+
+@media (max-height: 850px) {
+  /* Full width, with the term run into its definition, to save lines. */
+  .stop-definition {
+    max-width: none;
+    margin-bottom: 0.35rem;
+    padding-block: 0.2rem 0.25rem;
+    font-size: 1.1rem;
+  }
+
+  .stop-definition p {
+    display: inline;
+    margin-left: 0.4em;
+  }
+}
+
+/* The map goes beside its controls and badges, so all of it is on screen. */
+@media (min-width: 62rem) {
+  .stop-view .chart-frame:has(.alert-map) {
+    display: grid;
+    grid-template-columns: 19rem minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto 1fr auto auto;
+    column-gap: 1.25rem;
+    align-items: start;
+  }
+
+  .stop-view .chart-frame:has(.alert-map) > * {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  .stop-view .chart-frame:has(.alert-map) > :is(h3, .chart-how-to-read, .chart-footnote) {
+    grid-column: 1 / -1;
+  }
+
+  .stop-view .chart-frame:has(.alert-map) > :is(.chart-view, .chart-table) {
+    grid-column: 2;
+    grid-row: 2 / span 4;
+  }
+
+  .stop-view .chart-frame:has(.alert-map) .chart-badges {
+    grid-template-columns: 1fr;
+  }
+
+  /* Room for the points near the map's lower edge, so it doesn't get a scrollbar. */
+  .stop-view .chart-frame:has(.alert-map) .chart-scroll {
+    padding-bottom: 0.75rem;
+  }
+
+  .stop-view .chart-frame:has(.alert-map) .chart-toggle {
+    justify-self: start;
+  }
+}
+
+/* On a short screen, three badges fit in one row. */
+@media (max-height: 850px) {
+  .stop-view .chart-badges {
+    grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  }
+}

@@ -9,6 +9,7 @@ import { formatMonth, liveChartFrame, type ChartSpec, type Drawing } from "../ch
 import { monthPeriod } from "../chart/flags.ts";
 import { alertAreas, alertMonthly, boundaries, excludedAlertAreas } from "../data.ts";
 import { ALERT_BINS, alertBin } from "../theme/alertScale.ts";
+import type { FixedView } from "../strikes/shared.ts";
 import { svgElement } from "../theme/marks.ts";
 import { mapRows, monthsInRange, nearestMonth, type Boundary, type MapRow } from "./alertData.ts";
 import "./alertMap.css";
@@ -33,6 +34,8 @@ export interface AlertMapSettings {
   /** The month to open on. Without one, the latest offered. */
   month?: string;
   onMonthChange?(month: string): void;
+  /** A guided stop's view: a height that fits the screen. */
+  fixed?: FixedView;
 }
 
 const hoursText = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
@@ -120,9 +123,14 @@ function label(x: number, y: number, text: string): SVGTextElement {
   return element;
 }
 
-function drawMap(rows: readonly MapRow[], width: number, highlight: readonly string[]): Drawing<MapRow> {
+function drawMap(
+  rows: readonly MapRow[],
+  width: number,
+  highlight: readonly string[],
+  maxHeight: number,
+): Drawing<MapRow> {
   // Capped so the whole map fits on a projected screen; a wider frame centers it.
-  const height = Math.round(Math.min(width * 0.68, 600));
+  const height = Math.round(Math.min(width * 0.68, maxHeight));
   const projection = geoConicEqualArea()
     .parallels([46, 51])
     .rotate([-31, 0])
@@ -211,6 +219,7 @@ function spec(
   rows: MapRow[],
   highlight: readonly string[],
   parts: Pick<ChartSpec<MapRow>, "controls" | "scaleKey" | "footnote">,
+  maxHeight = 600,
 ): ChartSpec<MapRow> {
   const outlined = highlight.length ? " Oblasts chosen in the filters have a double outline." : "";
   return {
@@ -242,7 +251,7 @@ function spec(
     rows,
     coverage: monthPeriod(month),
     pointer: "shape",
-    draw: (data, width) => drawMap(data, width, highlight),
+    draw: (data, width) => drawMap(data, width, highlight, maxHeight),
   };
 }
 
@@ -308,7 +317,7 @@ export function alertMap(settings: AlertMapSettings): HTMLElement {
 
   const current = () => offered[index]!;
   const currentSpec = () =>
-    spec(current(), mapRows(alertMonthly, alertAreas, current()), settings.highlight, parts);
+    spec(current(), mapRows(alertMonthly, alertAreas, current()), settings.highlight, parts, settings.fixed?.height);
   const parts = { controls, scaleKey: scaleKey(), footnote: footnote() };
 
   function syncControls(): void {
