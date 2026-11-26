@@ -1,0 +1,6 @@
+/* Both periods on one line where there's room, to leave the chart its height on a stop. */
+.period-key {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1.5rem;
+}

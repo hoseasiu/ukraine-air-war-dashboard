@@ -1,6 +1,7 @@
 /**
- * Reported intercept rates before and after an annotated event, side by side
- * (plan §2 B3, §6). Takes its event, window length and classes as settings and
+ * Reported intercept rates before and after an annotated event (plan §2 B3,
+ * §6), as a dumbbell chart: one row per class, with a dot for each window on one
+ * 0% to 100% axis. Takes its event, window length and classes as settings and
  * reads no filters.
  */
 import type { Annotation } from "../annotations/annotationData.ts";
@@ -8,9 +9,10 @@ import { liveChartFrame, type ChartSpec, type Target } from "../chart/chartFrame
 import { annotations, formatDate, outcomeTable, rateTable } from "../data.ts";
 import { withTerms } from "../glossary/popover.ts";
 import { chartSvg, classLabels, count, create, percent, strikeFootnote, svgText } from "../strikes/shared.ts";
-import type { ClassId } from "../theme/classStyles.ts";
-import { classFill, svgElement } from "../theme/marks.ts";
+import { CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
+import { svgElement } from "../theme/marks.ts";
 import "./eventPanels.css";
+import { segmented } from "./segmented.ts";
 import {
   DEFAULT_WINDOW_DAYS,
   eventsInWindows,
@@ -18,19 +20,25 @@ import {
   panelEvents,
   panelHowToRead,
   PANEL_NOTES,
-  SIDES,
   WINDOW_DAYS,
   windowRows,
   type EventWindow,
+  type Side,
   type WindowDays,
   type WindowRow,
 } from "./eventWindowData.ts";
 
-const HEADER = 52;
-const ROW = 70;
-const BAR = 18;
-const GUTTER = 24;
-const PANEL_GAP = 8;
+const AXIS = 24;
+const ROW = 62;
+const STACKED_ROW = 94;
+/** Widths of the class names and the counts, where they share a line with the axis. */
+const NAMES = 275;
+const COUNTS = 380;
+/** Narrower than this, the counts go under the axis. */
+const ONE_LINE = 900;
+const RATE_TICKS = [0, 0.25, 0.5, 0.75, 1];
+/** Dots closer than this share one tooltip target. */
+const TOGETHER = 12;
 
 export interface EventPanelSettings {
   /** An id from PANEL_EVENT_IDS. The first is used if left out or unknown. */
@@ -94,6 +102,30 @@ function eventDetails(chosen: Annotation, windows: readonly EventWindow[]): HTML
   return [account, create("p", "", intro), list];
 }
 
+/** Before is a ring and after a filled dot, so they don't depend on color. The ring still shows around a dot on it. */
+function dot(side: Side, x: number, y: number, color: string): SVGCircleElement {
+  return side === "Before"
+    ? svgElement("circle", { cx: x, cy: y, r: 8, fill: "var(--surface)", stroke: color, "stroke-width": 3 })
+    : svgElement("circle", { cx: x, cy: y, r: 5.5, fill: color });
+}
+
+/** Which dot is which, with each window's dates and how much of it the data covers. */
+function windowKey(windows: readonly EventWindow[]): HTMLElement {
+  const key = create("div");
+  for (const window of windows) {
+    const line = create("p", "strike-key");
+    const mark = svgElement("svg", { width: 24, height: 20, "aria-hidden": "true", focusable: "false" });
+    mark.append(dot(window.side, 12, 10, "currentColor"));
+    line.append(
+      mark,
+      `${window.side} (${window.side === "Before" ? "ring" : "filled dot"}): ${span(window)} · ${length(window)} · ` +
+        `${nightCount(window.nights)} with a report`,
+    );
+    key.append(line);
+  }
+  return key;
+}
+
 function spec(chosen: Annotation, days: WindowDays, classes: readonly ClassId[]) {
   const windows = eventWindows(outcomeTable, chosen.date, days);
   const rows = windowRows(outcomeTable, rateTable, windows, classes);
@@ -102,7 +134,8 @@ function spec(chosen: Annotation, days: WindowDays, classes: readonly ClassId[])
     title: `Reported intercept rate before and after: ${chosen.label}`,
     howToRead: panelHowToRead(rateTable.minLaunched),
     description: rows.length
-      ? "Two panels of bar charts, one for the window before the event’s date and one for the window after. " +
+      ? "A dumbbell chart: one row for each weapon class, with the rate before the event’s date and the rate after " +
+        "it on one scale from 0% to 100%. " +
         windows.map((w) => `${w.side}: ${span(w)}, ${length(w)}, ${nightCount(w.nights)}.`).join(" ") +
         " " +
         rows.map((row) => `${shortName(row.class)}, ${row.side.toLowerCase()}: ${figures(row)}.`).join(" ")
@@ -133,40 +166,61 @@ function spec(chosen: Annotation, days: WindowDays, classes: readonly ClassId[])
     ],
     rows,
     coverage: (row) => ({ from: row.from, to: row.to }),
+    scaleKey: windowKey(windows),
     pointer: "xy",
     draw(data, width) {
-      const perRow = width >= 880 ? 2 : 1;
-      const panelWidth = Math.floor((width - (perRow - 1) * GUTTER) / perRow);
-      const panelHeight = HEADER + present.length * ROW + PANEL_GAP;
-      const svg = chartSvg(width, Math.ceil(SIDES.length / perRow) * panelHeight);
+      const oneLine = width >= ONE_LINE;
+      const rowHeight = oneLine ? ROW : STACKED_ROW;
+      const bottom = AXIS + present.length * rowHeight;
+      const svg = chartSvg(width, bottom + AXIS);
       const targets: Target<WindowRow>[] = [];
+      // Room at both ends for a dot and its axis label.
+      const start = (oneLine ? NAMES : 0) + 20;
+      const end = width - (oneLine ? COUNTS : 0) - 24;
+      const at = (rate: number) => start + rate * (end - start);
 
-      windows.forEach((window, index) => {
-        const left = (index % perRow) * (panelWidth + GUTTER);
-        const top = Math.floor(index / perRow) * panelHeight;
+      for (const tick of RATE_TICKS) {
+        const x = at(tick);
+        const label = { "text-anchor": "middle", "font-size": 13 };
         svg.append(
-          svgText(left, top + 18, `${window.side}: ${span(window)}`, { "font-weight": 700, "font-size": 15 }),
-          svgText(left, top + 38, `${length(window)} · ${nightCount(window.nights)} with a report`, { "font-size": 13 }),
+          svgElement("line", { x1: x, x2: x, y1: AXIS, y2: bottom, class: "dumbbell-grid" }),
+          svgText(x, 15, percent.format(tick), label),
+          svgText(x, bottom + 17, percent.format(tick), label),
         );
-        data
-          .filter((row) => row.side === window.side)
-          .forEach((row, line) => {
-            const y = top + HEADER + line * ROW;
-            const barTop = y + 22;
-            const rate = row.intercept_rate;
-            svg.append(
-              svgText(left, y + 15, shortName(row.class), { "font-size": 14, "font-weight": 700 }),
-              // The full 0% to 100% track, so bars compare across both panels. A gap leaves it empty.
-              svgElement("rect", { x: left, y: barTop, width: panelWidth - 1, height: BAR, class: "event-track" }),
-            );
-            if (rate !== null) {
-              svg.append(
-                svgElement("rect", { x: left, y: barTop, width: rate * (panelWidth - 1), height: BAR, fill: classFill(row.class) }),
-              );
-            }
-            svg.append(svgText(left, barTop + BAR + 17, figures(row), { "font-size": 14 }));
-            targets.push({ x: left + (rate ?? 0.5) * panelWidth, y: barTop + BAR / 2, rows: [row] });
-          });
+      }
+
+      present.forEach((id, index) => {
+        const top = AXIS + index * rowHeight;
+        const own = data.filter((row) => row.class === id);
+        const y = oneLine ? top + rowHeight / 2 : top + 36;
+        svg.append(
+          svgElement("line", { x1: 0, x2: width, y1: top, y2: top, class: "dumbbell-rule" }),
+          svgText(0, oneLine ? y + 5 : top + 19, shortName(id), { "font-size": 14, "font-weight": 700 }),
+          svgElement("line", { x1: start, x2: end, y1: y, y2: y, class: "dumbbell-grid" }),
+        );
+        const [first, second] = own.flatMap((row) => (row.intercept_rate === null ? [] : [row.intercept_rate]));
+        if (first !== undefined && second !== undefined) {
+          const color = CLASS_STYLES[id].color;
+          svg.append(
+            svgElement("line", { x1: at(first), x2: at(second), y1: y, y2: y, stroke: color, class: "dumbbell-bar" }),
+          );
+        }
+        let previous: Target<WindowRow> | undefined;
+        // Rows come Before first, so the after dot is drawn on top.
+        own.forEach((row, line) => {
+          const textX = oneLine ? width - COUNTS : 20;
+          const textY = oneLine ? y - 5 + line * 20 : top + 63 + line * 20;
+          svg.append(svgText(textX, textY, `${row.side}: ${figures(row)}`, { "font-size": 14 }));
+          if (row.intercept_rate === null) {
+            // A gap has no dot, so its target sits by its words.
+            targets.push({ x: textX - 12, y: textY - 5, rows: [row] });
+            return;
+          }
+          const x = at(row.intercept_rate);
+          svg.append(dot(row.side, x, y, CLASS_STYLES[id].color));
+          if (previous && Math.abs(previous.x - x) < TOGETHER) previous.rows.push(row);
+          else targets.push((previous = { x, y, rows: [row] }));
+        });
       });
       return { element: svg, targets };
     },
@@ -206,21 +260,25 @@ export function eventPanels(settings: EventPanelSettings): HTMLElement {
       events.map((event) => [event.id, `${formatDate(event.date)}: ${event.label}`]),
       chosen.id,
     );
-    const [daysLabel, daysSelect] = menu(
-      "Window length, each side",
-      WINDOW_DAYS.map((value) => [String(value), `${value} days`]),
-      String(days),
-    );
     const changed = () => {
-      chosen = events.find((event) => event.id === eventSelect.value)!;
-      days = WINDOW_DAYS.find((value) => String(value) === daysSelect.value)!;
       onChange(chosen.id, days);
       redraw();
     };
-    eventSelect.addEventListener("change", changed);
-    daysSelect.addEventListener("change", changed);
+    eventSelect.addEventListener("change", () => {
+      chosen = events.find((event) => event.id === eventSelect.value)!;
+      changed();
+    });
+    const lengths = segmented(
+      "Window length, each side",
+      WINDOW_DAYS.map((value) => [String(value), `${value} days`] as const),
+      String(days),
+      (value) => {
+        days = WINDOW_DAYS.find((option) => String(option) === value)!;
+        changed();
+      },
+    );
     const menus = create("div", "event-menus");
-    menus.append(eventLabel, daysLabel);
+    menus.append(eventLabel, lengths);
     controls.append(menus);
   }
   controls.append(details);
