@@ -22,6 +22,8 @@ TITLE = "Issue dependency graph (auto-generated)"
 WORKFLOW = "dependency-graph.yml"
 MAX_BODY = 65536
 MAX_NODE_TITLE = 40
+# Anyone can open an issue on a public repo, and agents pick up work from this list.
+TRUSTED_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
 
 STATUS_TEXT = {"done": "done", "ready": "ready", "progress": "in progress", "blocked": "blocked"}
 STATUS_STYLE = {
@@ -37,7 +39,7 @@ query($owner: String!, $name: String!, $endCursor: String) {
     issues(first: 100, after: $endCursor, orderBy: {field: CREATED_AT, direction: ASC}) {
       pageInfo { hasNextPage endCursor }
       nodes {
-        number title state body
+        number title state body authorAssociation
         milestone { title }
         labels(first: 100) { nodes { name } }
         blockedBy(first: 50) {
@@ -101,6 +103,7 @@ def parse_issue(node, repo):
         "title": node["title"],
         "open": node["state"] == "OPEN",
         "body": node["body"] or "",
+        "trusted": node["authorAssociation"] in TRUSTED_ASSOCIATIONS,
         "milestone": node["milestone"]["title"] if node["milestone"] else None,
         "labels": {label["name"] for label in node["labels"]["nodes"]},
         "blockers": blockers,
@@ -121,12 +124,30 @@ def split_generated(issues):
     return target, [i for i in issues if i is not target]
 
 
+def trusted_only(issues):
+    """Drop issues by untrusted authors. A link to one still blocks, shown by number only."""
+    hidden = {i["number"] for i in issues if not i["trusted"]}
+    return [
+        {
+            **issue,
+            "blockers": [
+                {**b, "hidden": True} if not b["repo"] and b["number"] in hidden else b
+                for b in issue["blockers"]
+            ],
+        }
+        for issue in issues
+        if issue["trusted"]
+    ]
+
+
 def prepare(issues):
     """Sort issues and blockers, and drop links to the generated issue."""
     numbers = {i["number"] for i in issues}
     prepared = []
     for issue in sorted(issues, key=lambda i: i["number"]):
-        blockers = [b for b in issue["blockers"] if b["repo"] or b["number"] in numbers]
+        blockers = [
+            b for b in issue["blockers"] if b["repo"] or b.get("hidden") or b["number"] in numbers
+        ]
         blockers.sort(key=lambda b: (b["repo"] or "", b["number"]))
         prepared.append({**issue, "blockers": blockers})
     return prepared
@@ -206,7 +227,7 @@ def render_graph(issues):
         label = f"{mermaid_text('#' + str(issue['number']) + ' ' + shorten(issue['title']))}<br/>{note}"
         lines.append(f'  n{issue["number"]}["{label}"]:::{state}')
         for blocker in issue["blockers"]:
-            if blocker["repo"]:
+            if blocker["repo"] or blocker.get("hidden"):
                 external[node_id(blocker)] = blocker
     for key, blocker in sorted(external.items()):
         state = "blocked" if blocker["open"] else "done"
@@ -326,6 +347,7 @@ def main():
     try:
         repo = args.repo or gh("repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner").strip()
         target, issues = split_generated(fetch_issues(repo))
+        issues = trusted_only(issues)
         body = render(issues, repo)
         if args.dry_run:
             print(body, end="")

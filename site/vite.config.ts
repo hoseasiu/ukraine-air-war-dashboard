@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { defineConfig, type Plugin } from "vite";
+import { licenseNotices } from "./licenses.ts";
 import { parseAlertMonthly, parseBoundaries } from "./src/alerts/alertData.ts";
 import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./src/buildData.ts";
 
@@ -23,7 +24,9 @@ export default defineConfig({
   // Relative asset URLs work under any GitHub Pages project subpath.
   // This relies on hash routing: every page is served by the one index.html.
   base: "./",
-  plugins: [checkBuildData()],
+  plugins: [checkBuildData(), licenseNotices()],
+  // The bundled libraries' licenses, which minifying strips from the code.
+  build: { license: { fileName: "third-party-licenses.txt" } },
   server: {
     // The only folders readable by the dev server besides site/. Never data/raw/.
     fs: { allow: [".", "../data/processed", "../data/reference"] },
