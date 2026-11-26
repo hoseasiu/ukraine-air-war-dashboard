@@ -3,6 +3,7 @@ import { defineConfig, type Plugin } from "vite";
 import { licenseNotices } from "./licenses.ts";
 import { parseAlertMonthly, parseBoundaries } from "./src/alerts/alertData.ts";
 import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./src/buildData.ts";
+import { parseMonthly, parseNights } from "./src/strikes/strikeData.ts";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -16,6 +17,8 @@ function checkBuildData(): Plugin {
       const areas = parseAreas(read("../data/reference/oblasts.csv"));
       parseAlertMonthly(JSON.parse(read("../data/processed/alert_hours_monthly.json")), areas);
       parseBoundaries(read("../data/reference/ukraine_admin1.geojson"), areas);
+      parseNights(JSON.parse(read("../data/processed/nights.json")));
+      parseMonthly(JSON.parse(read("../data/processed/monthly_by_class.json")));
     },
   };
 }
