@@ -343,6 +343,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 **Open**
 - Terms of the sources behind the alert data (#26): the dataset is MIT, but it's collected from Telegram channels, including a volunteer one (eTryvoga), whose terms we don't know ([data audit](data-audit.md#alerts-license)). The site uses only the official-channel file.
 - Sources for the glossary (#24). The owner approved the wording (see Settled) without answering this separately: the general descriptions of weapons, EW and decoys in [terms.ts](../site/src/glossary/terms.ts) have no cited source. Suggested: decide before shipping whether they need citations (§9 Phase 5 asks that numbers trace to a source), alongside the Data & Methods page (#23).
+- Intercept-rate months with too few launches (#65): the issue asks for faded or hollow points rather than only gaps. Under 10 launches with an outcome there is no `intercept_rate` (#5), so for now they are hollow markers in a row under each panel, at no rate height. Showing a faded point at its rate instead would change that rule: the pipeline would have to publish those rates.
 - Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January). The 2026 massive-night bar and labels can change with it (#28).
 - Stop 9's animation (#22): is pressing the Play button enough, or should a clicker be able to start it?
 
