@@ -42,8 +42,8 @@ export const FLAG_TEXT: Record<FlagId, FlagText> = {
     text: "Counts reported jointly for different weapon classes are not split. A single class’s figures don’t cover every launch of that kind.",
   },
   alert_end_assumed: {
-    label: "Some alert end times assumed",
-    text: "Some alerts have no recorded end, so their end times are assumed.",
+    label: "Some alert end times may be assumed",
+    text: "The source gives an alert with no recorded end an assumed one, without marking it. Some end times here may be assumed.",
   },
   alert_regions_excluded: {
     label: "Luhansk and Crimea excluded",

@@ -1,12 +1,17 @@
 /** Data compiled into the bundle. Nothing is fetched at page load. */
+import alertMonthlyJson from "../../data/processed/alert_hours_monthly.json";
 import buildInfoJson from "../../data/processed/build_info.json";
+import boundariesText from "../../data/reference/ukraine_admin1.geojson?raw";
 import oblastsCsv from "../../data/reference/oblasts.csv?raw";
 import weaponClassesCsv from "../../data/reference/weapon_classes.csv?raw";
+import { parseAlertMonthly, parseBoundaries } from "./alerts/alertData.ts";
 import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./buildData.ts";
 
 export const buildInfo = parseBuildInfo(buildInfoJson);
 export const weaponClasses = parseWeaponClasses(weaponClassesCsv);
 export const alertAreas = parseAreas(oblastsCsv);
+export const alertMonthly = parseAlertMonthly(alertMonthlyJson, alertAreas);
+export const boundaries = parseBoundaries(boundariesText, alertAreas);
 
 /** Names of the areas left out of every alert figure. */
 export function excludedAlertAreas(): string[] {
