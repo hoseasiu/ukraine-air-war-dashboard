@@ -14,7 +14,8 @@ import { formatDate, nightTable } from "../data.ts";
 import { withTerms } from "../glossary/popover.ts";
 import type { ClassId } from "../theme/classStyles.ts";
 import { classFillScale, plotDefaults } from "../theme/plot.ts";
-import { barValue, classLabels, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, strikeFootnote } from "./shared.ts";
+import { nightContext } from "./nightContext.ts";
+import { barText, barValue, classLabels, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, strikeFootnote } from "./shared.ts";
 import { barIsRestricted, breakdownRows, type BreakdownRow } from "./strikeData.ts";
 
 export interface NightBreakdownSettings {
@@ -43,8 +44,8 @@ function nightSentence(date: string): string {
   const year = date.slice(0, 4);
   if (total === null) return `No launch count is published for this night.`;
   const verdict = rows[0]!.is_massive
-    ? `so it counts as massive: more than ${year}’s bar of ${barValue.format(bar)}.`
-    : `so it doesn’t count as massive: not more than ${year}’s bar of ${barValue.format(bar)}.`;
+    ? `so it counts as massive: more than ${year}’s bar of ${barText(bar)}.`
+    : `so it doesn’t count as massive: not more than ${year}’s bar of ${barText(bar)}.`;
   return `${count.format(total)} weapons with published counts were launched, in all counted classes, ${verdict}`;
 }
 
@@ -151,19 +152,29 @@ function placeList(date: string, classes: readonly ClassId[]): HTMLElement[] {
   const rows = breakdownRows(nightTable, date, classes);
   if (!rows.length) return [];
   const heading = create("h4", "", "Launch areas named in this night’s reports");
+  heading.id = "night-places-title";
   const note = create(
     "p",
     "",
     "These are lists, not counts. One report can name several areas, and its launches can’t be divided among them. " +
       "A semicolon separates what different reports list.",
   );
-  const list = create("dl", "night-places");
-  for (const row of rows) {
-    const term = create("dt");
-    term.append(...withTerms(classLabels[row.class]));
-    list.append(term, create("dd", "", row.places));
+  const table = create("table", "night-places");
+  table.setAttribute("aria-labelledby", heading.id);
+  const head = table.createTHead().insertRow();
+  for (const label of ["Class", "Launch areas named"]) {
+    const cell = create("th", "", label);
+    cell.scope = "col";
+    head.append(cell);
   }
-  return [heading, note, list];
+  const body = table.createTBody();
+  for (const row of rows) {
+    const name = create("th");
+    name.scope = "row";
+    name.append(...withTerms(classLabels[row.class]));
+    body.insertRow().append(name, create("td", "", row.places));
+  }
+  return [heading, note, table];
 }
 
 export function nightBreakdown(settings: NightBreakdownSettings): HTMLElement {
@@ -184,13 +195,16 @@ export function nightBreakdown(settings: NightBreakdownSettings): HTMLElement {
   }
 
   const chart = liveChartFrame(spec(settings, controls));
-  const places = create("div");
+  const places = create("div", "night-places-block");
   places.append(...placeList(settings.date, settings.classes));
-  wrapper.append(chart.element, places);
+  const context = nightContext(settings.date);
+  // A guided stop shows what its caption describes first, so the year strip goes last there.
+  wrapper.append(chart.element, ...(settings.compact ? [places, context.element] : [context.element, places]));
 
   select?.addEventListener("change", () => {
     const date = select.value;
     chart.update(spec({ ...settings, date }, controls));
+    context.update(date);
     places.replaceChildren(...placeList(date, settings.classes));
     settings.onDateChange?.(date);
   });

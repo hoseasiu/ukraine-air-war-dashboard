@@ -14,9 +14,11 @@ import {
   parseMonthly,
   parseNights,
   sizeBins,
+  sizeCap,
   sumKnown,
   weekdayIndex,
   weekdayRows,
+  yearNightRows,
   type Selection,
 } from "../src/strikes/strikeData.ts";
 import { CLASS_IDS } from "../src/theme/classStyles.ts";
@@ -83,7 +85,37 @@ test("every night with a known size lands in exactly one histogram bin", () => {
     assert.equal(own[0]!.massive_above, year.massive_above);
     // Bins run without holes from 0.
     own.forEach((bin, index) => assert.equal(bin.bin_from, index * 25));
+    const sizes = allNights(nights, CLASS_IDS)
+      .filter((n) => n.date.startsWith(`${year.year}-`) && n.size !== null)
+      .map((n) => n.size!);
+    assert.equal(own[0]!.year_max, Math.max(...sizes));
+    // Each bin holds the nights in its range; only the one at the cap is open-ended.
+    for (const bin of own) {
+      const inside = sizes.filter((size) => size >= bin.bin_from && (bin.bin_to === null || size <= bin.bin_to));
+      assert.equal(bin.nights, inside.length);
+      assert.equal(bin.bin_to === null, bin.bin_from === sizeCap(nights));
+    }
   }
+});
+
+test("the size axis is capped above every massive bar", () => {
+  assert.ok(nights.years.every((year) => year.massive_above < sizeCap(nights)));
+  const bars = (massive_above: number) => ({ ...nights, years: [{ ...nights.years[0]!, massive_above }] });
+  assert.equal(sizeCap(bars(100)), 600);
+  assert.equal(sizeCap(bars(640)), 700);
+});
+
+test("a year's strip has all its nights, marks one, and flags a restricted bar", () => {
+  const date = massiveDates(nights, everything)[0]!;
+  const rows = yearNightRows(nights, date);
+  const year = nights.years.find((entry) => date.startsWith(`${entry.year}-`))!;
+  assert.equal(rows.length, year.n_nights);
+  assert.equal(rows.filter((r) => r.massive === "Massive night").length, year.n_massive);
+  assert.deepEqual(rows.filter((r) => r.shown === "The night broken down").map((r) => r.date), [date]);
+  assert.ok(rows.every((r) => r.massive_above === year.massive_above && !r.ballistic_restricted));
+  // The 2026 bar uses restricted nights, so even earlier nights are flagged.
+  const spring = massiveDates(nights, { from: "2026-01", to: "2026-07" })[0]!;
+  assert.ok(yearNightRows(nights, spring).every((r) => r.ballistic_restricted));
 });
 
 test("the massive bar is withheld when a class is off, and sizes count only the classes shown", () => {

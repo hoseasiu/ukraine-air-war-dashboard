@@ -11,6 +11,41 @@
   filter: drop-shadow(1px 0 0 var(--surface)) drop-shadow(-1px 0 0 var(--surface));
 }
 
+.size-bar {
+  fill: #8c8c8c;
+}
+
+.size-base {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+/* Solid, with a triangle on top, so it differs from the massive bar's dashes without color. */
+.median-rule {
+  stroke: var(--ink);
+  stroke-width: 2;
+  filter: drop-shadow(1px 0 0 var(--surface)) drop-shadow(-1px 0 0 var(--surface));
+}
+
+.median-head {
+  fill: var(--ink);
+}
+
+.size-count {
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 3;
+}
+
+/* Marks drawn over other marks leave the pointer to what is under them. */
+.massive-rule,
+.median-rule,
+.median-head,
+.size-count,
+.calendar-month {
+  pointer-events: none;
+}
+
 .strike-key,
 .strike-key-title {
   display: flex;
@@ -42,12 +77,22 @@
   stroke-dasharray: 2 2;
 }
 
+.calendar-month {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.massive-halo {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 5;
+}
+
 .massive-ring {
   fill: none;
   stroke: #111111;
-  stroke-width: 2.5;
-  paint-order: stroke;
-  filter: drop-shadow(0 0 1px #ffffff);
+  stroke-width: 2.75;
 }
 
 .massive-dot {
@@ -82,16 +127,27 @@
   margin: 0 0 1rem;
 }
 
-.night-places {
-  max-width: 60rem;
+.night-places-block h4 {
+  margin-bottom: 0.25rem;
 }
 
-.night-places dt {
-  margin-top: 0.5rem;
+.night-places-block p {
+  max-width: 60rem;
+  margin: 0 0 0.5rem;
+}
+
+.night-places {
+  width: 100%;
+  max-width: 60rem;
+  font-size: 0.9rem;
+}
+
+.night-places th,
+.night-places td {
+  padding: 0.2rem 0.75rem 0.2rem 0;
+  vertical-align: top;
+}
+
+.night-places tbody th {
   font-weight: 700;
 }
-
-.night-places dd {
-  margin-left: 0;
-}
-

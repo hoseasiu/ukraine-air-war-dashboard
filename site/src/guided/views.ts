@@ -50,7 +50,7 @@ function pointList(points: readonly Point[]): HTMLElement {
 /**
  * Moves each "How to read this" note below its chart. The caption makes the
  * stop's point, and the chart has to be on screen with it. The badges stay above.
- * One night's launch areas are part of its view, so its notes go below them too.
+ * One night's launch areas are part of its view, so the breakdown's notes go below them too.
  */
 function chartsFirst(container: HTMLElement): void {
   for (const figure of container.querySelectorAll(".chart-frame")) {
@@ -58,8 +58,11 @@ function chartsFirst(container: HTMLElement): void {
     const table = figure.querySelector(".chart-table");
     if (note && table) table.after(note);
   }
-  const night = container.querySelector(".night-breakdown");
-  if (night) night.append(...night.querySelectorAll(".chart-how-to-read, .chart-footnote"));
+  const breakdown = container.querySelector(".night-breakdown .chart-frame");
+  if (breakdown) {
+    const notes = breakdown.querySelectorAll(".chart-how-to-read, .chart-footnote");
+    container.querySelector(".night-places-block")?.after(...notes);
+  }
 }
 
 /** Draws a stop's view into an empty container. */
