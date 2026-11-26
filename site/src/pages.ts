@@ -1,3 +1,4 @@
+import { alertMap } from "./alerts/alertMap.ts";
 import { classKey } from "./classKey.ts";
 import type { Filters } from "./filters/state.ts";
 import { glossaryList, withTerms } from "./glossary/popover.ts";
@@ -27,7 +28,7 @@ function paragraph(text: string): HTMLParagraphElement {
   return p;
 }
 
-function placeholder(questions: string[]): HTMLElement {
+function placeholder(questions: string[], intro = "No charts yet. This page will take up these questions:"): HTMLElement {
   const section = document.createElement("div");
   const list = document.createElement("ul");
   const seen = new Set<TermId>();
@@ -36,7 +37,7 @@ function placeholder(questions: string[]): HTMLElement {
     item.append(...withTerms(question, seen));
     list.append(item);
   }
-  section.append(paragraph("No charts yet. This page will take up these questions:"), list);
+  section.append(paragraph(intro), list);
   return section;
 }
 
@@ -51,6 +52,9 @@ function discussion(prompts: readonly string[]): HTMLElement {
   section.append(heading("Questions to discuss"), promptList(prompts));
   return section;
 }
+
+/** The map's month, kept while the filters redraw the page. It isn't a filter, so it isn't in the URL. */
+let mapMonth: string | undefined;
 
 /** The first page is shown when the hash is empty or unknown. */
 export const PAGES: [Page, ...Page[]] = [
@@ -100,13 +104,24 @@ export const PAGES: [Page, ...Page[]] = [
         "Alert figures end at July 2026, whatever months are selected.",
       ],
     },
-    render(container) {
+    render(container, filters) {
       container.append(
-        placeholder([
-          "How many hours per month is each oblast under alert?",
-          "How does life under alerts differ between oblasts?",
-          "How does attack intensity relate to alert burden over time?",
-        ]),
+        alertMap({
+          from: filters.from,
+          to: filters.to,
+          highlight: filters.oblasts,
+          month: mapMonth,
+          onMonthChange: (month) => {
+            mapMonth = month;
+          },
+        }),
+        placeholder(
+          [
+            "How does life under alerts differ between oblasts?",
+            "How does attack intensity relate to alert burden over time?",
+          ],
+          "Still to come on this page:",
+        ),
         discussion(TAB_PROMPTS.alerts),
       );
     },
