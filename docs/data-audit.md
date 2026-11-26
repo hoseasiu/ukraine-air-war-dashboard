@@ -1,6 +1,6 @@
 # Data audit
 
-Phase 0 findings. The Kaggle section is from [#1](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/1). The alerts section comes with #2, and #5 condenses both into the one-page note.
+Phase 0 findings. The Kaggle section is from [#1](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/1). The [alerts section](#alerts-ukrainian-air-raid-sirens-dataset) is from [#2](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/2). #5 condenses both into the one-page note.
 
 ## Kaggle: Massive Missile Attacks on Ukraine
 
@@ -205,3 +205,236 @@ The Nov 12 night post also names ballistic missiles without giving a count, and 
 - Any Facebook source link, or any regional-command post.
 - Whether totals agree with CSIS or MDAA.
 - Whether the Air Force's figures are accurate. They're reported figures, not independently verified.
+
+## Alerts: Ukrainian air-raid sirens dataset
+
+Audited Nov 25, 2026. Dataset by Vadym Klymenko: <https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset>, at commit [`1a349789e45d63a19c8faf46d0e5877cbb36ac8b`](https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset/commit/1a349789e45d63a19c8faf46d0e5877cbb36ac8b) (committed 2026-11-25 07:40 UTC). File hashes and download commands are in [data/README.md](../data/README.md#air-raid-sirens).
+
+Rerun the figures with:
+
+```powershell
+uv run pipeline/audit/alerts.py
+```
+
+The script doesn't cover the license, the upstream code and documentation, the upstream issues, the channel page or the reports on alert levels. Those were read by hand. Months are Kyiv-time calendar months. Unless stated otherwise, a **national** figure is the **unweighted mean over 24 areas** (23 oblasts and Kyiv city, without Luhansk and Crimea), in **hours per area per month**.
+
+### Short answers
+
+| Question | Answer |
+|---|---|
+| License | **MIT** for the repository. |
+| Timestamps | **UTC.** |
+| Does the official file reach the present? | **No.** Its last alert starts **Sept 7, 2026**. It also has a hole from Aug 29 to Sept 2. |
+| Anything else wrong with the official file? | **113,845 exact duplicate rows**, all starting before Jan 26, 2026. |
+| How should raion alerts roll up? | **Average the raions** ([rule](#roll-up-rule), accepted by the owner). It changes nothing in 2023–24, but months after the switch still aren't like-for-like. |
+| Which file for which period? | Alert figures **end at July 2026** (owner's decision). Proposed: **official file from April 2022**. Don't splice the volunteer file onto it ([source choice](#proposed-source-choice)). |
+| How much is `naive=True`? | **5.1% of volunteer rows**, and 1.1–4.7% of volunteer hours by year. |
+| Permanent alerts | **Confirmed not listed** for Crimea or Luhansk. |
+| Yellow and red levels | **Not in the data.** |
+
+### Alerts license
+
+The repository's `LICENSE` is MIT, "Copyright (c) 2022 Vadym Klymenko". Processed files made from it need that copyright and permission notice. Files that also use Kaggle data are covered by [CC BY-NC-SA 4.0](#license-and-redistribution) as well.
+
+The upstream code reads the official file from the channel `air_alert_ua` and the volunteer file from `UkraineAlarmSignal`. The upstream README credits eTryvoga for the volunteer data. **Can't tell** what terms those sources set; the MIT file doesn't mention them. This is a note for #26, not legal advice.
+
+### Files and coverage
+
+| | `official_data_en.csv` | `volunteer_data_en.csv` |
+|---|---|---|
+| Columns | `oblast`, `raion`, `hromada`, `level`, `started_at`, `finished_at`, `source` | `region`, `started_at`, `finished_at`, `naive` |
+| Rows | 299,275 (185,430 distinct) | 124,468 |
+| First start (UTC) | 2022-03-15 16:10 | 2022-02-25 16:36 |
+| Last start (UTC) | **2026-09-07 05:28** | 2026-11-25 07:04 |
+| Spatial level | `oblast`, `raion` or `hromada` | Oblast and Kyiv city only |
+| Areas named | 25 (24 plus Luhansk) | 25 (24 plus Luhansk) |
+
+- `raion` and `hromada` are blank where the level doesn't need them. `source` is always `official`. `level` is the **administrative level**, not a threat level.
+- **UTC:** every timestamp carries `+00:00`, and the upstream README says UTC. Matching each official oblast-level start to the nearest volunteer start in the same area, the median difference is 27 s in November–March and 22 s in April–October, so the files agree across the clock change. About 77–81% of matches are within 5 minutes.
+- No negative durations. 4 official rows (before removing copies) and 8 volunteer rows last zero seconds.
+- Neither file is sorted by start time.
+- Partial months: March 2022 (official), February 2022 and November 2026 (volunteer).
+
+#### Duplicate rows
+
+113,845 official rows appear **exactly twice**. Every row starting from March 2022 through December 2024 has a copy, nearly every row in 2025 does, and the last copied row starts **Jan 25, 2026**. **Can't tell** why. The upstream code appends to the existing file, so a repeated run is one possible cause.
+
+The pipeline must drop exact duplicates before counting or adding durations. A union of intervals isn't affected, but row counts and summed hours are. After removing them, no two rows for the same oblast, raion, hromada and level overlap. The volunteer file has no exact duplicates and no same-region overlaps.
+
+#### Missing intervals
+
+- **Official, Aug 29 to Sept 2, 2026:** no alert starts for 105 hours (Aug 29 04:55 to Sept 2 13:48 UTC), with none at all on Aug 30, Aug 31 or Sept 1. The volunteer file has 161–180 starts on each of those days. Between Aug 29 05:00 and Sept 2 13:00, 43 official rows are active at some point, against 741 volunteer rows. **August 2026 is therefore incomplete in the official file.**
+- The official file has one other gap over 18 hours between starts anywhere: 19 hours on Apr 19–20, 2025. The volunteer file has no such gap then. **Can't tell** whether official alerts are missing.
+- The volunteer file has one gap over 18 hours: 22 hours on Oct 22–23, 2022.
+- This check only finds gaps across the whole country. **It can't detect missing alerts in a single area.**
+
+#### Why the official file stops on Sept 7
+
+Upstream issues [#6](https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset/issues/6) and [#7](https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset/issues/7) report it. Neither had a reply on Nov 25. #7 suggests that the new alert levels changed the message format, so the parser no longer matches.
+
+What we saw may point elsewhere. On the channel's [public web page](https://t.me/s/air_alert_ua) (read Nov 25), alert posts run to message 338380 (Sept 7, 06:09 UTC). The next, 338381, is dated **Nov 1** and is about unauthorized access to the official app. The later posts, up to 338388 (Nov 19), are app notices or show no alert text. The upstream parser's saved position is 338388, the newest post. So **it appears the channel stopped posting alerts there**, leaving the parser nothing new to read. **Can't tell** why, whether alerts are now published somewhere else, or whether the official file will resume or be backfilled.
+
+The upstream README says both files will be updated daily. On the audit date the official file wasn't.
+
+#### Assumed end times in the official file
+
+The official file has **no flag** for these. In the upstream code, if a new alert for a place arrives more than 3 hours after an unfinished one, the old one gets an end **1 hour** after its start. 255 distinct rows last exactly 3,600 s (148 of them in 2026). Some could be real hour-long alerts, so this isn't a count of assumed ends. If the new start arrives within 3 hours, it replaces the unfinished one, and the earlier start is lost.
+
+#### Very long alerts
+
+Some official rows last weeks or months. The longest are for Lypetska hromada (604 days) and Vovchanska hromada (439 days), both in Kharkiv oblast. Several for hromadas in Nikopol raion (Dnipropetrovsk oblast) last 8–26 days. 396 hromada, 488 raion and 13 oblast rows exceed 24 hours. **Can't tell** which reflect a standing threat and which a missing end message.
+
+### The raion switch
+
+Raion alerting didn't begin in December 2025. It phased in during 2025:
+
+| Distinct official rows by start month | `oblast` | `raion` | `hromada` |
+|---|---|---|---|
+| 2024-12 | 1,421 | 1 | 282 |
+| 2025-01 | 1,642 | 154 | 235 |
+| 2025-05 | 1,352 | 317 | 596 |
+| 2025-08 | 1,117 | 2,437 | 631 |
+| 2025-10 | 715 | 3,498 | 693 |
+| 2025-11 | 164 | 7,266 | 708 |
+| 2025-12 | 24 | 7,298 | 692 |
+| 2026-07 | 59 | 10,377 | 637 |
+
+For each area, we found the month from which oblast-level rows stay under half of its oblast-or-raion alert hours. It ranges from January 2025 (Cherkasy) to November 2025 (for example Lviv, Odesa and Zaporizhzhia). Kyiv city has no raions in the file and doesn't switch. In the median area, oblast-level rows cover 100% of those hours through July 2025, 89% in August, 61% in October, 4% in November and 0% from December.
+
+**The granularity flag should cover the transition during 2025, with the main step in November 2025.** The plan says December 2025.
+
+### Roll-up options and their effect
+
+All options use distinct rows and exclude Luhansk and Crimea. A "union" counts overlapping time once.
+
+| Option | Rule for an area's hours |
+|---|---|
+| Sum of rows | Add every row's duration. **Double counts.** |
+| Oblast rows only | Union of `level = oblast` rows. |
+| Any part | Union of all rows: some part of the area was under alert. |
+| Any raion | The same without hromada rows. |
+| **Raion average** | For each raion, the union of oblast rows and that raion's rows. Then the mean over the area's raions. |
+| Raion average + hromada | The same, counting each hromada row for its whole raion. |
+| All raions | Time when every raion was covered at once. |
+| Volunteer | Union of the volunteer rows for the area. |
+
+National figures (mean hours per area per month):
+
+| Period | Sum of rows | Oblast rows only | Any part | Any raion | **Raion average** | Raion avg. + hromada | All raions | Volunteer |
+|---|---|---|---|---|---|---|---|---|
+| 2023 | 75.6 | 58.5 | 70.9 | 58.5 | **58.5** | 60.2 | 58.5 | 61.8 |
+| 2024 | 226.5 | 105.2 | 140.2 | 105.2 | **105.2** | 111.4 | 105.2 | 76.0 |
+| Jan–Jun 2025 | 312.5 | 125.1 | 168.8 | 133.4 | **130.3** | 137.9 | 128.4 | 71.3 |
+| Jul–Nov 2025 | 553.2 | 65.5 | 187.8 | 162.3 | **124.8** | 131.9 | 100.5 | 71.4 |
+| Dec 2025–Jul 2026 | 900.7 | 1.7 | 207.8 | 200.8 | **133.0** | 136.6 | 86.9 | 76.0 |
+
+("Sum of rows" is computed after removing exact copies. Without that step it would be higher still.)
+
+Selected areas, mean hours per month, **Dec 2025–Jul 2026**:
+
+| Area | Any part | Any raion | **Raion average** | Raion avg. + hromada | Volunteer |
+|---|---|---|---|---|---|
+| Kharkiv oblast | 635 | 588 | **339** | 351 | 157 |
+| Kyiv city | 42 | 42 | **42** | 42 | 31 |
+| Lviv oblast | 10 | 10 | **8** | 8 | 54 |
+| Dnipropetrovsk oblast | 728 | 646 | **241** | 310 | 129 |
+| Donetsk oblast | 686 | 648 | **648** | 652 | 150 |
+| Zaporizhzhia oblast | 549 | 549 | **548** | 549 | 154 |
+| Volyn oblast | 16 | 16 | **12** | 12 | 113 |
+
+Over that period, ranking areas by "any part", "any raion" or "all raions" gives nearly the same order as the raion average (Spearman 0.98). "Oblast rows only" is unusable after the switch (−0.08). The volunteer ranking agrees less (0.81).
+
+### Roll-up rule
+
+**Accepted by the owner on Nov 25, 2026.**
+
+1. Drop exact duplicate rows.
+2. Exclude Luhansk and Crimea, and flag them.
+3. Leave out hromada-level rows.
+4. For each raion, take the union of the area's oblast-level rows and that raion's rows.
+5. The area's alert hours are the **mean of its raions' hours**. Kyiv city counts as one unit.
+6. Split intervals at midnight Kyiv time when assigning days and months.
+
+The audit takes each area's raion list from the names in the official file (3 to 8 per oblast). #4 should fix that list in the gazetteer, so a missing or renamed raion fails loudly instead of changing a denominator.
+
+**What one oblast alert-hour then means:** the average raion of the oblast spent one hour under a raion-wide or oblast-wide alert. Half the raions under alert for two hours counts as one hour. It is **not** "some part of the oblast was under alert", and raions aren't weighted by population or area. A suggested label is "alert hours, average per raion". A national figure should be a mean per area, not a sum of areas.
+
+**Why this rule:**
+
+- It matches the oblast-level figure in 2023 and 2024 (58.5 and 105.2 hours nationally), so it doesn't redefine the earlier series.
+- "Any part" and "any raion" count a whole oblast whenever one raion is under alert. After the switch this raises large oblasts with uneven alerts: for Kharkiv they give 1.7–1.9 times the raion average.
+- A hromada row covers only part of a raion, and the file gives no way to weight it. Leaving these rows out understates the burden in the affected places. Counting each as a whole raion would raise Dec 2025–Jul 2026 by 3.6 hours nationally (2.7%) but by 69 hours (29%) in Dnipropetrovsk. It would also raise earlier months (2024: 6.2 hours nationally). Show this limit on the Data & Methods page.
+
+**Comparability across the switch: only partial.** The unit is the same, but the alerting practice changed. Under an oblast-wide alert every raion counts. Under raion alerts, raions that aren't alerted don't. So part of any change across 2025 can come from the practice itself, and **this data can't separate that part from changes in attacks.** Similar national means (130.3 in Jan–Jun 2025 and 133.0 in Dec 2025–Jul 2026) are **not** evidence that nothing changed. Mark the transition on every alert time series, and don't describe changes across it as changes in threat.
+
+- **Alert counts (`n_alerts`) aren't comparable** across the switch, because several raion alerts can stand where one oblast alert would have. Distinct raion rows in November 2025 (7,266) were almost four times the oblast rows in the busiest month of 2023 (1,916). Show hours. If counts are needed, #8 should define and test a per-raion count; this audit didn't.
+- **Donetsk oblast** is under alert almost 90% of the time by this measure. Its 8 raion names include areas under occupation, and several have almost identical row counts. **Can't tell** how those alerts relate to what residents there hear.
+
+### Volunteer `naive=True` alerts
+
+- **6,318 of 124,468 rows (5.1%).** All last exactly 30 minutes. Where an end was observed, the median is 30.1 minutes and the mean 47.2. So the assumed length matches a typical alert but is shorter than the average one. How long the unended alerts really lasted is unknown.
+- By year: 2.0% of rows in 2022, 6.1% in 2023, 5.6% in 2024, 5.8% in 2025 and 5.0% in 2026.
+- By area: highest in Kherson (16.7%), Donetsk (9.7%), Kyiv city (9.3%) and Sumy (8.7%). Lowest in Chernivtsi (1.1%). Luhansk has only 4 rows, all naive.
+- Removing them would cut union hours (without Luhansk) by 1.1% in 2022, 3.2–3.5% in 2023–2025 and 4.7% in 2026. The largest effect on one area-month with at least 20 volunteer hours is 52% (Ternopil, October 2026).
+- **Observed ends can look wrong too.** The file has multi-day alerts with `naive=False`, many in western oblasts, such as Zakarpattia from Nov 1 to Nov 13, 2026 (11 days). In 2026, rows over 12 hours (20 of them) hold 6.3% of volunteer hours. A missed end message matched to a later one would look like this. **Not verified.**
+
+### How the two files agree
+
+Official oblast-level hours against volunteer hours, before the main switch:
+
+- **2023:** 19 of 24 areas are within 7%. Dnipropetrovsk differs most (volunteer 1.67 times official), then Kirovohrad (1.33) and Kyiv oblast (1.26).
+- **2024:** nationally the volunteer file is 28% lower (76.0 against 105.2). It has 43% of the official hours in Kharkiv, 46% in Sumy and 72% in Kyiv city.
+- **Jan–Jun 2025:** the volunteer file is 45% lower than the raion average (71.3 against 130.3), which by then includes some raion rows. Kyiv city, with no raion split, is 40.4 against 68.8.
+
+**Can't tell** which file is right. The volunteer parser guesses the area and state from keywords in message text. It keeps one open alert per area: a new start within 3 hours replaces the old start, and after 3 hours the old one gets the 30-minute end. Both rules can lose time. Some keywords also look ambiguous (`Подільський` maps to Lviv oblast). We didn't check any of this against posts.
+
+After the switch the volunteer file stays at oblast level, and **we can't tell** what its oblast alert then means. In Dec 2025–Jul 2026 it shows 54 hours a month for Lviv and 113 for Volyn, against 10 and 16 for official "any part", so it isn't simply "any raion under alert". Long rows like those above may explain some western hours; we didn't measure how much of this gap.
+
+### Proposed source choice
+
+| Period | Proposal | Why |
+|---|---|---|
+| Feb 25 – Mar 31, 2022 | Leave out of monthly figures | The official file starts Mar 15. Strike data starts only Sept 28, 2022. |
+| **April 2022 – July 2026** | **Official file, with the [roll-up rule](#roll-up-rule)** | 52 months from one file with one formula. Flag the 2025 transition. |
+| August 2026 | Leave out | About 4 days are largely missing. |
+| Sept 2026 onward | **No figure.** Show as not available | The official file stops Sept 7. |
+| All periods | Volunteer file as a cross-check only | Its levels differ from official by area and period. |
+
+**Effect of splicing instead:** switching to the volunteer file after July 2026 would create a step caused only by the change of file. In Dec 2025–Jul 2026, where both exist, moving from official to volunteer takes the national mean from 133 to 76 hours, Kharkiv from 339 to 157, Lviv from 8 to 54 and Volyn from 12 to 113. The differences go both ways, so one correction factor wouldn't work.
+
+**Owner's decision (Nov 25, 2026):** alert figures end at July 2026, with no volunteer-only view for later months. Check upstream again at the snapshot refresh (#28). The cost is that strike data runs to Nov 21, 2026, and the planned snapshot to Dec 31, which limits E1's month slider, E2, E3 and guided stops 9 and 10. So August 2026 is left out rather than shown as incomplete. The rest of the source choice is still a proposal, listed in [plan §11](plan.md#11-decisions).
+
+A third-party archive of alerts.in.ua history may be another route: a [pull request in another project](https://github.com/yehor-o/time_series_air_alerts/pull/1) reportedly says it fills the gap. We saw this only in a web search summary and **haven't checked** the claim, the archive, its license or its coverage.
+
+For guided stop 1, "total alert-hours nationwide" still needs a definition. A sum of raion averages over areas is hard to interpret, so a mean per area is suggested.
+
+### Permanent alerts (Luhansk and Crimea)
+
+The upstream [datasets README](https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset/blob/1a349789e45d63a19c8faf46d0e5877cbb36ac8b/datasets/README.md) says there are two permanent alerts that **are not listed**: Luhansk from Apr 4, 2022, 16:45 UTC, and Crimea from Dec 10, 2022, 22:22 UTC. The files agree:
+
+- **Crimea and Sevastopol:** no rows in either file.
+- **Luhansk:** the official file has one row (Mar 24–28, 2022). The volunteer file has four 30-minute `naive` rows between Feb 28 and Apr 5, 2022. Neither has a row for the permanent alert, and neither has any row starting after Apr 5, 2022.
+
+Summing the files would show these regions as nearly alert-free. **Exclude both and show them as flagged, never as zero.**
+
+### Yellow and red alert levels
+
+**They aren't in the data.** Neither file has a threat-level column.
+
+Background from web search, not checked against the resolution itself: Cabinet Resolution No. 1092 of Sept 2026 set a yellow level (drone threat) and a red level (missile or massed drone threat) ([summary](https://racio.ua/en/statti/air-raid-alerts-at-work-resolution-1092)). Sources differ on whether it is dated Sept 3 or 4. Kyiv's rollout was reported to start Sept 6, with other places following later.
+
+- The official file ends about a day after that reported start.
+- On Sept 7 the channel posted messages titled as strike-drone threats, marked 🔴 or 🟠, alongside ordinary air-raid messages. The upstream parser records only on or off. From its code, an 🟠 post with that title wouldn't count as a start.
+- A Nov 1 channel post says the official app's map shows yellow and red levels. So the levels exist; these files don't carry them.
+- The volunteer file continues after the change. Its national monthly means are 83 hours in August 2026, then 93, 92 and 95 in September to November (November partial). **Can't tell** which levels its alerts include, or whether the change affected these figures. Its parser treats words such as "threat" (`загроза`) and "danger" (`небезпека`) as a start.
+
+**Consequence:** this dataset can't separate drone alerts from missile alerts. Any alert figure from Sept 2026 on also needs a note that the alert system changed.
+
+### Alerts: not checked
+
+- Individual alerts against official or volunteer posts. Only the newest page of the official channel was read.
+- The `_uk` files, including whether they have the same duplicates and end date.
+- Alerts against any independent source, such as alerts.in.ua.
+- Raion boundaries, renames or population (#4).
+- The text of Resolution No. 1092.
+- Whether upstream rewrites past rows. Pinning the commit protects reproducibility either way.

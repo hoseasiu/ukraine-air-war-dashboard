@@ -46,6 +46,7 @@ docs/             spec and data audit
 | Command | What it does |
 |---|---|
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
+| `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
 | `uv run pipeline/audit/weapon_classes.py` | Checks that every raw `model` string has exactly one weapon class, and prints the figures in `data/reference/README.md`. Needs `data/raw/`. |
 | `python .github/scripts/dependency_graph.py --dry-run` | Prints the body of the generated dependency issue (#31). Without `--dry-run`, updates it. Needs `gh`. |
 | `python -m unittest discover -s .github/scripts` | Tests the dependency-graph script. |
@@ -66,6 +67,16 @@ From the audit of the Nov 21 snapshot (#1). Read [docs/data-audit.md](docs/data-
 - Don't sum all rows as attacks: regional reports may repeat national figures, reconnaissance rows are almost all shoot-downs, and daytime and night windows overlap.
 - `time_start` and `time_end` come both with and without a time of day, sometimes with trailing spaces.
 - Read files as UTF-8 explicitly. Printing the Cyrillic strings fails on the Windows console default (cp1252).
+
+From the alerts audit (#2), at upstream commit `1a34978`. Read the [alerts section](docs/data-audit.md#alerts-ukrainian-air-raid-sirens-dataset) before using alert data.
+
+- The official file's last alert starts Sept 7, 2026, and Aug 29 to Sept 2 is largely missing. The owner decided that alert figures end at July 2026; check upstream again at #28.
+- 113,845 official rows appear exactly twice. Drop exact duplicates first.
+- `level` is the administrative level (oblast, raion, hromada), not the yellow/red alert level. Neither file carries yellow/red.
+- Raion alerting phased in during 2025. Don't add up rows or count "any raion" as the whole oblast. Use the accepted [roll-up rule](docs/data-audit.md#roll-up-rule), which averages the raions.
+- Don't splice the volunteer file onto the official one. Their levels differ by area and period.
+- Luhansk and Crimea permanent alerts aren't listed. Show both as excluded, never as zero.
+- Official end times assumed by the upstream parser aren't flagged.
 
 ## Working on issues
 

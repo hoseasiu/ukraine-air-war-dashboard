@@ -240,6 +240,8 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Repo: `ukraine-air-war-dashboard` (replaces the name suggested in §8). Private until the data license check and a review are done.
 - Annotation list (#15): on Nov 25, 2026 the owner approved the nine verified rows in [annotations.csv](../data/reference/annotations.csv). The two unverified rows stay off the site.
 - Issue dependencies: GitHub's "blocked by" links are the only record. A GitHub Action generates a graph and list from them in #31, which replaces the hand-kept table in `DEPENDENCIES.md`.
+- Alert coverage (owner, Nov 25, 2026, #2): alert figures end at July 2026, because the official file stops Sept 7, 2026 and August is incomplete. No volunteer-only view for later months. Check upstream again at the snapshot refresh (#28). This overrides §3's snapshot date for alert data and affects E1–E3 and stops 9 and 10.
+- Alert roll-up (owner, Nov 25, 2026, #2): drop exact duplicates, exclude Luhansk and Crimea, leave out hromada rows, and average each oblast's raions (each raion's rows plus oblast-wide rows), splitting at Kyiv-time midnight. An oblast alert-hour is then an hour for the average raion, and months after the 2025 switch are only partly comparable. Full rule and limits: [data-audit.md](data-audit.md#roll-up-rule).
 
 **Open**
 - Definition of a "massive" night: percentile or fixed threshold (decide in Phase 0).
@@ -252,6 +254,9 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Scope of A5 (#1; for #5): decoys can't be separated. A jet-drone share is possible only from about Aug 28, 2026, with partial coverage in September. This also affects guided stop 3 and the "Shahed-type and decoy" wording.
 - Wording for "since 2022" and "full period" (A1, stops 1 and 2): strike data starts Sept 28, 2022 (#1). Suggested: say "since Sept 28, 2022".
 - News coverage bearing on the ballistic-flag question above (#15): LIGA says the report for Aug 9 already gave no missile count (Meduza, citing Strana, also gives Aug 9), the Air Force confirmed the change publicly on Aug 12, and LIGA says cruise missiles are affected too.
+- Alert source choice (#2; for #5 and #8). The end month is settled above. Suggested for the rest: official file from April 2022; volunteer file only as a cross-check. See [data-audit.md](data-audit.md#proposed-source-choice).
+- Alert granularity flag (#2). §3 and §4 say the switch to raions was in Dec 2025. It phased in during 2025, with the main step in Nov 2025. Suggested: mark the transition from 2025.
+- "Total alert-hours nationwide" in stop 1 (#2). Suggested: replace it with a mean per area (23 oblasts and Kyiv city), because a sum of raion averages is hard to interpret.
 
 ---
 
