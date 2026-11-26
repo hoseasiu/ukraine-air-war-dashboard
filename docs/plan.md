@@ -246,6 +246,10 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Scope of A5 (#1; for #5): decoys can't be separated. A jet-drone share is possible only from about Aug 28, 2026, with partial coverage in September. This also affects guided stop 3 and the "Shahed-type and decoy" wording.
 - Wording for "since 2022" and "full period" (A1, stops 1 and 2): strike data starts Sept 28, 2022 (#1). Suggested: say "since Sept 28, 2022".
 - Final annotation list (Hosea reviews).
+- Alert coverage after July 2026 (#2; affects E1–E3, stops 9 and 10, #8, #28). The official alerts file stops Sept 7, 2026 and August is incomplete, so §3's "updated daily" and the Dec 31 snapshot don't hold for it. Suggested: end alert figures at July 2026 and check upstream again at #28. Alternatives: a separate, labeled volunteer-only view, or auditing another source.
+- Alert roll-up rule and source choice (#2; for #5 and #8). Suggested: drop duplicates; leave out hromada rows; average each oblast's raions (each raion's rows plus oblast-wide rows); official file April 2022 to July 2026; volunteer file only as a cross-check. See [data-audit.md](data-audit.md#proposed-roll-up-rule).
+- Alert granularity flag (#2). §3 and §4 say the switch to raions was in Dec 2025. It phased in during 2025, with the main step in Nov 2025. Suggested: mark the transition from 2025.
+- "Total alert-hours nationwide" in stop 1 (#2). Suggested: replace it with a mean per area (23 oblasts and Kyiv city), because a sum of raion averages is hard to interpret.
 
 ---
 

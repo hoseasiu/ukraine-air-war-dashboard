@@ -28,4 +28,17 @@ Expand-Archive -Path archive.zip -DestinationPath data/raw
 
 ### Air raid sirens
 
-Source: <https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset> (MIT license). Not downloaded yet; see #2 and #6.
+Source: <https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset> (MIT license, Copyright (c) 2022 Vadym Klymenko). Keep that copyright and permission notice with processed files made from it.
+
+Audited at commit `1a349789e45d63a19c8faf46d0e5877cbb36ac8b` (Nov 25, 2026; #2). **The official file at that commit ends Sept 7, 2026** and contains duplicate rows. Read the [alerts audit](../docs/data-audit.md#alerts-ukrainian-air-raid-sirens-dataset) before using either file.
+
+| File | Data rows | SHA-256 |
+|---|---|---|
+| `official_data_en.csv` | 299,275 | `b396f87696243069eec0219880e87dcd642b20beb0a7bae0d0e1f61e1ed20ec4` |
+| `volunteer_data_en.csv` | 124,468 | `c67fb71a19c69e690d4921fd5edc8338892bcf4a5a6b6a23836e600bf2a5f454` |
+
+**Setup:** no login needed. In PowerShell, from the repo root (#6 will replace this with a pipeline command):
+
+```powershell
+foreach ($f in 'official_data_en.csv', 'volunteer_data_en.csv') { Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Vadimkin/ukrainian-air-raid-sirens-dataset/1a349789e45d63a19c8faf46d0e5877cbb36ac8b/datasets/$f" -OutFile "data/raw/$f" }
+```
