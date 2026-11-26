@@ -2,7 +2,7 @@
 
 A teaching dashboard on Russia's missile and drone campaign against Ukraine, built for **Build for Ukraine 3.0** (Day 1: Wed Jan 13, 2027).
 
-**Status:** Phase 0 data audit. There is no application code yet.
+**Status:** early development. The site is a scaffold with no charts yet, and the data pipeline isn't built. To run it, see the site commands in [AGENTS.md](AGENTS.md#commands).
 
 It will have two modes:
 
@@ -29,7 +29,7 @@ Processed data derived from the Kaggle dataset may be shared only under CC BY-NC
 
 Raw files aren't committed. See [data/README.md](data/README.md) to set them up.
 
-## Planned stack
+## Stack
 
 - **Data pipeline:** Python (pandas and DuckDB), run offline with one command, producing small precomputed files
 - **Site:** Vite and TypeScript, Observable Plot and d3-geo; static, with no backend

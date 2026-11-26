@@ -5,6 +5,10 @@
 | `raw/` | Source files, exactly as downloaded. Never edit them or rename their columns. | No |
 | `processed/` | Pipeline outputs that the site loads. Anything derived from Kaggle is CC BY-NC-SA 4.0 (see below). | Yes, with the license notice |
 
+## Snapshot date
+
+`processed/build_info.json` holds `snapshot_date`, which the site shows on every page. The current value, 2026-11-21, is the date of the Kaggle files below, and was entered by hand because there's no pipeline yet (#10). Once the pipeline exists, it should write this file. The alerts data isn't fetched yet, so the date says nothing about it.
+
 ## Current raw files
 
 ### Kaggle: Massive Missile Attacks on Ukraine
