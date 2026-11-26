@@ -66,7 +66,7 @@ def _stop_1(monthly, alerts):
     excluded = ", ".join(a["name"] for a in alerts["excluded_areas"]) or "none"
     lines += [
         f"  Alert hours, mean per area, {alerts['first_day']} to {alerts['last_day']}:",
-        f"    {mean:,.0f} hours in all, or {mean / months:,.1f} a month. Areas: {areas}.",
+        f"    {mean / months:,.1f} hours in an average month. Areas: {areas}.",
         f"    Excluded, not zero: {excluded}.",
         "    Each area is the average of its raions. Some ends may be assumed, and months",
         "    from 2025 are only partly comparable because of the switch to raion alerts.",

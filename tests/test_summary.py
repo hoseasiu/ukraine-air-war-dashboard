@@ -85,7 +85,7 @@ def test_report_gives_the_stop_1_figures_with_their_dates():
     text = report()
     assert "launched, 2026-07-03 to 2026-09-20: 2,200" in text
     assert "2026-07-03 to 2026-07-31: 59.1% (650 of 1,100" in text
-    assert "2026-06-01 to 2026-07-31:\n    30 hours in all, or 15.0 a month. Areas: 2." in text
+    assert "2026-06-01 to 2026-07-31:\n    15.0 hours in an average month. Areas: 2." in text
     assert "Excluded, not zero: Excluded oblast." in text
     assert "Site data: 3 of 100 bytes" in text
 
