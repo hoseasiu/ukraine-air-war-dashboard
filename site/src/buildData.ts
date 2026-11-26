@@ -30,10 +30,30 @@ export function parseBuildInfo(json: unknown): BuildInfo {
   return { snapshotDate: date };
 }
 
-function yesNo(value: string | undefined, column: string): boolean {
+function yesNo(value: string | undefined, column: string, file = "weapon_classes.csv"): boolean {
   if (value === "yes") return true;
   if (value === "no") return false;
-  throw new Error(`weapon_classes.csv: ${column} must be "yes" or "no", got ${JSON.stringify(value)}`);
+  throw new Error(`${file}: ${column} must be "yes" or "no", got ${JSON.stringify(value)}`);
+}
+
+export interface Area {
+  /** ISO 3166-2 code. */
+  id: string;
+  name: string;
+  /** False for areas the alert data doesn't cover. Show them as excluded, never as zero. */
+  inAlertTotals: boolean;
+}
+
+export function parseAreas(csv: string): Area[] {
+  const areas = csvParse(csv).map((row) => {
+    const { iso_3166_2: id, name } = row;
+    if (!id || !name) throw new Error(`oblasts.csv: a row has no iso_3166_2 or name: ${JSON.stringify(row)}`);
+    return { id, name, inAlertTotals: yesNo(row.in_alert_totals, "in_alert_totals", "oblasts.csv") };
+  });
+  if (!areas.length || new Set(areas.map((area) => area.id)).size !== areas.length) {
+    throw new Error("oblasts.csv: needs at least one row, and each iso_3166_2 only once");
+  }
+  return areas;
 }
 
 /** Returns the counted classes, in chart order, with labels from the CSV. */

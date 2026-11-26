@@ -1,6 +1,7 @@
 /**
  * Generic discussion prompts for tabs and guided stops (plan §7). They aren't
- * tied to any course challenge. Drafts for the owner's review (#24).
+ * tied to any course challenge. The owner approved this wording on Nov 25, 2026
+ * (#24); a change to it needs their review again.
  */
 
 /** The three examples in plan §7, in the plan's words. */

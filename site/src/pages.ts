@@ -1,4 +1,5 @@
 import { classKey } from "./classKey.ts";
+import type { Filters } from "./filters/state.ts";
 import { glossaryList, withTerms } from "./glossary/popover.ts";
 import type { TermId } from "./glossary/terms.ts";
 import { promptList } from "./teaching/promptList.ts";
@@ -10,7 +11,14 @@ export interface Page {
   /** Tab text. */
   nav: string;
   heading: string;
-  render(container: HTMLElement): void;
+  /** The filter controls shown under the heading. Leave out for a page that takes none. */
+  filters?: {
+    /** Shows the oblast picker. */
+    oblasts?: boolean;
+    notes: string[];
+  };
+  /** Draws the page below the heading and filters. Called again whenever the filters change. */
+  render(container: HTMLElement, filters: Filters): void;
 }
 
 function paragraph(text: string): HTMLParagraphElement {
@@ -50,6 +58,7 @@ export const PAGES: [Page, ...Page[]] = [
     id: "attacks",
     nav: "A. Attacks",
     heading: "Attacks: scale and rhythm",
+    filters: { notes: ["Strike data starts Sept 28, 2022."] },
     render(container) {
       container.append(
         placeholder([
@@ -67,6 +76,7 @@ export const PAGES: [Page, ...Page[]] = [
     id: "defense",
     nav: "B. Defense",
     heading: "Air defense performance",
+    filters: { notes: ["Strike data starts Sept 28, 2022."] },
     render(container) {
       container.append(
         placeholder([
@@ -83,6 +93,13 @@ export const PAGES: [Page, ...Page[]] = [
     id: "alerts",
     nav: "E. Alerts",
     heading: "Civilian burden from air-raid alerts",
+    filters: {
+      oblasts: true,
+      notes: [
+        "Weapon classes apply only to launch figures, not to alert hours.",
+        "Alert figures end at July 2026, whatever months are selected.",
+      ],
+    },
     render(container) {
       container.append(
         placeholder([

@@ -21,7 +21,7 @@ export interface Stop {
   /** One or two sentences, shown in large type. */
   caption: string;
   view: StopView;
-  /** Discussion prompts shown under the caption. Drafts are in teaching/prompts.ts. */
+  /** Discussion prompts shown under the caption. They come from teaching/prompts.ts. */
   prompts?: readonly string[];
 }
 

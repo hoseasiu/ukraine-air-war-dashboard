@@ -1,7 +1,8 @@
 /**
  * Glossary definitions (plan §7) and the rules for finding their terms in text.
  *
- * Drafts for the owner's review (#24). Claims about this data come from
+ * The owner approved this wording on Nov 25, 2026 (#24); a change to it needs
+ * their review again. Claims about this data come from
  * docs/data-audit.md and data/reference/README.md, and class membership from
  * data/reference/model_classes.csv. The general descriptions of each kind of
  * weapon have no cited source yet.

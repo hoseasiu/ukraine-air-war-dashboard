@@ -32,14 +32,16 @@ Create folders as the work needs them, and update this section if you choose dif
 
 ```
 data/raw/         source files (gitignored; setup in data/README.md)
-data/reference/   hand-editable tables: weapon-class mapping, oblast gazetteer, annotations
+data/reference/   hand-editable tables (weapon-class mapping, oblast gazetteer, annotations) and the generated map boundaries
 data/processed/   pipeline outputs, with their license notice
 pipeline/         Python data build; columns.py is the only place raw columns are renamed
 pipeline/audit/   rerunnable audit scripts (read raw data, write nothing)
+pipeline/reference/ rebuilds generated reference files
 tests/            pipeline tests
 site/             Vite + TypeScript front end
 site/src/theme/   weapon-class styles (the only color definitions), patterns and Plot defaults
 site/src/chart/   the shared chart frame and its data-quality flag rules
+site/src/filters/ global filters: URL state and controls
 site/src/glossary/ term definitions, term matching and popovers
 site/src/teaching/ discussion prompts for tabs and guided stops
 site/tests/       site tests
@@ -54,11 +56,13 @@ Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` instal
 |---|---|
 | `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json` and `build_info.json`. It's a stub until #7 and #8 add the tables. |
 | `uv run python -m pipeline fetch` | Only downloads and verifies the pinned alert files. |
-| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)). |
+| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. |
 | `uv run ruff check .` | Lints the Python, apart from `.github/`. |
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
 | `uv run pipeline/audit/weapon_classes.py` | Checks that every raw `model` string has exactly one weapon class, and prints the figures in `data/reference/README.md`. Needs `data/raw/`. |
+| `uv run pipeline/audit/gazetteer.py` | Checks that every alert-file oblast name and Kaggle `affected region` item resolves, and that the raion list matches the official alert file. Needs the Kaggle and alert CSVs in `data/raw/`. |
+| `uv run pipeline/reference/build_boundaries.py` | Rebuilds `data/reference/ukraine_admin1.geojson`. Needs the [boundary zip](data/README.md#boundaries) in `data/raw/`. |
 | `python .github/scripts/dependency_graph.py --dry-run` | Prints the body of the generated dependency issue (#31). Without `--dry-run`, updates it. Needs `gh`. |
 | `python -m unittest discover -s .github/scripts` | Tests the dependency-graph script. |
 
@@ -69,16 +73,17 @@ Site commands run from `site/` and need Node 22.12 or later:
 | `npm ci` | Installs the locked dependencies. Run once per clone or worktree. |
 | `npm run dev` | Serves the site locally with live reload. |
 | `npm run typecheck` | Type-checks the site. CI runs it. |
-| `npm test` | Tests the data-quality flag rules and glossary term matching. CI runs it. |
-| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`. CI runs it. |
+| `npm test` | Tests the data-quality flag rules, the filters’ URL state and glossary term matching. CI runs it. |
+| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `oblasts.csv`. CI runs it. |
 | `npm run preview` | Serves the built site locally. |
 
-Site tests cover only the flag rules and glossary matching, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
+Site tests cover only the flag rules, the filters' URL state and glossary matching, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
 
 ## Site notes
 
 - Pages are URL hashes (`#attacks`, `#defense`, `#alerts`, `#methods`). Asset paths are relative, so the build works under any subpath. A plain in-page anchor such as `#main` would be read as a route.
 - Guided mode is `#stop-N`. Its stops are data in `site/src/guided/stops.ts`, and a new kind of chart view also needs a case in `views.ts`. A stop's view takes all its settings from that data, and guided mode never reads or writes the query string, which belongs to the exploration filters. #11 should keep it that way.
+- Global filters live in the query string, such as `?from=2023-01&classes=cruise#attacks` ([state.ts](site/src/filters/state.ts)). A page asks for the controls with `filters` in [pages.ts](site/src/pages.ts), and its `render()` gets the current values and runs again after each change, so charts shouldn't keep their own copy. Applying them is each chart's job: clamp the months to the data it has, and leave out classes that are off.
 - Text that may use a defined term goes through `withTerms()` ([popover.ts](site/src/glossary/popover.ts)), which adds the popovers; page paragraphs, guided captions, class labels and the chart frame already do. Don't use it inside a link, button or heading. Definitions and match patterns are in [terms.ts](site/src/glossary/terms.ts), and discussion prompts in [prompts.ts](site/src/teaching/prompts.ts).
 - Data is imported at build time through `site/src/data.ts`, never fetched.
 - Charts take colors, patterns, symbols and dashes from `site/src/theme/`. Dashes aren't a Plot scale, so line charts set them per class from `CLASS_STYLES`.
@@ -100,6 +105,12 @@ From the audit of the Nov 21 snapshot (#1). Read [docs/data-audit.md](docs/data-
 - Don't sum all rows as attacks: regional reports may repeat national figures, reconnaissance rows are almost all shoot-downs, and daytime and night windows overlap.
 - `time_start` and `time_end` come both with and without a time of day, sometimes with trailing spaces.
 - Read files as UTF-8 explicitly. Printing the Cyrillic strings fails on the Windows console default (cp1252).
+
+From the gazetteer (#4). Read [data/reference/gazetteer.md](data/reference/gazetteer.md) before matching place names or drawing the map.
+
+- Match area names exactly through `oblast_aliases.csv`. `Kyiv` is the city. `Ukraine` in `affected region` is nationwide, not an oblast.
+- Join map data on `iso_3166_2`. The boundary source's P-codes differ from ISO codes for several areas.
+- The boundary rings are wound for d3-geo, not RFC 7946. Show the boundary credit with the map (CC BY-IGO).
 
 From the alerts audit (#2), at upstream commit `1a34978`. Read the [alerts section](docs/data-audit.md#alerts-ukrainian-air-raid-sirens-dataset) before using alert data.
 
