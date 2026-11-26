@@ -3,10 +3,12 @@ import * as Plot from "@observablehq/plot";
 import { chartFrame, formatMonth, type ChartSpec, type Target } from "../chart/chartFrame.ts";
 import { monthPeriod, type ColumnSpec } from "../chart/flags.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
-import { formatDate, monthlyTable } from "../data.ts";
+import { drawMarkers, eventKey, MARKER_ROW } from "../annotations/eventMarkers.ts";
+import { placeMarkers } from "../annotations/markerLayout.ts";
+import { annotations, formatDate, monthlyTable } from "../data.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
 import { classFillScale, plotDefaults } from "../theme/plot.ts";
-import { chartSvg, classLabels, monthAxisTicks, percent, strikeFootnote, svgText } from "./shared.ts";
+import { chartSvg, classLabels, create, monthAxisTicks, percent, strikeFootnote, svgText, type FixedView } from "./shared.ts";
 import { monthRows, monthsShown, type MonthChartRow, type Selection } from "./strikeData.ts";
 
 const BASE_COLUMNS: ColumnSpec[] = [
@@ -35,14 +37,30 @@ function largestMonth(rows: readonly MonthChartRow[]): string {
   return `${formatMonth(month)}, with ${total.toLocaleString("en-US")}`;
 }
 
-export function monthlyLaunchChart(selection: Selection): HTMLElement {
+export interface MonthlyChartOptions {
+  /** A guided stop's view: no wording about filters, and a height that fits the screen. */
+  fixed?: FixedView;
+  /** Numbered markers for the cited events, with their dates and citations under the chart. */
+  events?: boolean;
+}
+
+export function monthlyLaunchChart(selection: Selection, options: MonthlyChartOptions = {}): HTMLElement {
   const rows = monthRows(monthlyTable, selection, formatDate);
   const months = monthsShown(monthlyTable, selection.from, selection.to);
-  return chartFrame<MonthChartRow>({
-    title: "Monthly launches by weapon class",
+  // One class has no legend, so the title has to name it.
+  const only = selection.classes.length === 1 ? classLabels[selection.classes[0]!] : null;
+  const markers = options.events ? placeMarkers(annotations, months) : [];
+  const markerSpace = markers.length ? (Math.max(...markers.map((marker) => marker.row)) + 1) * MARKER_ROW : 0;
+  const chart = chartFrame<MonthChartRow>({
+    title: only ? `Monthly launches: ${only}` : "Monthly launches by weapon class",
     howToRead:
-      "Each bar is one month’s published launches, stacked by weapon class, daytime reports included. " +
-      "Drones far outnumber missiles in most months; turn classes off in the filters to rescale the bars. " +
+      (only
+        ? "Each bar is one month’s published launches in this class, daytime reports included. "
+        : "Each bar is one month’s published launches, stacked by weapon class, daytime reports included. ") +
+      (options.fixed
+        ? ""
+        : "Drones far outnumber missiles in most months; turn classes off in the filters to rescale the bars. ") +
+      (markers.length ? "Each numbered marker sits over the month of an event listed under the chart. " : "") +
       "The first and last months of the data are partial.",
     description: rows.length
       ? `Stacked bar chart of published launches per month by weapon class, ${formatMonth(months[0]!)} to ` +
@@ -58,7 +76,9 @@ export function monthlyLaunchChart(selection: Selection): HTMLElement {
       const plot = Plot.plot({
         ...plotDefaults,
         width,
-        height: 420,
+        height: options.fixed?.height ?? 420 + markerSpace,
+        marginTop: plotDefaults.marginTop + markerSpace,
+        marginBottom: 32,
         x: { type: "band", domain: months, padding: 0.15, label: null, ...monthAxisTicks(months, width) },
         y: { label: "Published launches", grid: true },
         color: classFillScale(classLabels),
@@ -79,9 +99,14 @@ export function monthlyLaunchChart(selection: Selection): HTMLElement {
       const totals = new Map<string, number>();
       for (const row of data) totals.set(row.month, (totals.get(row.month) ?? 0) + (row.launched ?? 0));
       const targets = plotTargets(plot, data, { x: (r) => r.month, y: (r) => totals.get(r.month) });
+      drawMarkers(plot, markers);
       return { element: plot, targets };
     },
   });
+  if (!markers.length) return chart;
+  const wrapper = create("div", "event-chart");
+  wrapper.append(chart, eventKey(markers, monthlyTable.firstDay));
+  return wrapper;
 }
 
 const PANEL_HEIGHT = 190;

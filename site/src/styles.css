@@ -142,20 +142,6 @@ tbody th {
   display: block;
 }
 
-.highlight th,
-.highlight td {
-  font-weight: 700;
-  border-block: 3px solid var(--ink);
-}
-
-.highlight-note {
-  display: inline-block;
-  margin-left: 0.5rem;
-  padding: 0 0.4rem;
-  font-size: 0.8rem;
-  border: 2px solid var(--ink);
-}
-
 /* Guided mode: large type for a projector, with controls that stay on screen. */
 .stop-title {
   font-size: 2.25rem;

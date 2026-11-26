@@ -20,10 +20,10 @@ export const alertMonthly = parseAlertMonthly(alertMonthlyJson, alertAreas);
 export const boundaries = parseBoundaries(boundariesText, alertAreas);
 export const nightTable = parseNights(nightsJson);
 export const monthlyTable = parseMonthly(monthlyByClassJson);
+export const annotations = parseAnnotations(annotationsCsv);
 // Tab B's copies, which keep destroyed counts and rates.
 export const outcomeTable = parseOutcomes(nightsJson);
 export const rateTable = parseRates(monthlyByClassJson);
-export const annotations = parseAnnotations(annotationsCsv);
 
 /** Names of the areas left out of every alert figure. */
 export function excludedAlertAreas(): string[] {

@@ -14,6 +14,12 @@ export const barValue = new Intl.NumberFormat("en-US", { maximumFractionDigits: 
 
 export const percent = new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 1 });
 
+/** Settings for a guided stop's view of a chart. */
+export interface FixedView {
+  /** About how tall the drawing should be, in pixels, to fit the screen. */
+  height: number;
+}
+
 export function create<K extends keyof HTMLElementTagNameMap>(
   tag: K,
   className = "",

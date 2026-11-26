@@ -43,10 +43,11 @@ site/             Vite + TypeScript front end
 site/src/theme/   weapon-class styles (the only class color definitions), oblast line styles, patterns, Plot defaults and the alert-hours scale
 site/src/chart/   the shared chart frame and its data-quality flag rules
 site/src/alerts/  tab E charts (alert-hours map, oblast comparison, alerts and launches) and the checks on their data
-site/src/annotations/ reading the event annotations: only verified, owner-approved rows
+site/src/annotations/ reading the event annotations (only verified, owner-approved rows), and numbered event markers with their citations
 site/src/filters/ global filters: URL state and controls
 site/src/defense/ the defense tab: its charts, and the checks on and rows from the destroyed counts and rates
 site/src/glossary/ term definitions, term matching and popovers
+site/src/guided/  guided mode: the stops, the engine that steps through them, and stop 1's headline numbers
 site/src/strikes/ the attacks tab: its charts, and the checks on and sums from the strike tables
 site/src/teaching/ discussion prompts for tabs and guided stops
 site/tests/       site tests
@@ -81,11 +82,11 @@ Site commands run from `site/` and need Node 22.12 or later:
 | `npm ci` | Installs the locked dependencies. Run once per clone or worktree. |
 | `npm run dev` | Serves the site locally with live reload. |
 | `npm run typecheck` | Type-checks the site. CI runs it. |
-| `npm test` | Tests the data-quality flag rules, the filters’ URL state, glossary term matching, tab E’s chart data, the attacks and defense tabs’ figures, and the before/after windows and annotation display rule. CI runs it. |
-| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `nights.json` or `monthly_by_class.json` (including a massive label that disagrees with its year's bar), or on a bad `oblasts.csv`, `alert_hours_monthly.json` or boundary file (every included area needs every month, and every area one boundary), or if a before/after panel event isn't verified, approved and cited in `annotations.csv`. CI runs it. |
+| `npm test` | Tests the data-quality flag rules, the filters’ URL state, glossary term matching, tab E’s chart data, the attacks and defense tabs’ figures, the before/after windows, the annotation display rule, stop 1’s headline numbers, marker placement and guided stepping. CI runs it. |
+| `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `nights.json` or `monthly_by_class.json` (including a massive label that disagrees with its year's bar), or on a bad `oblasts.csv`, `alert_hours_monthly.json` or boundary file (every included area needs every month, and every area one boundary), or on a shown annotation that fails its checks, or if a before/after panel event isn't verified, approved and cited in `annotations.csv`. CI runs it. |
 | `npm run preview` | Serves the built site locally. |
 
-Site tests cover only the flag rules, the filters' URL state, glossary matching, tab E's chart data and the attacks and defense tabs' figures, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. **Whoever adds a command records it here.**
+Site tests cover only data and logic (the list above), not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. **Whoever adds a command records it here.**
 
 ## Site notes
 
@@ -93,6 +94,9 @@ Site tests cover only the flag rules, the filters' URL state, glossary matching,
 - The build writes `licenses.txt` ([licenses.ts](site/licenses.ts)) and `third-party-licenses.txt` (Vite's `build.license`), linked from the footer. A new data source needs a notice in the first. The dev server serves only the first.
 - Pages are URL hashes (`#attacks`, `#defense`, `#alerts`, `#methods`). Asset paths are relative, so the build works under any subpath. A plain in-page anchor such as `#main` would be read as a route.
 - Guided mode is `#stop-N`. Its stops are data in `site/src/guided/stops.ts`, and a new kind of chart view also needs a case in `views.ts`. A stop's view takes all its settings from that data, and guided mode never reads or writes the query string, which belongs to the exploration filters. #11 should keep it that way.
+- The owner approved the titles and captions of stops 1–6 (#21); changing one needs their review again. New ones, such as #22's, are drafts until they approve them. Keep counts out of captions. A stop with a `reveal` takes two presses of Next. For a chart's guided version, pass its `fixed` option, which drops wording about filters and sizes it to the screen. Stop views also move “How to read this” below the chart ([views.ts](site/src/guided/views.ts)); badges stay above. Check new stops at 1920 × 1080 and 1280 × 720.
+- Event markers come from `data/reference/annotations.csv`, only rows that are verified and approved ([annotationData.ts](site/src/annotations/annotationData.ts)). Always show `eventKey()` with them, for the citations.
+- A figure outside a chart still gets its badges from `chartFlags()`, drawn with `flagList()` ([headlineData.ts](site/src/guided/headlineData.ts)).
 - Global filters live in the query string, such as `?from=2023-01&classes=cruise#attacks` ([state.ts](site/src/filters/state.ts)). A page asks for the controls with `filters` in [pages.ts](site/src/pages.ts), and its `render()` gets the current values and runs again after each change, so charts shouldn't keep their own copy. Applying them is each chart's job: clamp the months to the data it has, and leave out classes that are off.
 - Text that may use a defined term goes through `withTerms()` ([popover.ts](site/src/glossary/popover.ts)), which adds the popovers; page paragraphs, guided captions, class labels and the chart frame already do. Don't use it inside a link, button or heading. Definitions and match patterns are in [terms.ts](site/src/glossary/terms.ts), and discussion prompts in [prompts.ts](site/src/teaching/prompts.ts).
 - Data is imported at build time through `site/src/data.ts`, never fetched.

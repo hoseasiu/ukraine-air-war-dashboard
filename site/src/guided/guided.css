@@ -1,0 +1,206 @@
+/* Guided stop views. The shared guided-mode type and controls are in styles.css. */
+
+/* Tighter page chrome, so a stop's view and its caveats get the screen. */
+body:has(.guided) .preview-note {
+  margin-top: 0.25rem;
+  padding: 0.1rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+body:has(.guided) h1 {
+  margin: 0.2rem 0 0;
+  font-size: 1.1rem;
+}
+
+body:has(.guided) .snapshot {
+  font-size: 0.85rem;
+}
+
+body:has(.guided) nav a {
+  padding-block: 0.2rem;
+  font-size: 0.85rem;
+}
+
+.guided .stop-title {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 2rem;
+}
+
+.guided .stop-caption {
+  max-width: 44em;
+  margin: 0 0 0.6rem;
+  font-size: 1.5rem;
+}
+
+.guided .stop-prompts ul {
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.headline .chart-badges {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+.stop-view .chart-frame h3 {
+  font-size: 1.15rem;
+}
+
+/* Badges sit side by side, so the chart starts higher up. */
+.stop-view .chart-badges {
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: 0.3rem 1rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.stop-view .chart-toggle {
+  padding: 0.15rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.stop-view .chart-legend {
+  gap: 0 1rem;
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.stop-view .chart-scroll {
+  margin-top: 0.25rem;
+}
+
+.stop-view .strike-key,
+.stop-view .strike-key-title {
+  margin-top: 0.25rem;
+}
+
+.stop-view .chart-how-to-read {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+}
+
+/* One row for the title, snapshot date and tabs. */
+@media (min-width: 62rem) {
+  body:has(.guided) header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  body:has(.guided) .preview-note {
+    width: 100%;
+  }
+
+  body:has(.guided) .masthead {
+    gap: 0 1rem;
+  }
+
+  body:has(.guided) nav ul {
+    border-bottom: 0;
+  }
+}
+
+/* A short screen, such as 1280 by 720. */
+@media (max-height: 850px) {
+  .guided .stop-title {
+    margin-top: 0.25rem;
+    font-size: 1.6rem;
+  }
+
+  .guided .stop-caption {
+    margin-bottom: 0.35rem;
+    font-size: 1.3rem;
+  }
+
+  .guided .stop-prompts ul {
+    margin-bottom: 0.25rem;
+    font-size: 1.15rem;
+  }
+}
+
+/* One night's launch areas, beside their class names to keep them short. */
+.stop-view .night-breakdown h4 {
+  margin: 0;
+}
+
+.stop-view .night-breakdown h4 + p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.stop-view .night-places {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.2rem 1rem;
+  max-width: none;
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
+}
+
+.stop-view .night-places dt,
+.stop-view .night-places dd {
+  margin: 0;
+}
+
+.headlines {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.headline {
+  padding-top: 0.5rem;
+  border-top: 3px solid var(--ink);
+}
+
+.headline p {
+  margin: 0 0 0.4rem;
+}
+
+.headline .headline-value {
+  margin: 0;
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.headline .headline-label {
+  font-size: 1.2rem;
+  line-height: 1.3;
+}
+
+.headline .headline-dates {
+  font-weight: 700;
+}
+
+.headline-note,
+.headline-credit {
+  color: var(--ink-secondary);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* At the end of the control bar, so showing it doesn't move Back and Next. */
+.stop-controls .stop-reveal {
+  position: absolute;
+  right: 1rem;
+}
+
+/* On a narrow screen it sits above the bar instead. */
+@media (max-width: 52rem) {
+  .stop-controls .stop-reveal {
+    bottom: calc(100% + 0.25rem);
+  }
+}
+
+/* A stop's chart sits right under its caption. */
+.stop-view .chart-frame,
+.stop-view .night-breakdown {
+  margin: 0.5rem 0 1rem;
+}

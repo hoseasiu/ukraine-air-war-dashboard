@@ -1,0 +1,34 @@
+/* A dashed gray line under a ringed number, so a marker doesn't look like data. */
+.event-rule {
+  stroke: var(--ink-secondary);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.event-dot {
+  fill: var(--surface);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.event-key ol {
+  columns: 28rem 2;
+  column-gap: 2.5rem;
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.event-key li {
+  break-inside: avoid;
+  margin-bottom: 0.25rem;
+}
+
+.event-sources {
+  color: var(--ink-secondary);
+  font-size: 0.8rem;
+}
+
+.event-sources a {
+  color: var(--accent);
+}

@@ -24,9 +24,12 @@ export interface NightBreakdownSettings {
   /** Dates the reader can switch between. Leave out, or give one, for a fixed night. */
   choices?: readonly string[];
   onDateChange?(date: string): void;
+  /** Shorter bar rows, so a guided stop's launch areas are on screen too. */
+  compact?: boolean;
 }
 
 const ROW_HEIGHT = 52;
+const COMPACT_ROW_HEIGHT = 36;
 
 /** What the whole night's reports say, whatever classes are shown. */
 function nightSentence(date: string): string {
@@ -45,7 +48,10 @@ function nightSentence(date: string): string {
   return `${count.format(total)} weapons with published counts were launched, in all counted classes, ${verdict}`;
 }
 
-function spec(date: string, classes: readonly ClassId[], controls?: HTMLElement): ChartSpec<BreakdownRow> {
+function spec(
+  { date, classes, compact }: Pick<NightBreakdownSettings, "date" | "classes" | "compact">,
+  controls?: HTMLElement,
+): ChartSpec<BreakdownRow> {
   const rows = breakdownRows(nightTable, date, classes);
   const sentence = nightSentence(date);
   const year = Number(date.slice(0, 4));
@@ -96,7 +102,7 @@ function spec(date: string, classes: readonly ClassId[], controls?: HTMLElement)
       const plot = Plot.plot({
         ...plotDefaults,
         width,
-        height: data.length * ROW_HEIGHT + 50,
+        height: data.length * (compact ? COMPACT_ROW_HEIGHT : ROW_HEIGHT) + 50,
         marginTop: 6,
         marginLeft: margin,
         marginRight: 64,
@@ -177,14 +183,14 @@ export function nightBreakdown(settings: NightBreakdownSettings): HTMLElement {
     controls.append(label, select);
   }
 
-  const chart = liveChartFrame(spec(settings.date, settings.classes, controls));
+  const chart = liveChartFrame(spec(settings, controls));
   const places = create("div");
   places.append(...placeList(settings.date, settings.classes));
   wrapper.append(chart.element, places);
 
   select?.addEventListener("change", () => {
     const date = select.value;
-    chart.update(spec(date, settings.classes, controls));
+    chart.update(spec({ ...settings, date }, controls));
     places.replaceChildren(...placeList(date, settings.classes));
     settings.onDateChange?.(date);
   });

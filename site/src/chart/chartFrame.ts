@@ -139,7 +139,8 @@ function tooltipContent<Row extends object>(
   };
 }
 
-function badges(flags: readonly FlagId[]): HTMLUListElement {
+/** The data-quality badges. A figure outside a chart gets its flags from chartFlags() too. */
+export function flagList(flags: readonly FlagId[]): HTMLUListElement {
   const list = create("ul", "chart-badges");
   list.setAttribute("aria-label", "Data-quality notes");
   // Shared, so a term repeated across badges is marked once.
@@ -304,7 +305,7 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
     title.textContent = spec.title;
     howToRead.replaceChildren(create("strong", "", "How to read this: "), ...withTerms(spec.howToRead));
     description.textContent = spec.description;
-    badgeSlot.replaceChildren(...(flags.length ? [badges(flags)] : []));
+    badgeSlot.replaceChildren(...(flags.length ? [flagList(flags)] : []));
 
     const hasRows = spec.rows.length > 0;
     empty.hidden = hasRows;
