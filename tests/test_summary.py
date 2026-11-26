@@ -71,6 +71,12 @@ def test_share_adds_counts_before_dividing():
     assert intercept_share(MONTHLY["rows"]) == (1460, 2000)
 
 
+def test_report_share_stops_at_the_end_of_july_2026():
+    (line,) = [x for x in report().splitlines() if "launches with an outcome" in x]
+    assert line.strip().startswith("2026-07-03 to 2026-07-31:")
+    assert "stop at July 31, 2026" in report()
+
+
 def test_alert_hours_are_a_mean_over_areas_not_a_sum():
     assert mean_area_hours(ALERTS) == (30.0, 2, 2)
 
@@ -79,7 +85,6 @@ def test_report_gives_the_stop_1_figures_with_their_dates():
     text = report()
     assert "launched, 2026-07-03 to 2026-09-20: 2,200" in text
     assert "2026-07-03 to 2026-07-31: 59.1% (650 of 1,100" in text
-    assert "2026-07-03 to 2026-09-20: 73.0% (1,460 of 2,000" in text
     assert "2026-06-01 to 2026-07-31:\n    30 hours in all, or 15.0 a month. Areas: 2." in text
     assert "Excluded, not zero: Excluded oblast." in text
     assert "Site data: 3 of 100 bytes" in text
@@ -87,9 +92,8 @@ def test_report_gives_the_stop_1_figures_with_their_dates():
 
 def test_report_keeps_the_caveats():
     text = report()
-    # The EW caveat comes with the shares, and the open question isn't presented as settled.
+    # The EW caveat comes with the share.
     assert '"Destroyed" includes weapons lost to electronic warfare.' in text
-    assert "NOT SETTLED" in text
     assert text.count("restriction from 2026-08-11") + text.count(
         "RESTRICTION from 2026-08-11"
     ) >= 2

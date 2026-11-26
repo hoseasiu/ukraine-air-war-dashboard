@@ -55,12 +55,12 @@ def _stop_1(monthly, alerts):
     if before:
         end = month_end(max(r["month"] for r in before)).isoformat()
         lines.append(_share_line(first, min(end, last), before))
+    else:
+        lines.append(f"    none: no rows before {MISSILE_RATES_END_BEFORE}")
     lines += [
-        _share_line(first, last, rows),
         f"    {EW_CAVEAT}",
-        f"    A figure that reaches {restriction} or later is under the restriction.",
-        "    NOT SETTLED: how an all-class share treats missile and mixed rows from",
-        "    August 2026 is open (docs/plan.md section 11). Neither figure is approved.",
+        "    All-class shares stop at July 31, 2026, before missile reporting was",
+        "    restricted (owner's decision, docs/plan.md section 11).",
     ]
     mean, areas, months = mean_area_hours(alerts)
     excluded = ", ".join(a["name"] for a in alerts["excluded_areas"]) or "none"
