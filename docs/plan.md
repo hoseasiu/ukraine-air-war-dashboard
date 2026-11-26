@@ -246,7 +246,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - How daytime reports fit "attack night" keyed by end date, given overlapping windows (#1; for #5 and #7).
 - Scope of A5 (#1; for #5): decoys can't be separated. A jet-drone share is possible only from about Aug 28, 2026, with partial coverage in September. This also affects guided stop 3 and the "Shahed-type and decoy" wording.
 - Wording for "since 2022" and "full period" (A1, stops 1 and 2): strike data starts Sept 28, 2022 (#1). Suggested: say "since Sept 28, 2022".
-- Final annotation list (Hosea reviews).
+- Final annotation list (Hosea reviews). Candidates are in [annotations.csv](../data/reference/annotations.csv), all pending (#15). News coverage adds to the ballistic-flag question above: LIGA says the report for Aug 9 already gave no missile count (Meduza, citing Strana, also gives Aug 9), the Air Force confirmed the change publicly on Aug 12, and LIGA says cruise missiles are affected too.
 
 ---
 

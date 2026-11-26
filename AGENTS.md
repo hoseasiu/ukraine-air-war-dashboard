@@ -48,6 +48,7 @@ docs/             spec and data audit
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `python .github/scripts/dependency_graph.py --dry-run` | Prints the body of the generated dependency issue (#31). Without `--dry-run`, updates it. Needs `gh`. |
 | `python -m unittest discover -s .github/scripts` | Tests the dependency-graph script. |
+| `python -m unittest discover -s tests` | Checks `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)). |
 
 No pipeline or site build or test commands exist yet. #6 adds the pipeline commands and #10 the site commands. **Whoever adds a command records it here.**
 
