@@ -248,6 +248,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 
 **Open**
 - Definition of a "massive" night: percentile or fixed threshold (decide in Phase 0).
+- Glossary definitions and discussion prompts (#24). The coding agent drafted [terms.ts](../site/src/glossary/terms.ts) and [prompts.ts](../site/src/teaching/prompts.ts); the owner hasn't reviewed them. The general descriptions of weapons, EW and decoys have no cited source. Suggested: the owner approves the wording, and says whether those descriptions need citations before they ship (§9 Phase 5 asks that numbers trace to a source).
 - Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January).
 - Which three oblasts to compare in stop 10 (suggested: Kharkiv, Kyiv city, Lviv).
 - Ballistic-restriction flag start date (#1). This plan and `AGENTS.md` rule 3 say after Aug 12, 2026. The Kaggle page says reporting stopped Aug 10, and `hidden` rows end from Aug 11. They also cover some cruise and anti-ship missiles. Suggested: flag every night ending Aug 11 or later and call it a missile-reporting restriction.

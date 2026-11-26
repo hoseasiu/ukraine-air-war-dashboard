@@ -5,6 +5,7 @@
  * These are placeholders that exercise the engine. #21 and #22 replace them;
  * captions need the owner's sign-off.
  */
+import { STOP_PROMPTS } from "../teaching/prompts.ts";
 import type { ClassId } from "../theme/classStyles.ts";
 
 /**
@@ -20,6 +21,8 @@ export interface Stop {
   /** One or two sentences, shown in large type. */
   caption: string;
   view: StopView;
+  /** Discussion prompts shown under the caption. Drafts are in teaching/prompts.ts. */
+  prompts?: readonly string[];
 }
 
 export const STOPS: [Stop, ...Stop[]] = [
@@ -37,5 +40,6 @@ export const STOPS: [Stop, ...Stop[]] = [
     title: "Placeholder: highlight",
     caption: "This placeholder stop shows the same view with one weapon class highlighted.",
     view: { kind: "class-key", highlight: "shahed_drone" },
+    prompts: STOP_PROMPTS.closing,
   },
 ];

@@ -2,6 +2,8 @@
  * Guided mode: steps through STOPS. The URL hash is its only state. It never
  * reads or writes the query string, which belongs to the exploration filters.
  */
+import { withTerms } from "../glossary/popover.ts";
+import { promptList } from "../teaching/promptList.ts";
 import { STOPS, type Stop } from "./stops.ts";
 import { renderView } from "./views.ts";
 
@@ -72,6 +74,7 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
   const heading = create("h2", "stop-title");
   heading.tabIndex = -1;
   const caption = create("p", "stop-caption");
+  const prompts = create("div", "stop-prompts");
   const view = create("div", "stop-view");
 
   const back = stepButton("Back", -1);
@@ -86,7 +89,7 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
   const announcer = create("p", "visually-hidden");
   announcer.setAttribute("role", "status");
 
-  root.append(heading, caption, view, controls, announcer);
+  root.append(heading, caption, prompts, view, controls, announcer);
 
   window.addEventListener("keydown", (event) => {
     const step = KEY_STEPS[event.key];
@@ -100,16 +103,18 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
   });
 
   function fill(stop: Stop, number: number): void {
-    const focusWasInView = view.contains(document.activeElement);
+    // Focus inside any of these, such as on a glossary term, goes away with the old stop.
+    const focusWasReplaced = [caption, prompts, view].some((part) => part.contains(document.activeElement));
     heading.textContent = stop.title;
-    caption.textContent = stop.caption;
+    caption.replaceChildren(...withTerms(stop.caption));
+    prompts.replaceChildren(...(stop.prompts ? [promptList(stop.prompts)] : []));
     view.replaceChildren();
     renderView(view, stop.view);
     // aria-disabled rather than disabled, which would drop focus at either end.
     back.setAttribute("aria-disabled", String(number === 1));
     next.setAttribute("aria-disabled", String(number === STOPS.length));
     indicator.textContent = `Stop ${number} / ${STOPS.length}`;
-    if (focusWasInView) heading.focus({ preventScroll: true });
+    if (focusWasReplaced) heading.focus({ preventScroll: true });
   }
 
   return {
@@ -126,7 +131,9 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
       }
       fill(stop, number);
       const position = `Stop ${number} of ${STOPS.length}`;
-      if (!entering) announcer.textContent = `${position}. ${stop.title}. ${stop.caption}`;
+      if (!entering) {
+        announcer.textContent = [`${position}.`, `${stop.title}.`, stop.caption, ...(stop.prompts ?? [])].join(" ");
+      }
       return `${position}: ${stop.title}`;
     },
   };
