@@ -54,4 +54,5 @@ Work is tracked in [GitHub issues](https://github.com/hoseasiu/ukraine-air-war-d
 - [docs/plan.md](docs/plan.md): the full spec and decision log
 - [docs/data-audit.md](docs/data-audit.md): what the data can and can't support
 - [AGENTS.md](AGENTS.md): rules for coding sessions
-- [DEPENDENCIES.md](DEPENDENCIES.md): issue order and file-overlap risks
+- [DEPENDENCIES.md](DEPENDENCIES.md): how issue dependencies work, and file-overlap risks
+- [Dependency graph](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/31): generated issue showing what's blocked and what's ready
