@@ -8,6 +8,7 @@ import oblastsCsv from "../../data/reference/oblasts.csv?raw";
 import weaponClassesCsv from "../../data/reference/weapon_classes.csv?raw";
 import { parseAlertMonthly, parseBoundaries } from "./alerts/alertData.ts";
 import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./buildData.ts";
+import { parseOutcomes, parseRates } from "./defense/defenseData.ts";
 import { parseMonthly, parseNights } from "./strikes/strikeData.ts";
 
 export const buildInfo = parseBuildInfo(buildInfoJson);
@@ -17,6 +18,9 @@ export const alertMonthly = parseAlertMonthly(alertMonthlyJson, alertAreas);
 export const boundaries = parseBoundaries(boundariesText, alertAreas);
 export const nightTable = parseNights(nightsJson);
 export const monthlyTable = parseMonthly(monthlyByClassJson);
+// Tab B's copies, which keep destroyed counts and rates.
+export const outcomeTable = parseOutcomes(nightsJson);
+export const rateTable = parseRates(monthlyByClassJson);
 
 /** Names of the areas left out of every alert figure. */
 export function excludedAlertAreas(): string[] {

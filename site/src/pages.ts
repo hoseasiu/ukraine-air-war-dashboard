@@ -1,6 +1,7 @@
 import { alertMap } from "./alerts/alertMap.ts";
 import { attacksTab } from "./strikes/attacksTab.ts";
 import { classKey } from "./classKey.ts";
+import { defenseTab } from "./defense/defenseTab.ts";
 import type { Filters } from "./filters/state.ts";
 import { glossaryList, withTerms } from "./glossary/popover.ts";
 import type { TermId } from "./glossary/terms.ts";
@@ -73,14 +74,11 @@ export const PAGES: [Page, ...Page[]] = [
     nav: "B. Defense",
     heading: "Air defense performance",
     filters: { notes: ["Strike data starts Sept 28, 2022."] },
-    render(container) {
+    render(container, filters) {
       container.append(
-        placeholder([
-          "How has the reported intercept rate for each weapon class changed over time?",
-          "Do larger or more mixed salvos let more weapons through?",
-          "How did reported intercept rates differ before and after notable events?",
-        ]),
         paragraph("In the source reports, “destroyed” includes weapons lost to electronic warfare."),
+        defenseTab(filters),
+        placeholder(["How did reported intercept rates differ before and after notable events?"], "Still to come on this page:"),
         discussion(TAB_PROMPTS.defense),
       );
     },
