@@ -8,28 +8,56 @@
   font-size: 1.3rem;
 }
 
-.chart-how-to-read {
-  margin: 0 0 0.75rem;
+.chart-subtitle {
   max-width: 60rem;
+  margin: 0 0 0.5rem;
+  color: var(--ink-secondary);
 }
 
-/* A heavy rule and bold label mark a caveat, so it doesn't depend on color. */
+.chart-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+}
+
 .chart-badges {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.4rem;
-  margin: 0 0 0.75rem;
+  margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 0.9rem;
 }
 
-.chart-badges li {
-  max-width: 60rem;
-  padding: 0.15rem 0.75rem;
+/*
+ * A heavy rule and bold label mark a caveat, and an underlined label shows that
+ * it opens, so neither depends on color.
+ */
+.chart-badge {
+  min-height: 24px;
+  padding: 0.1rem 0.6rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: left;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
   border-left: 0.3rem solid var(--ink);
+  border-radius: 0 3px 3px 0;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.chart-badge:hover {
+  text-decoration-style: solid;
 }
 
 .chart-toggle {
+  margin-left: auto;
   font: inherit;
   font-size: 0.9rem;
   padding: 0.35rem 0.9rem;
@@ -153,13 +181,77 @@
   font-variant-numeric: tabular-nums;
 }
 
-.chart-footnote {
+.chart-notes {
   max-width: 60rem;
-  margin-top: 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.chart-notes summary {
+  width: fit-content;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.chart-notes > p {
+  margin: 0.4rem 0;
+}
+
+.chart-source {
+  max-width: 60rem;
+  margin-top: 0.35rem;
+  color: var(--ink-secondary);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.chart-source p,
+.chart-footnote p {
+  margin: 0.25rem 0;
+}
+
+.chart-footnote {
   color: var(--ink-secondary);
   font-size: 0.85rem;
 }
 
-.chart-footnote p {
-  margin: 0.25rem 0;
+/* The tab's data notes. */
+.data-notes {
+  margin: 0.5rem 0;
+  padding: 0.25rem 0.75rem;
+  border-left: 0.3rem solid var(--ink);
+  font-size: 0.85rem;
+}
+
+.data-notes summary {
+  cursor: pointer;
+}
+
+.data-notes dl {
+  max-width: 60rem;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.data-notes dt {
+  font-weight: 700;
+}
+
+.data-notes dd {
+  margin: 0 0 0.5rem;
+}
+
+/* Periods shaded on time axes. */
+.period-band {
+  fill: #ececec;
+}
+
+.period-band-edge {
+  stroke: var(--rule);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.period-band-label {
+  fill: var(--ink-secondary);
+  font-size: 13px;
 }

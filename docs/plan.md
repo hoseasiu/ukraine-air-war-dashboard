@@ -124,10 +124,10 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **B:** intercept rate over time by class, with the low-count gaps; saturation scatter with class coloring and hover details for each night; before/after panels for selected annotations.
   - **E:** choropleth of alert hours with a month slider; line chart comparing up to three oblasts; alert hours against launches over time.
 - **Every chart has:**
-  - a "How to read this" note (one or two sentences)
+  - a one-line subtitle, with a "How to read this" note and methods collapsed under the chart (#58)
   - hover tooltips
   - a "Show as table" toggle (for accessibility, and to show the actual numbers)
-  - the data-quality badges that apply to it
+  - the data-quality badges that apply to it, as labels that open the full text; each tab also lists them once at the top (#58)
 - **Data & Methods page:** sources and licenses, the snapshot date, the taxonomy table, definitions, the known gaps listed in §4, how to cite, and a changelog.
 
 ---
@@ -319,6 +319,14 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **Split view:** a switch brings back the panels by number of classes reported, with the earlier class colors and symbols, which keeps §6's class coloring. The default view has none. The switch isn't a filter and isn't in the URL. Stop 8 shows the one panel; its approved title, caption and prompt are unchanged.
   - **Summary:** below the scatter, one panel per year shows the median night's share not reported destroyed in seven size groups (1–9 up to 400 or more). A group with fewer than 5 nights has no median. Because it adds classes together, it stops at July 31, 2026, applying the owner's #9 rule for all-class shares, whatever classes are shown. It counts only nights with a point on the scatter, and each night once.
 - Before/after redesign (#67, Nov 26, 2026; built by the coding agent, not yet reviewed by the owner): a dumbbell chart replaces the two columns of bars in the #17 notes above. One row per class, with a ring for the window before and a filled dot for the window after on one 0% to 100% axis, joined by a line with no arrow, and both windows' rates, launches and nights beside it. A window with no rate has no dot and says why. Window length is a segmented control. Events, windows, figures, filters and the sentence saying a difference doesn't show cause are as before.
+
+- Data notes, badges and bands (#58, Nov 26, 2026). The layout is the owner's, from #58; the coding agent built it, and the owner hasn't reviewed the build or these choices:
+  - **Notes strip:** a collapsed line at the top of each tab names each badge its charts show, once, and opens to the full text. It reads the badges on the page, so it follows filter and chart changes. It replaces the Defense tab's separate sentence about electronic warfare.
+  - **Badges:** each is its label, which opens the full text in a popover, including on guided stops. Which badges a chart gets hasn't changed.
+  - **Notes under charts:** “How to read this” and the methods notes are collapsed together under each chart. Source and credit lines stay visible. The agent wrote the one-line subtitles. Where a chart marks massive nights, the subtitle or drawing still gives each year's bar, as the data audit asks.
+  - **Restricted band:** on the monthly launch, class-mix, intercept-rate, launches-and-alerts (launch panel), gaps, one-year strip and calendar charts, labeled “missile counts restricted”. On monthly axes it shades all of August 2026, whose figures include the restricted days. On date axes and the calendar it starts at Aug 11 (the calendar by whole weeks). It replaces the dashed marker on the launches-and-alerts chart.
+  - **Raion band:** on the alert-hour line charts, labeled “move to raion alerts”, from January to November 2025, the months in which the audit found areas switching. The badge still applies to every month from January 2025.
+  - **Alerts map:** on wide screens the tab now puts the map beside its slider and badges, as stop 9 does, so it starts on the first screen at 1280 × 720.
 
 **Open**
 - Terms of the sources behind the alert data (#26): the dataset is MIT, but it's collected from Telegram channels, including a volunteer one (eTryvoga), whose terms we don't know ([data audit](data-audit.md#alerts-license)). The site uses only the official-channel file.

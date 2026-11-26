@@ -8,7 +8,7 @@ import type { Annotation } from "../annotations/annotationData.ts";
 import { liveChartFrame, type ChartSpec, type Target } from "../chart/chartFrame.ts";
 import { annotations, formatDate, outcomeTable, rateTable } from "../data.ts";
 import { withTerms } from "../glossary/popover.ts";
-import { chartSvg, classLabels, count, create, percent, strikeFootnote, svgText } from "../strikes/shared.ts";
+import { chartSvg, classLabels, count, create, percent, footnote, strikeSource, svgText } from "../strikes/shared.ts";
 import { CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { svgElement } from "../theme/marks.ts";
 import "./eventPanels.css";
@@ -132,6 +132,8 @@ function spec(chosen: Annotation, days: WindowDays, classes: readonly ClassId[])
   const present = [...new Set(rows.map((row) => row.class))];
   return {
     title: `Reported intercept rate before and after: ${chosen.label}`,
+    subtitle: "Each class’s rate in equal windows before and after the event’s date. It doesn’t show a cause.",
+    source: strikeSource(),
     howToRead: panelHowToRead(rateTable.minLaunched),
     description: rows.length
       ? "A dumbbell chart: one row for each weapon class, with the rate before the event’s date and the rate after " +
@@ -249,7 +251,7 @@ export function eventPanels(settings: EventPanelSettings): HTMLElement {
   const full = (): ChartSpec<WindowRow> => ({
     ...spec(chosen, days, settings.classes),
     controls,
-    footnote: strikeFootnote(...PANEL_NOTES),
+    footnote: footnote(...PANEL_NOTES),
   });
   let redraw = () => {};
 

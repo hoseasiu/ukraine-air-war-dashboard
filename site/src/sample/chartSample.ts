@@ -52,6 +52,8 @@ const monthAxis = { label: null, tickFormat: formatMonth };
 
 const rateChart = chartFrame<SampleRow>({
   title: "Sample: reported intercept rate by class (invented numbers)",
+  subtitle: "Invented numbers, to show the chart frame.",
+  source: Object.assign(document.createElement("p"), { textContent: "Invented sample figures." }),
   howToRead:
     "Each line is one weapon class: the share of its launches reported destroyed that month. A break in a line means there is no rate, not a rate of zero.",
   description: "Line chart of invented monthly intercept rates for three weapon classes, May to October 2026.",
@@ -93,6 +95,8 @@ const rateChart = chartFrame<SampleRow>({
 
 const launchChart = chartFrame<SampleRow>({
   title: "Sample: monthly launches by class (invented numbers)",
+  subtitle: "Invented numbers, to show the chart frame.",
+  source: Object.assign(document.createElement("p"), { textContent: "Invented sample figures." }),
   howToRead:
     "Each bar is one month’s published launches, stacked by weapon class. A class with no published count adds nothing to the bar, which doesn’t mean it launched nothing.",
   description: "Stacked bar chart of invented monthly launch counts for three weapon classes, May to October 2026.",

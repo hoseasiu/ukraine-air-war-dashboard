@@ -72,11 +72,7 @@ export const PAGES: [Page, ...Page[]] = [
     heading: "Air defense performance",
     filters: { notes: ["Strike data starts Sept 28, 2022."] },
     render(container, filters) {
-      container.append(
-        paragraph("In the source reports, “destroyed” includes weapons lost to electronic warfare."),
-        defenseTab(filters),
-        discussion(TAB_PROMPTS.defense),
-      );
+      container.append(defenseTab(filters), discussion(TAB_PROMPTS.defense));
     },
   },
   {

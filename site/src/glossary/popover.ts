@@ -28,14 +28,19 @@ function place(box: HTMLElement, button: HTMLElement): void {
 }
 
 /**
- * A button reading `text`, followed by its popover. All spans and buttons, so it
- * can sit inside a paragraph.
+ * A button reading `text`, followed by its popover, headed `title`. All spans
+ * and buttons, so it can sit inside a paragraph. Glossary terms and chart badges
+ * both use it. A term's popover can open from inside another popover.
  */
-function termPopover(id: TermId, text: string): [HTMLButtonElement, HTMLSpanElement] {
-  const { term, definition } = GLOSSARY[id];
-  const boxId = `term-${++count}`;
+export function popover(
+  className: string,
+  text: string,
+  title: string,
+  content: readonly (Node | string)[],
+): [HTMLButtonElement, HTMLSpanElement] {
+  const boxId = `popover-${++count}`;
 
-  const button = create("button", "term", text);
+  const button = create("button", className, text);
   button.type = "button";
   button.setAttribute("popovertarget", boxId);
   button.setAttribute("aria-haspopup", "dialog");
@@ -48,9 +53,10 @@ function termPopover(id: TermId, text: string): [HTMLButtonElement, HTMLSpanElem
   box.tabIndex = -1;
   box.autofocus = true;
 
-  const name = create("span", "term-name", term);
+  const name = create("span", "term-name", title);
   name.id = `${boxId}-name`;
-  const body = create("span", "term-definition", definition);
+  const body = create("span", "term-definition");
+  body.append(...content);
   body.id = `${boxId}-definition`;
   box.setAttribute("aria-labelledby", name.id);
   box.setAttribute("aria-describedby", body.id);
@@ -94,9 +100,11 @@ function termPopover(id: TermId, text: string): [HTMLButtonElement, HTMLSpanElem
  * Don't use it inside a link, button or heading.
  */
 export function withTerms(text: string, seen?: Set<TermId>): (Node | string)[] {
-  return splitTerms(text, seen).flatMap<Node | string>((segment) =>
-    typeof segment === "string" ? [segment] : termPopover(segment.id, segment.text),
-  );
+  return splitTerms(text, seen).flatMap<Node | string>((segment) => {
+    if (typeof segment === "string") return [segment];
+    const { term, definition } = GLOSSARY[segment.id];
+    return popover("term", segment.text, term, [definition]);
+  });
 }
 
 /** Every definition, written out. */

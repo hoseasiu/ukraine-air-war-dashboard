@@ -1,4 +1,4 @@
-/** Footnote text shared by the alert line and panel charts. */
+/** Notes and credit shared by the alert line and panel charts. */
 import { formatMonth } from "../chart/chartFrame.ts";
 import { alertMonthly } from "../data.ts";
 
