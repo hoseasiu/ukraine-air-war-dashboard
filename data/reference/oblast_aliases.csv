@@ -1,0 +1,87 @@
+alias,iso_3166_2,match_type,seen_in
+Ukraine,,nationwide,kaggle_affected_region
+Vinnytsia oblast,UA-05,name,kaggle_affected_region
+Vinnytska oblast,UA-05,name,alerts_official_en;alerts_volunteer_en
+Вінницька область,UA-05,name,alerts_official_uk;alerts_volunteer_uk
+Volyn oblast,UA-07,name,kaggle_affected_region
+Volynska oblast,UA-07,name,alerts_official_en;alerts_volunteer_en
+Волинська область,UA-07,name,alerts_official_uk;alerts_volunteer_uk
+Luhansk oblast,UA-09,name,
+Luhanska oblast,UA-09,name,alerts_official_en;alerts_volunteer_en
+Луганська область,UA-09,name,alerts_official_uk;alerts_volunteer_uk
+Dnipropetrovsk oblast,UA-12,name,kaggle_affected_region
+Dnipropetrovska oblast,UA-12,name,alerts_official_en;alerts_volunteer_en
+Kryvyi Rih,UA-12,city_within,kaggle_affected_region
+Дніпропетровська область,UA-12,name,alerts_official_uk;alerts_volunteer_uk
+Donetsk oblast,UA-14,name,kaggle_affected_region
+Donetska oblast,UA-14,name,alerts_official_en;alerts_volunteer_en
+Донецька область,UA-14,name,alerts_official_uk;alerts_volunteer_uk
+Zhytomyr oblast,UA-18,name,kaggle_affected_region
+Zhytomyrska oblast,UA-18,name,alerts_official_en;alerts_volunteer_en
+Житомирська область,UA-18,name,alerts_official_uk;alerts_volunteer_uk
+Zakarpatska oblast,UA-21,name,alerts_official_en;alerts_volunteer_en
+Zakarpattia oblast,UA-21,name,kaggle_affected_region
+Закарпатська область,UA-21,name,alerts_official_uk;alerts_volunteer_uk
+Zaporizhzhia oblast,UA-23,name,kaggle_affected_region
+Zaporizka oblast,UA-23,name,alerts_official_en;alerts_volunteer_en
+Запорізька область,UA-23,name,alerts_official_uk;alerts_volunteer_uk
+Ivano-Frankivsk oblast,UA-26,name,kaggle_affected_region
+Ivano-Frankivsk obкlast,UA-26,typo,kaggle_affected_region
+Ivano-Frankivska oblast,UA-26,name,alerts_official_en;alerts_volunteer_en
+Івано-Франківська область,UA-26,name,alerts_official_uk;alerts_volunteer_uk
+Kyiv,UA-30,name,kaggle_affected_region
+Kyiv City,UA-30,name,alerts_official_en;alerts_volunteer_en
+Kyiv city,UA-30,name,
+Київ,UA-30,name,alerts_volunteer_uk;boundary
+м. Київ,UA-30,name,alerts_official_uk
+Kyiv oblast,UA-32,name,kaggle_affected_region
+Kyivska oblast,UA-32,name,alerts_official_en;alerts_volunteer_en
+Київська область,UA-32,name,alerts_official_uk;alerts_volunteer_uk
+Kirovohrad oblast,UA-35,name,kaggle_affected_region
+Kirovohradska oblast,UA-35,name,alerts_official_en;alerts_volunteer_en
+Кіровоградська область,UA-35,name,alerts_official_uk;alerts_volunteer_uk
+Sevastopol,UA-40,name,boundary
+Севастополь,UA-40,name,boundary
+Autonomous Republic of Crimea,UA-43,name,boundary
+Avtonomna Respublika Krym,UA-43,name,
+Crimea,UA-43,name,
+Автономна Республіка Крим,UA-43,name,boundary
+Lviv oblast,UA-46,name,kaggle_affected_region
+Lvivska oblast,UA-46,name,alerts_official_en;alerts_volunteer_en
+Львівська область,UA-46,name,alerts_official_uk;alerts_volunteer_uk
+Mykolaiv oblast,UA-48,name,kaggle_affected_region
+Mykolaivska oblast,UA-48,name,alerts_official_en;alerts_volunteer_en
+Миколаївська область,UA-48,name,alerts_official_uk;alerts_volunteer_uk
+Odesa oblast,UA-51,name,kaggle_affected_region
+Odeska oblast,UA-51,name,alerts_official_en;alerts_volunteer_en
+Одеська область,UA-51,name,alerts_official_uk;alerts_volunteer_uk
+Poltava oblast,UA-53,name,kaggle_affected_region
+Poltavska oblast,UA-53,name,alerts_official_en;alerts_volunteer_en
+Полтавська область,UA-53,name,alerts_official_uk;alerts_volunteer_uk
+Rivne oblast,UA-56,name,kaggle_affected_region
+Rivnenska oblast,UA-56,name,alerts_official_en;alerts_volunteer_en
+Рівненська область,UA-56,name,alerts_official_uk;alerts_volunteer_uk
+Sumska oblast,UA-59,name,alerts_official_en;alerts_volunteer_en
+Sumy oblast,UA-59,name,kaggle_affected_region
+Сумська область,UA-59,name,alerts_official_uk;alerts_volunteer_uk
+Ternopil oblast,UA-61,name,kaggle_affected_region
+Ternopilska oblast,UA-61,name,alerts_official_en;alerts_volunteer_en
+Тернопільська область,UA-61,name,alerts_official_uk;alerts_volunteer_uk
+Kharkiv oblast,UA-63,name,kaggle_affected_region
+Kharkivska oblast,UA-63,name,alerts_official_en;alerts_volunteer_en
+Харківська область,UA-63,name,alerts_official_uk;alerts_volunteer_uk
+Kherson oblast,UA-65,name,kaggle_affected_region
+Khersonska oblast,UA-65,name,alerts_official_en;alerts_volunteer_en
+Херсонська область,UA-65,name,alerts_official_uk;alerts_volunteer_uk
+Khmelnytska oblast,UA-68,name,alerts_official_en;alerts_volunteer_en
+Khmelnytskyi oblast,UA-68,name,kaggle_affected_region
+Хмельницька область,UA-68,name,alerts_official_uk;alerts_volunteer_uk
+Cherkaska oblast,UA-71,name,alerts_official_en;alerts_volunteer_en
+Cherkasy oblast,UA-71,name,kaggle_affected_region
+Черкаська область,UA-71,name,alerts_official_uk;alerts_volunteer_uk
+Chernihiv oblast,UA-74,name,kaggle_affected_region
+Chernihivska oblast,UA-74,name,alerts_official_en;alerts_volunteer_en
+Чернігівська область,UA-74,name,alerts_official_uk;alerts_volunteer_uk
+Chernivetska oblast,UA-77,name,alerts_official_en;alerts_volunteer_en
+Chernivtsi oblast,UA-77,name,kaggle_affected_region
+Чернівецька область,UA-77,name,alerts_official_uk;alerts_volunteer_uk

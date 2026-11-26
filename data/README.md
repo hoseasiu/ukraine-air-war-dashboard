@@ -46,3 +46,21 @@ Audited at commit `1a349789e45d63a19c8faf46d0e5877cbb36ac8b` (Nov 25, 2026; #2).
 ```powershell
 foreach ($f in 'official_data_en.csv', 'volunteer_data_en.csv') { Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Vadimkin/ukrainian-air-raid-sirens-dataset/1a349789e45d63a19c8faf46d0e5877cbb36ac8b/datasets/$f" -OutFile "data/raw/$f" }
 ```
+
+### Boundaries
+
+Source: [Ukraine - Subnational Administrative Boundaries](https://data.humdata.org/dataset/cod-ab-ukr) (OCHA COD-AB v05, on HDX). **License: CC BY-IGO.** Details are in the [gazetteer notes](reference/gazetteer.md#boundaries).
+
+Only needed to rebuild `reference/ukraine_admin1.geojson`, which is committed. Downloaded Nov 25, 2026:
+
+| File | Size | SHA-256 |
+|---|---|---|
+| `ukr_admin_boundaries.geojson.zip` | 83,953,609 bytes | `b8604bc983e1e54a6f7c10186a5cf8474cb8ed49eb038b4bef8091d92c286790` |
+
+**Setup:** no login needed. In PowerShell, from the repo root:
+
+```powershell
+Invoke-WebRequest -Uri "https://data.humdata.org/dataset/d23f529f-31e4-4021-a65b-13987e5cfb42/resource/681beb86-391b-4a08-8140-ca52e80fcdce/download/ukr_admin_boundaries.geojson.zip" -OutFile "data/raw/ukr_admin_boundaries.geojson.zip"
+```
+
+HDX may replace the file at this link. The build script then stops on the hash, so review the change before updating it.

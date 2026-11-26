@@ -1,0 +1,28 @@
+iso_3166_2,name,name_uk,kind,boundary_pcode,in_alert_totals,alert_exclusion_reason
+UA-05,Vinnytsia oblast,Вінницька область,oblast,UA05,yes,
+UA-07,Volyn oblast,Волинська область,oblast,UA07,yes,
+UA-09,Luhansk oblast,Луганська область,oblast,UA44,no,"Permanent alert from Apr 4, 2022 isn't listed in the alert data."
+UA-12,Dnipropetrovsk oblast,Дніпропетровська область,oblast,UA12,yes,
+UA-14,Donetsk oblast,Донецька область,oblast,UA14,yes,
+UA-18,Zhytomyr oblast,Житомирська область,oblast,UA18,yes,
+UA-21,Zakarpattia oblast,Закарпатська область,oblast,UA21,yes,
+UA-23,Zaporizhzhia oblast,Запорізька область,oblast,UA23,yes,
+UA-26,Ivano-Frankivsk oblast,Івано-Франківська область,oblast,UA26,yes,
+UA-30,Kyiv city,Київ,city,UA80,yes,
+UA-32,Kyiv oblast,Київська область,oblast,UA32,yes,
+UA-35,Kirovohrad oblast,Кіровоградська область,oblast,UA35,yes,
+UA-40,Sevastopol,Севастополь,city,UA85,no,No rows in either alert file. Treated with Crimea.
+UA-43,Crimea,Автономна Республіка Крим,autonomous_republic,UA01,no,"Permanent alert from Dec 10, 2022 isn't listed in the alert data."
+UA-46,Lviv oblast,Львівська область,oblast,UA46,yes,
+UA-48,Mykolaiv oblast,Миколаївська область,oblast,UA48,yes,
+UA-51,Odesa oblast,Одеська область,oblast,UA51,yes,
+UA-53,Poltava oblast,Полтавська область,oblast,UA53,yes,
+UA-56,Rivne oblast,Рівненська область,oblast,UA56,yes,
+UA-59,Sumy oblast,Сумська область,oblast,UA59,yes,
+UA-61,Ternopil oblast,Тернопільська область,oblast,UA61,yes,
+UA-63,Kharkiv oblast,Харківська область,oblast,UA63,yes,
+UA-65,Kherson oblast,Херсонська область,oblast,UA65,yes,
+UA-68,Khmelnytskyi oblast,Хмельницька область,oblast,UA68,yes,
+UA-71,Cherkasy oblast,Черкаська область,oblast,UA71,yes,
+UA-74,Chernihiv oblast,Чернігівська область,oblast,UA74,yes,
+UA-77,Chernivtsi oblast,Чернівецька область,oblast,UA73,yes,
