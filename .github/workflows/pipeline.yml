@@ -1,0 +1,31 @@
+name: Pipeline
+
+# Lint and tests. Raw files aren't in git, so the tests here run on made-up inputs and
+# the committed tables, and tests/test_real_data.py is skipped. There's no path filter:
+# some tests read site code and reference files.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          python-version: "3.12"
+      - name: Install the locked dependencies
+        run: uv sync --locked
+      - name: Lint
+        run: uv run --no-sync ruff check .
+      - name: Test
+        # -rs prints why any test was skipped.
+        run: uv run --no-sync pytest -rs
+      - name: Test the dependency-graph script
+        run: uv run --no-sync python -m unittest discover -s .github/scripts

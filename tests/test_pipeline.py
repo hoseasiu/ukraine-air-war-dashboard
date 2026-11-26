@@ -7,6 +7,7 @@ import json
 import pytest
 
 from pipeline import __main__ as cli
+from pipeline.budget import BUDGET_BYTES
 from pipeline.build import build
 from pipeline.columns import COLUMNS, read_raw
 from pipeline.errors import PipelineError
@@ -199,3 +200,18 @@ def test_failed_download_leaves_nothing_behind(tmp_path, fails):
     with pytest.raises(PipelineError):
         fetch_alerts(tmp_path, {"a.csv": "0" * 64}, fake)
     assert list(tmp_path.iterdir()) == []
+
+
+def test_build_ends_with_the_summary_report(raw, reference, tmp_path, capsys):
+    build(raw, tmp_path / "processed", checksums(raw), reference)
+    printed = capsys.readouterr().out
+    assert printed.index("Wrote strike_reconciliation.json") < printed.index("Summary report")
+    assert "Guided stop 1" in printed
+    assert "weapons lost to electronic warfare" in printed
+
+
+def test_data_over_budget_fails_the_build_and_leaves_no_outputs(raw, reference, tmp_path):
+    (reference / "annotations.csv").write_bytes(b"x" * BUDGET_BYTES)
+    with pytest.raises(PipelineError, match="budget"):
+        build(raw, tmp_path / "processed", checksums(raw), reference)
+    assert not (tmp_path / "processed").exists()

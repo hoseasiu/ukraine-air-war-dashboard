@@ -286,13 +286,15 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **Saturation:** night size against `launched_with_outcome − destroyed`. A night where some published launches have no usable outcome is in the table but has no point (three nights in this snapshot).
   - **Class mix:** panels for one, two, and three or more classes reported, on shared scales. A point's color and symbol show the class with the most published launches. A mixed row counts as one class. Nights from Aug 11, 2026 are drawn hollow.
   - **Filters:** the classes turned on set each night's size, mix and number not reported destroyed. No massive bar is drawn, and no trend or reference line is fitted.
+- Build checks, summary report and CI (#9; built by the coding agent, not yet reviewed by the owner): the build prints a summary report and stops if the site's data would pass 2,000,000 bytes, counting every processed JSON file and the site's reference files before minifying or compression. Output stays JSON. The report's all-class share reported destroyed and mean alert hours per area follow the two decisions below. CI lints and tests the pipeline on made-up inputs and the committed tables; the checks on real raw files run only where those files are. The optional MDAA cross-check wasn't done.
+- All-class share (owner, Nov 25, 2026, #9; for #21): any all-class share reported destroyed is computed through July 31, 2026, and says so. The owner accepted the suggestion the coding agent had recorded under Open. Like other shares, it carries the EW caveat.
+- Alert hours on stop 1 (owner, Nov 25, 2026, #9; for #21): mean alert hours per area are shown for an average month, not as a total, with their own dates (April 2022 to July 2026 in this snapshot). The owner chose this from the two options, and the coding agent had suggested it. This doesn't approve the stop's caption.
 
 **Open**
 - Terms of the sources behind the alert data (#26): the dataset is MIT, but it's collected from Telegram channels, including a volunteer one (eTryvoga), whose terms we don't know ([data audit](data-audit.md#alerts-license)). The site uses only the official-channel file.
 - Sources for the glossary (#24). The owner approved the wording (see Settled) without answering this separately: the general descriptions of weapons, EW and decoys in [terms.ts](../site/src/glossary/terms.ts) have no cited source. Suggested: decide before shipping whether they need citations (§9 Phase 5 asks that numbers trace to a source), alongside the Data & Methods page (#23).
 - Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January). The 2026 massive-night bar and labels can change with it (#28).
 - Which three oblasts to compare in stop 10 (suggested: Kharkiv, Kyiv city, Lviv). The tab E comparison shows these three until the owner picks (#19).
-- All-class share from August 2026 (#5; for #21). The owner ended missile-class intercept rates at July 2026. This doesn't say what an all-class share (stop 1's "share intercepted") does with missile and mixed rows after July. Suggested: compute any all-class share through July 31, 2026 and say so.
 
 ---
 
