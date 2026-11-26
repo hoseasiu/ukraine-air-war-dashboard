@@ -65,7 +65,7 @@ Wherever it's shown, say that **the bar differs by year** and give that year's b
 - No class rate for mixed rows. Excluded classes are in no rate.
 - Every chart that uses it carries the EW caveat.
 
-How an **all-class** share, and the destroyed counts in B2, should treat missiles from August 2026 is [open](plan.md#11-decisions).
+How an **all-class** share should treat missiles from August 2026 is [open](plan.md#11-decisions). The owner later chose to keep later nights in B2, flagged, noted and marked apart (#16).
 
 ### Other decisions
 

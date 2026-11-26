@@ -2,7 +2,9 @@
 
 A teaching dashboard on Russia's missile and drone campaign against Ukraine, built for **Build for Ukraine 3.0** (Day 1: Wed Jan 13, 2027).
 
-**Status:** early development. The site is a scaffold with no charts yet, and the data pipeline isn't built. To run it, see the site commands in [AGENTS.md](AGENTS.md#commands).
+**[Open the dashboard](https://hoseasiu.github.io/ukraine-air-war-dashboard/)** (early preview)
+
+**Status:** an unfinished preview that hasn't had its accessibility review, so don't cite it yet. The attacks and alerts tabs have charts, and so does the defense tab, apart from its before-and-after panels. Those panels and the Data & Methods page are still to come, and the guided mode has only placeholder stops. To run it locally, see the site commands in [AGENTS.md](AGENTS.md#commands).
 
 It will have two modes:
 
@@ -38,7 +40,7 @@ The code is [MIT](LICENSE) and our writing is CC BY 4.0. Material from the data 
 
 - **Data pipeline:** Python (pandas and DuckDB), run offline with one command, producing small precomputed files
 - **Site:** Vite and TypeScript, Observable Plot and d3-geo; static, with no backend
-- **Hosting:** GitHub Pages by default
+- **Hosting:** [GitHub Pages](https://hoseasiu.github.io/ukraine-air-war-dashboard/), deployed from `main` by a [workflow](.github/workflows/deploy.yml)
 
 ## Roadmap
 

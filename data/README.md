@@ -78,7 +78,7 @@ One object per night and class in `rows`. **A night is keyed by the Kyiv date it
 | `destroyed_includes_ew` | True when the row has a `destroyed` figure. |
 | `ballistic_restricted` | True from the night of Aug 11, 2026, **for every class**. |
 
-For B2, a night after the restriction can be missing missiles from its size, its mix and its destroyed counts. How to treat missile outcomes from August 2026 there is [still open](../docs/plan.md#11-decisions).
+For B2, a night after the restriction can be missing missiles from its size, its mix and its destroyed counts. The owner chose to keep those nights, flagged, noted and marked apart (#16, [plan §11](../docs/plan.md#11-decisions)).
 
 ### `monthly_by_class.json`
 
