@@ -1,4 +1,5 @@
 /** Data compiled into the bundle. Nothing is fetched at page load. */
+import annotationsCsv from "../../data/reference/annotations.csv?raw";
 import alertMonthlyJson from "../../data/processed/alert_hours_monthly.json";
 import buildInfoJson from "../../data/processed/build_info.json";
 import monthlyByClassJson from "../../data/processed/monthly_by_class.json";
@@ -7,7 +8,9 @@ import boundariesText from "../../data/reference/ukraine_admin1.geojson?raw";
 import oblastsCsv from "../../data/reference/oblasts.csv?raw";
 import weaponClassesCsv from "../../data/reference/weapon_classes.csv?raw";
 import { parseAlertMonthly, parseBoundaries } from "./alerts/alertData.ts";
+import { parseAnnotations } from "./annotations/annotationData.ts";
 import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./buildData.ts";
+import { parseOutcomes } from "./guided/headlineData.ts";
 import { parseMonthly, parseNights } from "./strikes/strikeData.ts";
 
 export const buildInfo = parseBuildInfo(buildInfoJson);
@@ -17,6 +20,8 @@ export const alertMonthly = parseAlertMonthly(alertMonthlyJson, alertAreas);
 export const boundaries = parseBoundaries(boundariesText, alertAreas);
 export const nightTable = parseNights(nightsJson);
 export const monthlyTable = parseMonthly(monthlyByClassJson);
+export const outcomeTable = parseOutcomes(monthlyByClassJson);
+export const annotations = parseAnnotations(annotationsCsv);
 
 /** Names of the areas left out of every alert figure. */
 export function excludedAlertAreas(): string[] {

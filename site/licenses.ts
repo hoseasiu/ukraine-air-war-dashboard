@@ -15,7 +15,7 @@ function siteNotices(): string {
     "== Code ==",
     read("../LICENSE").trim(),
     "== Our writing ==",
-    "Our definitions, discussion prompts, captions and explanations are licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Credit: Hosea Siu, The Air War, in Data.",
+    "Our definitions, discussion prompts, captions, event labels and explanations are licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Credit: Hosea Siu, The Air War, in Data.",
     "== Map boundaries ==",
     `${boundaries.attribution}\n${boundaries.license}\nNo endorsement by Kartographia or OCHA is implied.`,
     "== Data ==",

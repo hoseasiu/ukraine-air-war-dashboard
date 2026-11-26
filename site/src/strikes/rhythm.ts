@@ -6,7 +6,7 @@ import { nightTable } from "../data.ts";
 import { svgElement } from "../theme/marks.ts";
 import { NIGHT_BINS, nightBin } from "../theme/nightScale.ts";
 import { plotDefaults } from "../theme/plot.ts";
-import { barValue, chartSvg, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, strikeFootnote, svgText } from "./shared.ts";
+import { barValue, chartSvg, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, strikeFootnote, svgText, type FixedView } from "./shared.ts";
 import {
   allNights,
   barIsRestricted,
@@ -71,7 +71,8 @@ function massiveMark(x: number, y: number, cell: number): SVGElement[] {
   ];
 }
 
-export function nightCalendar(selection: Selection): HTMLElement {
+/** `fixed` is a guided stop's view: years in two columns, so they fit on a projector. */
+export function nightCalendar(selection: Selection, options: { fixed?: boolean } = {}): HTMLElement {
   const nights = nightsInRange(allNights(nightTable, selection.classes), selection);
   const rows: CalendarRow[] = nights
     .filter((night) => night.reported)
@@ -125,27 +126,31 @@ export function nightCalendar(selection: Selection): HTMLElement {
     scaleKey: calendarKey(),
     pointer: "shape",
     footnote: strikeFootnote(
-      "A night is the reports ending on one Kyiv date, without daytime reports. Colors mean the same whatever the " +
-        "filters show. A calendar can suggest seasons, but the data spans only about four winters, while totals and " +
+      "A night is the reports ending on one Kyiv date, without daytime reports. " +
+        (options.fixed ? "" : "Colors mean the same whatever the filters show. ") +
+        "A calendar can suggest seasons, but the data spans only about four winters, while totals and " +
         "reporting changed a great deal, so this dashboard doesn’t claim a seasonal pattern.",
       RESTRICTED_BAR_NOTE,
     ),
     draw(data, width) {
       const left = 44;
+      const perRow = options.fixed && width >= 900 ? 2 : 1;
+      const columnWidth = Math.floor(width / perRow);
       // A year spans at most 54 week columns.
-      const cell = Math.max(7, Math.min(20, (width - left) / 54));
+      const cell = Math.max(7, Math.min(20, (columnWidth - left - (perRow - 1) * 12) / 54));
       const block = cell * 7 + 44;
-      const svg = chartSvg(width, years.length * block);
+      const svg = chartSvg(width, Math.ceil(years.length / perRow) * block);
       const byDate = new Map(data.map((row) => [row.date, row]));
       const targets: Target<CalendarRow>[] = [];
 
       years.forEach((year, index) => {
-        const top = index * block + 36;
+        const top = Math.floor(index / perRow) * block + 36;
+        const columnLeft = (index % perRow) * columnWidth;
         const jan1 = Date.UTC(year, 0, 1);
         const offset = weekdayIndex(`${year}-01-01`);
-        svg.append(svgText(0, top - 22, String(year), { "font-weight": 700, "font-size": 15 }));
+        svg.append(svgText(columnLeft, top - 22, String(year), { "font-weight": 700, "font-size": 15 }));
         for (const day of [0, 3, 6]) {
-          svg.append(svgText(0, top + cell * (day + 0.8), WEEKDAYS[day]!.slice(0, 3), { "font-size": 12 }));
+          svg.append(svgText(columnLeft, top + cell * (day + 0.8), WEEKDAYS[day]!.slice(0, 3), { "font-size": 12 }));
         }
 
         for (let time = jan1; time < Date.UTC(year + 1, 0, 1); time += DAY) {
@@ -153,7 +158,7 @@ export function nightCalendar(selection: Selection): HTMLElement {
           const month = date.slice(0, 7);
           if (!months.includes(month) || date < nightTable.firstDay || date > nightTable.lastDay) continue;
           const position = (time - jan1) / DAY + offset;
-          const x = left + Math.floor(position / 7) * cell;
+          const x = columnLeft + left + Math.floor(position / 7) * cell;
           const y = top + (position % 7) * cell;
           if (date.endsWith("-01")) {
             // Names sit over the week the month starts in.
@@ -184,7 +189,7 @@ export function nightCalendar(selection: Selection): HTMLElement {
 
 const WEEKDAY_PANEL = 250;
 
-export function weekdayChart(selection: Selection): HTMLElement {
+export function weekdayChart(selection: Selection, options: { fixed?: FixedView } = {}): HTMLElement {
   const rows = weekdayRows(nightTable, selection);
   const subset = isSubset(selection.classes);
   const sizeLabel = subset ? "Median launched per night, classes shown" : "Median launched per night";
@@ -219,8 +224,9 @@ export function weekdayChart(selection: Selection): HTMLElement {
     coverage: (row) => ({ from: row.from, to: row.to }),
     pointer: "xy",
     footnote: strikeFootnote(
-      "A median over several years mixes years in which a typical night had very different sizes. Narrow the months " +
-        "to look at one year. Massive nights are marked against their own year’s bar.",
+      "A median over several years mixes years in which a typical night had very different sizes. " +
+        (options.fixed ? "" : "Narrow the months to look at one year. ") +
+        "Massive nights are marked against their own year’s bar.",
       RESTRICTED_BAR_NOTE,
     ),
     draw(data, width) {
@@ -230,18 +236,19 @@ export function weekdayChart(selection: Selection): HTMLElement {
         { title: sizeLabel, value: (row: WeekdayRow) => row.median_size },
         { title: "Massive nights", value: (row: WeekdayRow) => row.massive_nights },
       ];
-      const height = Math.ceil(panels.length / perRow) * (WEEKDAY_PANEL + 28);
+      const panelHeight = options.fixed ? Math.max(180, options.fixed.height - 60) : WEEKDAY_PANEL;
+      const height = Math.ceil(panels.length / perRow) * (panelHeight + 28);
       const svg = chartSvg(width, height);
       const targets: Target<WeekdayRow>[] = [];
 
       panels.forEach((panel, index) => {
         const left = (index % perRow) * panelWidth;
-        const top = Math.floor(index / perRow) * (WEEKDAY_PANEL + 28);
+        const top = Math.floor(index / perRow) * (panelHeight + 28);
         const plot = Plot.plot({
           ...plotDefaults,
           style: { ...plotDefaults.style, fontSize: "14px" },
           width: panelWidth,
-          height: WEEKDAY_PANEL,
+          height: panelHeight,
           marginLeft: 48,
           marginTop: 12,
           marginBottom: 32,
