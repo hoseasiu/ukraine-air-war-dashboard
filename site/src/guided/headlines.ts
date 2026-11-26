@@ -1,6 +1,6 @@
 /** Draws stop 1's headline numbers. They aren't a chart, but carry the same badges. */
 import { flagList } from "../chart/chartFrame.ts";
-import { alertMonthly, excludedAlertAreas, formatDate, monthlyTable, outcomeTable } from "../data.ts";
+import { alertMonthly, excludedAlertAreas, formatDate, monthlyTable, rateTable } from "../data.ts";
 import { withTerms } from "../glossary/popover.ts";
 import { create, percent } from "../strikes/shared.ts";
 import { headlines, type Headline } from "./headlineData.ts";
@@ -24,7 +24,7 @@ function card(headline: Headline, value: string, label: string, note: string): H
 }
 
 export function headlineView(): HTMLElement {
-  const { launched, destroyedShare, alertHours } = headlines(monthlyTable, outcomeTable, alertMonthly);
+  const { launched, destroyedShare, alertHours } = headlines(monthlyTable, rateTable, alertMonthly);
   const wrapper = create("div");
   const list = create("ul", "headlines");
   list.setAttribute("aria-label", "Three headline numbers");
@@ -47,9 +47,9 @@ export function headlineView(): HTMLElement {
     card(
       alertHours,
       whole.format(alertHours.value),
-      "hours under air-raid alert, mean per area",
-      `About ${whole.format(alertHours.value / alertHours.months)} hours a month. The mean of ${alertHours.areas} ` +
-        "areas (oblasts and Kyiv city), each averaged over its raions, not a national total. Leaves out " +
+      "hours under air-raid alert in an average month, mean per area",
+      `The mean of ${alertHours.areas} areas (oblasts and Kyiv city), each averaged over its raions. Not a ` +
+        "national total. Leaves out " +
         `${new Intl.ListFormat("en-US").format(excludedAlertAreas())}.`,
     ),
   );

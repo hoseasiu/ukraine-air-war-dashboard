@@ -5,7 +5,8 @@ import { parseAlertMonthly } from "../src/alerts/alertData.ts";
 import { parseAnnotations } from "../src/annotations/annotationData.ts";
 import { placeMarkers } from "../src/annotations/markerLayout.ts";
 import { parseAreas } from "../src/buildData.ts";
-import { headlines, parseOutcomes } from "../src/guided/headlineData.ts";
+import { parseRates } from "../src/defense/defenseData.ts";
+import { headlines } from "../src/guided/headlineData.ts";
 import { stepFrom, type Position } from "../src/guided/steps.ts";
 import { parseMonthly } from "../src/strikes/strikeData.ts";
 
@@ -13,7 +14,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf
 
 const monthly = JSON.parse(read("../../data/processed/monthly_by_class.json"));
 const strikes = parseMonthly(monthly);
-const outcomes = parseOutcomes(monthly);
+const rates = parseRates(monthly);
 const alerts = parseAlertMonthly(
   JSON.parse(read("../../data/processed/alert_hours_monthly.json")),
   parseAreas(read("../../data/reference/oblasts.csv")),
@@ -22,14 +23,14 @@ const alerts = parseAlertMonthly(
 const sum = (values: (number | null)[]) => values.reduce<number>((total, value) => total + (value ?? 0), 0);
 
 test("the launch headline is the whole monthly table, under the restriction badge", () => {
-  const { launched } = headlines(strikes, outcomes, alerts);
+  const { launched } = headlines(strikes, rates, alerts);
   assert.equal(launched.value, sum(monthly.rows.map((row: { launched: number | null }) => row.launched)));
   assert.deepEqual(launched.period, { from: monthly.first_day, to: monthly.last_day });
   assert.deepEqual(launched.flags, ["ballistic_restricted"]);
 });
 
 test("the destroyed share ends before missile rates do, and carries the EW badge", () => {
-  const { destroyedShare } = headlines(strikes, outcomes, alerts);
+  const { destroyedShare } = headlines(strikes, rates, alerts);
   assert.equal(monthly.intercept_rate.missile_rates_end_before, "2026-08");
   const rows = monthly.rows.filter((row: { month: string }) => row.month <= "2026-07");
   const destroyed = sum(rows.map((row: { destroyed: number | null }) => row.destroyed));
@@ -41,26 +42,13 @@ test("the destroyed share ends before missile rates do, and carries the EW badge
   assert.deepEqual(destroyedShare.flags, ["destroyed_includes_ew"]);
 });
 
-test("the alert headline is a mean over areas, with its own dates and badges", () => {
-  const { alertHours } = headlines(strikes, outcomes, alerts);
+test("the alert headline is an average month, as a mean over areas, with its own dates and badges", () => {
+  const { alertHours } = headlines(strikes, rates, alerts);
   assert.equal(alertHours.areas, 24);
-  assert.equal(alertHours.months, 52);
-  assert.ok(Math.abs(alertHours.value - sum(alerts.rows.map((row) => row.hours)) / 24) < 1e-9);
+  assert.equal(alerts.months.length, 52);
+  assert.ok(Math.abs(alertHours.value - sum(alerts.rows.map((row) => row.hours)) / 24 / 52) < 1e-9);
   assert.deepEqual(alertHours.period, { from: "2022-04-01", to: "2026-07-31" });
   assert.deepEqual(alertHours.flags, ["alert_end_assumed", "alert_regions_excluded", "alert_granularity_change"]);
-});
-
-test("outcome counts that disagree are refused", () => {
-  const table = (row: object) => ({
-    intercept_rate: { missile_rates_end_before: "2026-08" },
-    rows: [{ month: "2026-01", class: "cruise", ...row }],
-  });
-  const good = { destroyed: 2, launched_with_outcome: 3, destroyed_includes_ew: true };
-  assert.equal(parseOutcomes(table(good)).rows.length, 1);
-  assert.throws(() => parseOutcomes(table({ ...good, destroyed: 4 })), /no larger/);
-  assert.throws(() => parseOutcomes(table({ ...good, launched_with_outcome: null })), /both be null/);
-  assert.throws(() => parseOutcomes(table({ ...good, destroyed_includes_ew: false })), /includes_ew/);
-  assert.throws(() => parseOutcomes({ rows: [] }), /missile_rates_end_before/);
 });
 
 const CSV_HEADER = "id,date,label,source_url,source_url_2,verification,owner_review\n";

@@ -5,49 +5,10 @@
  * No DOM or Vite imports here, so Node can test this file directly.
  */
 import type { AlertTable } from "../alerts/alertData.ts";
+import type { RateTable } from "../defense/defenseData.ts";
 import { chartFlags, monthPeriod, type ColumnSpec, type FlagId, type Period } from "../chart/flags.ts";
 import { monthFromNumber, monthNumber } from "../filters/state.ts";
 import { sumKnown, type MonthTable } from "../strikes/strikeData.ts";
-
-export interface OutcomeRow {
-  month: string;
-  /** Reported destroyed, including by electronic warfare. */
-  destroyed: number | null;
-  /** Launches in the reports where both counts are usable. */
-  launched_with_outcome: number | null;
-  destroyed_includes_ew: boolean;
-}
-
-export interface OutcomeTable {
-  /** The first month with no missile-class intercept rate, YYYY-MM. */
-  missileRatesEndBefore: string;
-  rows: OutcomeRow[];
-}
-
-/** The outcome columns of monthly_by_class.json. parseMonthly() leaves them out. */
-export function parseOutcomes(json: unknown): OutcomeTable {
-  function fail(message: string): never {
-    throw new Error(`monthly_by_class.json: ${message}`);
-  }
-  const table = (json ?? {}) as { intercept_rate?: { missile_rates_end_before?: unknown }; rows?: unknown };
-  const cutoff = table.intercept_rate?.missile_rates_end_before;
-  if (typeof cutoff !== "string" || !/^\d{4}-(0[1-9]|1[0-2])$/.test(cutoff)) {
-    fail("needs intercept_rate.missile_rates_end_before as YYYY-MM");
-  }
-  if (!Array.isArray(table.rows)) fail("needs rows");
-  const isCount = (value: unknown) => Number.isInteger(value) && (value as number) >= 0;
-  const rows = (table.rows as (OutcomeRow & { class: string })[]).map((row) => {
-    const { month, destroyed, launched_with_outcome, destroyed_includes_ew } = row;
-    const where = `${month} ${row.class}`;
-    const both = isCount(destroyed) && isCount(launched_with_outcome) && destroyed! <= launched_with_outcome!;
-    if (!both && !(destroyed === null && launched_with_outcome === null)) {
-      fail(`${where}: destroyed and launched_with_outcome must both be null, or counts with destroyed no larger`);
-    }
-    if (destroyed_includes_ew !== (destroyed !== null)) fail(`${where}: destroyed_includes_ew must match destroyed`);
-    return { month, destroyed, launched_with_outcome, destroyed_includes_ew };
-  });
-  return { missileRatesEndBefore: cutoff, rows };
-}
 
 export interface Headline {
   id: "launched" | "destroyed_share" | "alert_hours";
@@ -61,21 +22,21 @@ export interface Headline {
 export interface Headlines {
   launched: Headline;
   destroyedShare: Headline & { destroyed: number; launchedWithOutcome: number };
-  alertHours: Headline & { areas: number; months: number };
+  alertHours: Headline & { areas: number };
 }
 
 const flagsFor = (column: ColumnSpec, rows: object[], coverage: Period) =>
   chartFlags({ columns: [column], rows, coverage });
 
-export function headlines(strikes: MonthTable, outcomes: OutcomeTable, alerts: AlertTable): Headlines {
+export function headlines(strikes: MonthTable, rates: RateTable, alerts: AlertTable): Headlines {
   const strikePeriod = { from: strikes.firstDay, to: strikes.lastDay };
   const launched = sumKnown(strikes.rows.map((row) => row.launched));
   if (launched === null) throw new Error("Headlines: no published launch count");
 
-  // The all-class share stops where the missile-class rates do. Whether it
-  // should is still open (docs/plan.md §11); the stop says what it covers.
-  const lastShareMonth = monthFromNumber(monthNumber(outcomes.missileRatesEndBefore) - 1);
-  const inShare = outcomes.rows.filter((row) => row.month <= lastShareMonth);
+  // An all-class share stops where the missile-class rates do, and says so
+  // (the owner's decision on #9, docs/plan.md §11).
+  const lastShareMonth = monthFromNumber(monthNumber(rates.missileRatesEndBefore) - 1);
+  const inShare = rates.rows.filter((row) => row.month <= lastShareMonth);
   const destroyed = sumKnown(inShare.map((row) => row.destroyed));
   const withOutcome = sumKnown(inShare.map((row) => row.launched_with_outcome));
   if (destroyed === null || !withOutcome) throw new Error("Headlines: no reports with both counts");
@@ -83,8 +44,9 @@ export function headlines(strikes: MonthTable, outcomes: OutcomeTable, alerts: A
 
   const areas = new Set(alerts.rows.map((row) => row.oblast)).size;
   const alertPeriod = { from: monthPeriod(alerts.months[0]!).from, to: monthPeriod(alerts.months.at(-1)!).to };
-  // Each area weighs the same, whatever its size.
-  const meanHours = alerts.rows.reduce((sum, row) => sum + row.hours, 0) / areas;
+  // An average month, not a total (the owner's choice on #9). Each area weighs
+  // the same, whatever its size.
+  const monthlyHours = alerts.rows.reduce((sum, row) => sum + row.hours, 0) / areas / alerts.months.length;
 
   return {
     launched: {
@@ -111,9 +73,8 @@ export function headlines(strikes: MonthTable, outcomes: OutcomeTable, alerts: A
     },
     alertHours: {
       id: "alert_hours",
-      value: meanHours,
+      value: monthlyHours,
       areas,
-      months: alerts.months.length,
       period: alertPeriod,
       flags: flagsFor(
         { key: "hours", label: "Alert hours", type: "number", measure: "alert_hours" },

@@ -1,13 +1,14 @@
 """The data build.
 
-It checks the inputs and writes the manifest, the snapshot date, the alert tables
-and the strike tables.
+It checks the inputs, writes the manifest, the snapshot date, the alert tables and
+the strike tables, and prints the summary report.
 """
 
 import json
 from datetime import date
 
 from pipeline.alerts import OFFICIAL, build_tables
+from pipeline.budget import BUDGET_BYTES, check_budget, reference_sizes
 from pipeline.columns import read_raw
 from pipeline.errors import PipelineError
 from pipeline.gazetteer import load_gazetteer
@@ -25,6 +26,7 @@ from pipeline.sources import (
     sha256_of,
 )
 from pipeline.strikes import build_strike_tables
+from pipeline.summary import summary_report
 from pipeline.weapon_classes import load_weapon_classes
 
 # `time_end` comes as a date, with or without a time of day, sometimes with trailing spaces.
@@ -62,9 +64,8 @@ def describe(raw_dir, name, frame):
     }
 
 
-def write_json(path, value):
-    path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8", newline="\n")
-    print(f"Wrote {path.name}")
+def render_json(value):
+    return json.dumps(value, indent=2) + "\n"
 
 
 def dump_lines(items, opener, closer, indent):
@@ -78,8 +79,8 @@ def compact(value):
     return json.dumps(value, separators=(",", ":"))
 
 
-def write_table(path, table):
-    """Like write_json, but with one row (or one area's series) per line."""
+def render_table(table):
+    """Like render_json, but with one row (or one area's series) per line."""
     parts = []
     for key, value in table.items():
         if key == "rows":
@@ -91,8 +92,7 @@ def write_table(path, table):
         else:
             text = compact(value)
         parts.append(f"{compact(key)}: {text}")
-    path.write_text(dump_lines(parts, "{", "}", 0) + "\n", encoding="utf-8", newline="\n")
-    print(f"Wrote {path.name}")
+    return dump_lines(parts, "{", "}", 0) + "\n"
 
 
 def build(raw_dir, out_dir, alert_checksums=ALERTS_SHA256, reference_dir=REFERENCE_DIR):
@@ -128,17 +128,30 @@ def build(raw_dir, out_dir, alert_checksums=ALERTS_SHA256, reference_dir=REFEREN
         },
     }
 
-    # No build time in either file: the same inputs must give the same bytes.
+    # No build time in any file: the same inputs must give the same bytes.
+    outputs = {
+        "manifest.json": render_json(manifest),
+        "build_info.json": render_json({"snapshot_date": snapshot}),
+        "alert_hours_monthly.json": render_table(monthly),
+        "alert_daily.json": render_table(daily),
+        "nights.json": render_table(nights),
+        "monthly_by_class.json": render_table(monthly_by_class),
+        "strike_reconciliation.json": render_json(reconciliation),
+    }
+    sizes = {name: len(content.encode("utf-8")) for name, content in outputs.items()}
+    sizes.update(reference_sizes(reference_dir))
+    check_budget(sizes)
+
     out_dir.mkdir(parents=True, exist_ok=True)
-    write_json(out_dir / "manifest.json", manifest)
-    write_json(out_dir / "build_info.json", {"snapshot_date": snapshot})
-    write_table(out_dir / "alert_hours_monthly.json", monthly)
-    write_table(out_dir / "alert_daily.json", daily)
-    write_table(out_dir / "nights.json", nights)
-    write_table(out_dir / "monthly_by_class.json", monthly_by_class)
-    write_json(out_dir / "strike_reconciliation.json", reconciliation)
+    for name, content in outputs.items():
+        (out_dir / name).write_text(content, encoding="utf-8", newline="\n")
+        print(f"Wrote {name}")
     print(
         f"Snapshot date: {snapshot}. Alert figures run {monthly['first_day']} to "
         f"{monthly['last_day']}. Strike figures run {nights['first_day']} to "
         f"{nights['last_day']}."
+    )
+    print()
+    print(
+        summary_report(nights, monthly_by_class, monthly, reconciliation, sizes, BUDGET_BYTES)
     )

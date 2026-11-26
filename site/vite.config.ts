@@ -4,8 +4,7 @@ import { licenseNotices } from "./licenses.ts";
 import { parseAlertMonthly, parseBoundaries } from "./src/alerts/alertData.ts";
 import { parseAnnotations } from "./src/annotations/annotationData.ts";
 import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./src/buildData.ts";
-import { parseOutcomes } from "./src/guided/headlineData.ts";
-import { parseMonthly, parseNights } from "./src/strikes/strikeData.ts";
+import { parseOutcomes, parseRates } from "./src/defense/defenseData.ts";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -19,10 +18,9 @@ function checkBuildData(): Plugin {
       const areas = parseAreas(read("../data/reference/oblasts.csv"));
       parseAlertMonthly(JSON.parse(read("../data/processed/alert_hours_monthly.json")), areas);
       parseBoundaries(read("../data/reference/ukraine_admin1.geojson"), areas);
-      parseNights(JSON.parse(read("../data/processed/nights.json")));
-      const monthly = JSON.parse(read("../data/processed/monthly_by_class.json"));
-      parseMonthly(monthly);
-      parseOutcomes(monthly);
+      // Each also runs the tab A checks on its table.
+      parseOutcomes(JSON.parse(read("../data/processed/nights.json")));
+      parseRates(JSON.parse(read("../data/processed/monthly_by_class.json")));
       parseAnnotations(read("../data/reference/annotations.csv"));
     },
   };
