@@ -1,0 +1,127 @@
+.filters {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.25rem;
+}
+
+.filters fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.filters legend {
+  padding: 0;
+  font-weight: 700;
+}
+
+.filter-slider {
+  display: grid;
+  grid-template-columns: 3.5em minmax(0, 28rem) 6em;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filters input[type="range"] {
+  width: 100%;
+  min-height: 1.75rem;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.filter-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.filter-classes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.25rem;
+}
+
+.filter-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  /* At least the 24px target size of WCAG 2.2. */
+  min-height: 1.75rem;
+  cursor: pointer;
+}
+
+.filter-check input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.filter-check.unavailable {
+  color: var(--ink-secondary);
+  cursor: default;
+}
+
+.filter-check.unavailable input {
+  opacity: 0.5;
+}
+
+.filter-oblasts summary {
+  min-height: 1.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filter-oblast-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0 1rem;
+}
+
+.filter-limit,
+.filter-excluded,
+.filter-note,
+.filter-summary {
+  margin: 0;
+}
+
+.filter-limit,
+.filter-excluded,
+.filter-note {
+  color: var(--ink-secondary);
+  font-size: 0.9rem;
+}
+
+.filter-excluded {
+  margin-top: 0.5rem;
+}
+
+.filter-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.filter-reset {
+  padding: 0.3rem 0.9rem;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+@media (max-width: 30rem) {
+  .filter-slider {
+    grid-template-columns: 3.5em minmax(0, 1fr);
+  }
+
+  .filter-value {
+    grid-column: 2;
+  }
+}
