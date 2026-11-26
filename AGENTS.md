@@ -87,6 +87,7 @@ Site tests cover only the flag rules, the filters' URL state, glossary matching,
 
 ## Site notes
 
+- The site is public at <https://hoseasiu.github.io/ukraine-air-war-dashboard/> as an early preview. [deploy.yml](.github/workflows/deploy.yml) publishes it on every push to `main` that touches the site, its data or `LICENSE`, so **merging such a change deploys it**. The preview note at the top of `site/index.html` stays until the owner says to remove it (#27).
 - The build writes `licenses.txt` ([licenses.ts](site/licenses.ts)) and `third-party-licenses.txt` (Vite's `build.license`), linked from the footer. A new data source needs a notice in the first. The dev server serves only the first.
 - Pages are URL hashes (`#attacks`, `#defense`, `#alerts`, `#methods`). Asset paths are relative, so the build works under any subpath. A plain in-page anchor such as `#main` would be read as a route.
 - Guided mode is `#stop-N`. Its stops are data in `site/src/guided/stops.ts`, and a new kind of chart view also needs a case in `views.ts`. A stop's view takes all its settings from that data, and guided mode never reads or writes the query string, which belongs to the exploration filters. #11 should keep it that way.
