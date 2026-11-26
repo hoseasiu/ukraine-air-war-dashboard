@@ -13,7 +13,15 @@ With the two Kaggle files in `raw/` (below), run this from the repo root. It wor
 uv run python -m pipeline
 ```
 
-It downloads the alert files if they're missing, checks the inputs and writes `processed/manifest.json` (snapshot date, plus each raw file's row count, size and SHA-256), `processed/build_info.json`, the two [alert tables](#alert-tables) and the [strike tables](#strike-tables). The same inputs give the same bytes, so after a rebuild `git diff data/processed` shows what changed. See [processed/LICENSE.md](processed/LICENSE.md) for the license of those files.
+It downloads the alert files if they're missing, checks the inputs and writes `processed/manifest.json` (snapshot date, plus each raw file's row count, size and SHA-256), `processed/build_info.json`, the two [alert tables](#alert-tables) and the [strike tables](#strike-tables). The same inputs give the same bytes, so after a rebuild `git diff data/processed` shows what changed.
+
+The build ends by printing a **summary report**: the headline numbers (with those for guided stop 1), launches by class, each year's massive-night bar, how the raw rows were used and the size of the site's data. It's for checking. Nothing reads it, so don't type its numbers into the site. Its all-class shares reported destroyed aren't approved figures ([open question](../docs/plan.md#11-decisions)).
+
+**Size budget:** the build fails, writing nothing, if the processed JSON plus the reference files the site uses pass 2,000,000 bytes, counted before minifying or compression ([budget.py](../pipeline/budget.py)). The tables are JSON, not Parquet.
+
+**Tests:** `uv run pytest -rs`. With all four CSVs in `raw/`, [test_real_data.py](../tests/test_real_data.py) also rebuilds from them, compares the result with `processed/` byte for byte, and checks model strings, monthly launch totals and alert durations against the raw rows. Otherwise it's skipped, as in CI.
+
+See [processed/LICENSE.md](processed/LICENSE.md) for the license of those files.
 
 ## Snapshot date
 

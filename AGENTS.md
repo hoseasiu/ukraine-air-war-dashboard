@@ -59,10 +59,10 @@ Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` instal
 
 | Command | What it does |
 |---|---|
-| `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json`, `build_info.json`, the [alert tables](data/README.md#alert-tables) and the [strike tables](data/README.md#strike-tables). |
+| `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json`, `build_info.json`, the [alert tables](data/README.md#alert-tables) and the [strike tables](data/README.md#strike-tables). Fails if the site's data would pass 2 MB, and ends by printing the [summary report](data/README.md#build). |
 | `uv run python -m pipeline fetch` | Only downloads and verifies the pinned alert files. |
-| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and checks on the committed alert and strike tables, the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. |
-| `uv run ruff check .` | Lints the Python, apart from `.github/`. |
+| `uv run pytest` | Runs everything in `tests/`: the pipeline tests on made-up inputs, checks on the real raw files (including that a build reproduces `data/processed/`; skipped unless all four CSVs are in `data/raw/`, and `-rs` says so), the 2 MB data budget, checks on the committed alert and strike tables, the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. CI runs it, without the real files. |
+| `uv run ruff check .` | Lints the Python, apart from `.github/`. CI runs it. |
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
 | `uv run pipeline/audit/definitions.py` | Prints the evidence for the massive-night and intercept-rate definitions in `docs/data-audit.md`. Needs `data/raw/`. |
@@ -70,7 +70,7 @@ Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` instal
 | `uv run pipeline/audit/gazetteer.py` | Checks that every alert-file oblast name and Kaggle `affected region` item resolves, and that the raion list matches the official alert file. Needs the Kaggle and alert CSVs in `data/raw/`. |
 | `uv run pipeline/reference/build_boundaries.py` | Rebuilds `data/reference/ukraine_admin1.geojson`. Needs the [boundary zip](data/README.md#boundaries) in `data/raw/`. |
 | `python .github/scripts/dependency_graph.py --dry-run` | Prints the body of the generated dependency issue (#31). Without `--dry-run`, updates it. Needs `gh`. |
-| `python -m unittest discover -s .github/scripts` | Tests the dependency-graph script. |
+| `python -m unittest discover -s .github/scripts` | Tests the dependency-graph script. CI runs it. |
 
 Site commands run from `site/` and need Node 22.12 or later:
 
@@ -83,7 +83,7 @@ Site commands run from `site/` and need Node 22.12 or later:
 | `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`, or on a bad `nights.json` or `monthly_by_class.json` (including a massive label that disagrees with its year's bar), or on a bad `oblasts.csv`, `alert_hours_monthly.json` or boundary file (every included area needs every month, and every area one boundary). CI runs it. |
 | `npm run preview` | Serves the built site locally. |
 
-Site tests cover only the flag rules, the filters' URL state, glossary matching, the alert map's data and the attacks tab's figures, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
+Site tests cover only the flag rules, the filters' URL state, glossary matching, the alert map's data and the attacks tab's figures, not rendering. To see the chart frame with invented numbers, run `npm run dev` and open `/chart-sample.html`; the production build leaves that page out. **Whoever adds a command records it here.**
 
 ## Site notes
 
@@ -167,6 +167,7 @@ If you find new work, open an issue. Record each dependency as a GitHub "blocked
 ## Quality bar
 
 - Pipeline: tests cover reconciliation with raw totals, unmapped model strings and non-negative alert durations. Fail loudly on new, unmapped values.
+- CI has no raw files. After changing the pipeline or the data, run `uv run pytest -rs` with them in `data/raw/` and check that nothing is skipped.
 - Site: WCAG 2.2 AA, full keyboard access, a table alternative for every chart, and reduced motion respected. Light theme by default, readable on a projector.
-- Total data the site loads stays under 2 MB.
+- Total data the site loads stays under 2 MB. [budget.py](pipeline/budget.py) checks it; list a newly imported reference file there.
 - Every number shown traces to a source, and every annotation has a citation.
