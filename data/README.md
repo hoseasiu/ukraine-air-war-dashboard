@@ -13,11 +13,43 @@ With the two Kaggle files in `raw/` (below), run this from the repo root. It wor
 uv run python -m pipeline
 ```
 
-It downloads the alert files if they're missing, checks the inputs and writes `processed/manifest.json` (snapshot date, plus each raw file's row count, size and SHA-256) and `processed/build_info.json`. It builds no tables yet (#7, #8). The same inputs give the same bytes, so after a rebuild `git diff data/processed` shows what changed. See [processed/LICENSE.md](processed/LICENSE.md) for the license of those files.
+It downloads the alert files if they're missing, checks the inputs and writes `processed/manifest.json` (snapshot date, plus each raw file's row count, size and SHA-256), `processed/build_info.json` and the two [alert tables](#alert-tables). It builds no strike tables yet (#7). The same inputs give the same bytes, so after a rebuild `git diff data/processed` shows what changed. See [processed/LICENSE.md](processed/LICENSE.md) for the license of those files.
 
 ## Snapshot date
 
 `processed/build_info.json` holds `snapshot_date`, which the site shows on every page. The build sets it to the **latest `time_end` date in `missile_attacks_daily.csv`** (2026-11-21 for the files below), not from file timestamps. It describes the strike data only, not the alert data.
+
+## Alert tables
+
+Built by [pipeline/alerts.py](../pipeline/alerts.py) from `official_data_en.csv` alone, with the [roll-up rule](../docs/data-audit.md#roll-up-rule). They cover **April 1, 2022 through July 31, 2026**, in **Kyiv time** (`Europe/Kyiv`; the source is UTC). So a day has 23 or 25 hours when the clocks change.
+
+Both files start with the source commit, `time_zone`, `first_day`, `last_day`, the 24 `areas` and the `excluded_areas` with reasons. **Excluded areas have no figures. Show them as excluded, never as zero.** Within the window, a 0 means the file lists no alert counted by the rule. It can't show that no alert was missed.
+
+### `alert_hours_monthly.json`
+
+One object per area and month in `rows` (24 × 52).
+
+| Column | Meaning |
+|---|---|
+| `oblast` | ISO 3166-2 code. Join to [`oblasts.csv`](reference/oblasts.csv) for names. |
+| `month` | `YYYY-MM`. |
+| `hours` | Alert hours, **average per raion** (Kyiv city is one unit). Not "some part of the oblast was under alert". |
+| `n_alerts` | Alert periods that **started** in the month, **average per raion**, so it can be a fraction. For each raion, oblast-wide and raion rows that overlap or touch are one period. Zero-length rows aren't counted, and a period that started before April 2022 isn't counted. |
+| `alert_end_assumed` | A row used here **may** have an assumed end (below). |
+| `alert_regions_excluded` | Always true: the table leaves out Luhansk, Crimea and Sevastopol. |
+| `alert_granularity_change` | True from January 2025, when the switch to raion alerts began phasing in (main step November 2025). |
+
+The three flag names are the site's [chart-frame row flags](../site/src/chart/flags.ts).
+
+**`n_alerts` is still not like-for-like across the 2025 switch.** Averaging over raions stops one oblast's raion rows from adding up, but the alerting practice changed. Don't describe a change across it as a change in threat.
+
+**Assumed ends.** The official file doesn't mark them, and only the unused volunteer file has a `naive` column. The upstream parser gives an unfinished alert an end exactly one hour after its start, so the flag is set when a row of exactly 3,600 seconds, at oblast or raion level, touches the period. Some of those are probably real hour-long alerts, and the flag can't tell them apart. An unflagged period has no end set by that rule. The parser can also replace an unfinished alert's start with a later one, which no flag can show.
+
+### `alert_daily.json`
+
+For the calendar view, stored as series to keep it small. `hours` maps each area to one number per day, in order from `first_day` to `last_day` (hours, average per raion). `flags` holds `alert_regions_excluded`, `alert_granularity_change_from` (a date) and `alert_end_assumed_days` (for each area, the flagged dates). A chart that builds rows from this file should set the three row flags from these.
+
+Hours are rounded to 0.01, so a month's daily values can differ slightly from its monthly total.
 
 ## Current raw files
 

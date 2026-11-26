@@ -9,6 +9,7 @@ from pipeline.errors import PipelineError
 ROOT = Path(__file__).resolve().parents[1]
 RAW_DIR = ROOT / "data" / "raw"
 PROCESSED_DIR = ROOT / "data" / "processed"
+REFERENCE_DIR = ROOT / "data" / "reference"
 
 # Kaggle needs a login, so a person downloads these. They aren't pinned: a snapshot
 # refresh replaces them, and the manifest records which files a build used.

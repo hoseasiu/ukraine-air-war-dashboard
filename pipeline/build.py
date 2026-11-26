@@ -1,14 +1,16 @@
 """The data build.
 
-A stub so far: it checks the inputs and writes the manifest and the snapshot date.
-The strike tables (#7) and alert tables (#8) are added here.
+It checks the inputs and writes the manifest, the snapshot date and the alert tables.
+The strike tables (#7) are added here.
 """
 
 import json
 from datetime import date
 
+from pipeline.alerts import OFFICIAL, build_tables
 from pipeline.columns import read_raw
 from pipeline.errors import PipelineError
+from pipeline.gazetteer import load_gazetteer
 from pipeline.sources import (
     ALERTS_COMMIT,
     ALERTS_REPO,
@@ -16,6 +18,7 @@ from pipeline.sources import (
     KAGGLE_DAILY,
     KAGGLE_FILES,
     KAGGLE_URL,
+    REFERENCE_DIR,
     fetch_alerts,
     require_kaggle,
     sha256_of,
@@ -61,13 +64,49 @@ def write_json(path, value):
     print(f"Wrote {path.name}")
 
 
-def build(raw_dir, out_dir, alert_checksums=ALERTS_SHA256):
+def dump_lines(items, opener, closer, indent):
+    """One item per line, so a rebuild gives a readable diff and the file stays small."""
+    pad = " " * indent
+    body = ",\n".join(f"{pad}  {item}" for item in items)
+    return f"{opener}\n{body}\n{pad}{closer}"
+
+
+def compact(value):
+    return json.dumps(value, separators=(",", ":"))
+
+
+def write_table(path, table):
+    """Like write_json, but with one row (or one area's series) per line."""
+    parts = []
+    for key, value in table.items():
+        if key == "rows":
+            text = dump_lines(map(compact, value), "[", "]", 2)
+        elif key == "hours":
+            text = dump_lines(
+                (f"{compact(k)}:{compact(v)}" for k, v in value.items()), "{", "}", 2
+            )
+        else:
+            text = compact(value)
+        parts.append(f"{compact(key)}: {text}")
+    path.write_text(dump_lines(parts, "{", "}", 0) + "\n", encoding="utf-8", newline="\n")
+    print(f"Wrote {path.name}")
+
+
+def build(raw_dir, out_dir, alert_checksums=ALERTS_SHA256, reference_dir=REFERENCE_DIR):
     # Kaggle first: it can't be downloaded, so fail before fetching anything.
     require_kaggle(raw_dir)
     fetch_alerts(raw_dir, alert_checksums)
 
     kaggle = {name: read_raw(raw_dir, name) for name in KAGGLE_FILES}
     snapshot = snapshot_date(kaggle[KAGGLE_DAILY])
+    alerts = {name: read_raw(raw_dir, name) for name in alert_checksums}
+    # Build every table before writing anything, so a failure leaves no mixed outputs.
+    alert_source = {
+        "url": f"https://github.com/{ALERTS_REPO}",
+        "commit": ALERTS_COMMIT,
+        "license": "MIT",
+    }
+    monthly, daily = build_tables(alerts[OFFICIAL], load_gazetteer(reference_dir), alert_source)
     manifest = {
         "snapshot_date": snapshot,
         "sources": {
@@ -77,12 +116,8 @@ def build(raw_dir, out_dir, alert_checksums=ALERTS_SHA256):
                 "files": [describe(raw_dir, name, frame) for name, frame in kaggle.items()],
             },
             "alerts": {
-                "url": f"https://github.com/{ALERTS_REPO}",
-                "commit": ALERTS_COMMIT,
-                "license": "MIT",
-                "files": [
-                    describe(raw_dir, name, read_raw(raw_dir, name)) for name in alert_checksums
-                ],
+                **alert_source,
+                "files": [describe(raw_dir, name, frame) for name, frame in alerts.items()],
             },
         },
     }
@@ -91,4 +126,9 @@ def build(raw_dir, out_dir, alert_checksums=ALERTS_SHA256):
     out_dir.mkdir(parents=True, exist_ok=True)
     write_json(out_dir / "manifest.json", manifest)
     write_json(out_dir / "build_info.json", {"snapshot_date": snapshot})
-    print(f"Snapshot date: {snapshot}. No derived tables yet (#7, #8).")
+    write_table(out_dir / "alert_hours_monthly.json", monthly)
+    write_table(out_dir / "alert_daily.json", daily)
+    print(
+        f"Snapshot date: {snapshot}. Alert figures run {monthly['first_day']} to "
+        f"{monthly['last_day']}. No strike tables yet (#7)."
+    )
