@@ -33,6 +33,18 @@ export function drawMarkers(plot: (SVGSVGElement | HTMLElement) & Plot, markers:
   }
 }
 
+/** The markers' lines alone, through a panel under the one that carries their numbers. */
+export function drawMarkerRules(plot: (SVGSVGElement | HTMLElement) & Plot, markers: readonly Marker[]): void {
+  const x = plot.scale("x")!;
+  const range = plot.scale("y")!.range as number[];
+  for (const marker of markers) {
+    const at = Number(x.apply(marker.month)) + x.bandwidth! / 2;
+    plot.append(
+      svgElement("line", { x1: at, x2: at, y1: Math.min(...range), y2: Math.max(...range), class: "event-rule" }),
+    );
+  }
+}
+
 /** Each marker's date, label and citations. This is the markers' text alternative. */
 export function eventKey(markers: readonly Marker[], firstDataDay: string): HTMLElement {
   const section = create("section", "event-key");

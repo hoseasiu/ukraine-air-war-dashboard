@@ -101,6 +101,32 @@
   stroke-width: 1;
 }
 
+.chart-option {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.chart-option label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 24px;
+}
+
+.chart-option input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+}
+
+.chart-option-note {
+  color: var(--ink-secondary);
+}
+
 .night-controls {
   display: flex;
   flex-wrap: wrap;

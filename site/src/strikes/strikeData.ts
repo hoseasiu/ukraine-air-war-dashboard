@@ -223,6 +223,28 @@ export function monthRows(table: MonthTable, selection: Selection, formatDay: (d
     });
 }
 
+/**
+ * The monthly launch chart's two panels. Drones far outnumber missiles, so each
+ * group gets its own scale. "mixed" sits with the missiles: nearly all of its
+ * rows include missiles (data/reference/README.md).
+ */
+export const LAUNCH_PANELS = [
+  { id: "drones", title: "Shahed-type and decoy drones", classes: ["shahed_drone"] },
+  {
+    id: "missiles",
+    title: "Missile and mixed classes",
+    classes: ["cruise", "ballistic", "aeroballistic_hypersonic", "antiship_other", "mixed"],
+  },
+] as const satisfies readonly { id: string; title: string; classes: readonly ClassId[] }[];
+
+/** The panels that have rows to draw, each with its rows. A panel with none is left out. */
+export function launchPanels<Row extends { class: ClassId }>(rows: readonly Row[]) {
+  return LAUNCH_PANELS.map((panel) => ({
+    ...panel,
+    rows: rows.filter((row) => (panel.classes as readonly ClassId[]).includes(row.class)),
+  })).filter((panel) => panel.rows.length > 0);
+}
+
 export interface Night {
   date: string;
   /** Known launches in the selected classes. null if none is known. */

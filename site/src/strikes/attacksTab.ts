@@ -11,6 +11,8 @@ import { largestNight, massiveDates, monthsShown } from "./strikeData.ts";
 
 /** The night chosen for the breakdown, kept while the filters redraw the page. It isn't a filter. */
 let chosenNight: string | undefined;
+/** Whether the monthly chart shows event markers, kept the same way. */
+let showEvents = false;
 
 function paragraph(text: string): HTMLParagraphElement {
   const p = create("p");
@@ -42,7 +44,12 @@ export function attacksTab(filters: Filters): HTMLElement {
     return section;
   }
   section.append(
-    monthlyLaunchChart(filters),
+    monthlyLaunchChart(filters, {
+      events: showEvents,
+      onEventsChange: (events) => {
+        showEvents = events;
+      },
+    }),
     classMixChart(filters),
     salvoHistogram(filters),
     breakdown(filters),
