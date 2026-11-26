@@ -5,9 +5,15 @@
   margin-bottom: 0.75rem;
 }
 
+/* The sparkline takes the slider's columns, and the first has a set width, so its track lines up. */
+.month-slider,
+.month-sparkline {
+  --month-columns: 7em minmax(0, 32rem) 6em;
+}
+
 .month-slider {
   display: grid;
-  grid-template-columns: auto minmax(0, 32rem) 6em;
+  grid-template-columns: var(--month-columns);
   align-items: center;
   gap: 0.75rem;
 }
@@ -26,6 +32,75 @@
 .month-value {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+}
+
+.month-sparkline {
+  display: grid;
+  grid-template-columns: var(--month-columns);
+  column-gap: 0.75rem;
+}
+
+.month-sparkline-plot {
+  grid-column: 2;
+  /* Half the slider thumb's width, plus room for the marker at the top. */
+  padding: 6px 8px 0;
+}
+
+.month-sparkline-track {
+  position: relative;
+  height: 2.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.month-sparkline-track svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.month-sparkline-area {
+  fill: var(--ink);
+  opacity: 0.1;
+}
+
+.month-sparkline-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.month-sparkline-rule,
+.month-sparkline-dot {
+  position: absolute;
+  pointer-events: none;
+}
+
+.month-sparkline-rule {
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--accent);
+}
+
+.month-sparkline-dot {
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+}
+
+.month-sparkline-caption {
+  grid-column: 2 / -1;
+  margin: 0;
+  padding: 0 8px;
+  color: var(--ink-secondary);
+  font-size: 0.85rem;
 }
 
 .month-buttons {
@@ -126,8 +201,17 @@
 }
 
 @media (max-width: 30rem) {
-  .month-slider {
-    grid-template-columns: minmax(0, 1fr) 6em;
+  .month-slider,
+  .month-sparkline {
+    --month-columns: minmax(0, 1fr) 6em;
+  }
+
+  .month-sparkline-plot {
+    grid-column: 1;
+  }
+
+  .month-sparkline-caption {
+    grid-column: 1 / -1;
   }
 
   .month-slider label {

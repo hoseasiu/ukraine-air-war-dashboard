@@ -65,6 +65,7 @@ export function attachTooltips(stage: HTMLElement, pointer: "x" | "xy" | "shape"
   let buttons: HTMLButtonElement[] = [];
   let tabStop = 0;
   let shown = -1;
+  let mark: ((index: number | null) => void) | undefined;
 
   const box = document.createElement("div");
   box.className = "chart-tooltip";
@@ -78,6 +79,7 @@ export function attachTooltips(stage: HTMLElement, pointer: "x" | "xy" | "shape"
 
   function hide(): void {
     box.hidden = true;
+    mark?.(null);
     buttons[shown]?.classList.remove("active");
     shown = -1;
   }
@@ -89,6 +91,7 @@ export function attachTooltips(stage: HTMLElement, pointer: "x" | "xy" | "shape"
     hide();
     shown = index;
     buttons[index]!.classList.add("active");
+    mark?.(index);
     fill(box, target.content);
     box.hidden = false;
     // Beside the point, flipped or clamped to stay on the chart.
@@ -187,9 +190,10 @@ export function attachTooltips(stage: HTMLElement, pointer: "x" | "xy" | "shape"
 
   return {
     /** Replaces the drawing and its targets, keeping keyboard focus where it was. */
-    update(drawing: Element, next: PlacedTooltip[]): void {
+    update(drawing: Element, next: PlacedTooltip[], onShow?: (index: number | null) => void): void {
       const refocus = focusedIndex() >= 0;
       hide();
+      mark = onShow;
       targets = next;
       tabStop = Math.min(tabStop, Math.max(0, targets.length - 1));
       buttons = targets.map((target, index) => {

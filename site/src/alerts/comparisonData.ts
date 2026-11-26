@@ -4,6 +4,7 @@
  * No DOM or Vite imports here, so Node can test this file directly.
  */
 import type { Area } from "../buildData.ts";
+import { ALERT_GRANULARITY_CHANGE_FROM } from "../chart/flags.ts";
 import { MAX_OBLASTS } from "../filters/state.ts";
 import { monthsInRange, type AlertMonth, type AlertTable } from "./alertData.ts";
 
@@ -54,4 +55,41 @@ export function assignStyles(
   const kept = new Map(oblasts.flatMap((id) => (previous.has(id) ? [[id, previous.get(id)!] as const] : [])));
   const free = [...Array(MAX_OBLASTS).keys()].filter((slot) => ![...kept.values()].includes(slot));
   return new Map(oblasts.map((id) => [id, kept.get(id) ?? free.shift()!]));
+}
+
+/**
+ * The months the comparison shades. Raion alerting phased in during 2025, with
+ * the main step in November (data audit). Later months stay only partly
+ * comparable with earlier ones.
+ */
+export const RAION_SWITCH = { from: ALERT_GRANULARITY_CHANGE_FROM.slice(0, 7), to: "2025-12" } as const;
+
+/** The first and last of the shown months that fall in the switch, or undefined if none does. */
+export function raionSwitchMonths(months: readonly string[]): { first: string; last: string } | undefined {
+  const inside = months.filter((month) => month >= RAION_SWITCH.from && month <= RAION_SWITCH.to);
+  return inside.length ? { first: inside[0]!, last: inside.at(-1)! } : undefined;
+}
+
+/** The name written at a line's end. "Kyiv" alone could be the city or the oblast, so both keep theirs. */
+export function endLabel(name: string): string {
+  return name === "Kyiv oblast" ? name : name.replace(/ oblast$/, "");
+}
+
+/**
+ * Moves labels apart so they're at least `gap` pixels from each other and stay
+ * between `top` and `bottom`, keeping them as near their lines' ends as that
+ * allows. Returns positions in the order given.
+ */
+export function spreadLabels(wanted: readonly number[], gap: number, top: number, bottom: number): number[] {
+  const order = [...wanted.keys()].sort((a, b) => wanted[a]! - wanted[b]!);
+  const placed = [...wanted];
+  let lowest = top - gap;
+  for (const index of order) {
+    lowest = placed[index] = Math.max(wanted[index]!, lowest + gap, top);
+  }
+  let highest = bottom + gap;
+  for (const index of order.reverse()) {
+    highest = placed[index] = Math.min(placed[index]!, highest - gap, bottom);
+  }
+  return placed;
 }

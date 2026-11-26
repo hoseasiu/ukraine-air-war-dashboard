@@ -89,6 +89,24 @@ export function parseAlertMonthly(json: unknown, areas: readonly Area[]): AlertT
   return { months, rows };
 }
 
+/** One month across the country. */
+export interface NationalMonth
+  extends Pick<AlertMonth, "month" | "alert_end_assumed" | "alert_regions_excluded" | "alert_granularity_change"> {
+  /** Mean over the areas in alert totals, each counted once. null outside the table's months, never 0. */
+  hours: number | null;
+}
+
+export function nationalMonth(table: AlertTable, month: string): NationalMonth {
+  const areas = table.rows.filter((row) => row.month === month);
+  return {
+    month,
+    hours: areas.length ? areas.reduce((sum, row) => sum + row.hours, 0) / areas.length : null,
+    alert_end_assumed: areas.some((row) => row.alert_end_assumed),
+    alert_regions_excluded: areas.some((row) => row.alert_regions_excluded),
+    alert_granularity_change: areas.some((row) => row.alert_granularity_change),
+  };
+}
+
 /** The table's months within the chosen range (both ends included). Can be empty. */
 export function monthsInRange(table: AlertTable, from: string, to: string): string[] {
   return table.months.filter((month) => month >= from && month <= to);

@@ -12,7 +12,7 @@ import { withTerms } from "../glossary/popover.ts";
 import type { TermId } from "../glossary/terms.ts";
 import { CLASS_IDS, CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { classFill, classSymbolPath, svgElement } from "../theme/marks.ts";
-import { chartFlags, FLAG_TEXT, rowFlags, type ColumnSpec, type FlagId, type FlagInput } from "./flags.ts";
+import { chartFlags, combinedFlags, FLAG_TEXT, rowFlags, type ColumnSpec, type FlagId, type FlagInput } from "./flags.ts";
 import { attachTooltips, type TooltipContent } from "./tooltips.ts";
 import "./chart.css";
 
@@ -32,6 +32,8 @@ export interface Drawing<Row> {
   element: SVGSVGElement | HTMLElement;
   /** In keyboard order. */
   targets: Target<Row>[];
+  /** Called with the target whose tooltip opens, and with null when it closes, so the drawing can mark it. */
+  mark?(target: Target<Row> | null): void;
 }
 
 export interface ChartSpec<Row extends object> extends FlagInput<Row> {
@@ -53,6 +55,11 @@ export interface ChartSpec<Row extends object> extends FlagInput<Row> {
    * above the badges, so a badge that comes or goes doesn't move them.
    */
   controls?: HTMLElement;
+  /**
+   * Figures the frame draws besides its rows, such as a sparkline among the
+   * controls. Their badges are worked out the same way and added to the chart's.
+   */
+  alsoDraws?: FlagInput<object>;
   /** How the pointer picks a target: the nearest column of the chart, the nearest point, or the shape under it. */
   pointer: "x" | "xy" | "shape";
   draw(rows: readonly Row[], width: number): Drawing<Row>;
@@ -285,12 +292,13 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
 
   function redraw(): void {
     if (!drawnWidth || !spec.rows.length) return;
-    const { element, targets } = spec.draw(spec.rows, drawnWidth);
+    const { element, targets, mark } = spec.draw(spec.rows, drawnWidth);
     // The description, the point labels and the table stand in for the drawing.
     element.setAttribute("aria-hidden", "true");
     tooltips.update(
       element,
       targets.map(({ x, y, rows, shape }) => ({ x, y, shape, content: tooltipContent(rows, spec.columns, flags) })),
+      mark && ((index) => mark(index === null ? null : targets[index]!)),
     );
   }
 
@@ -299,7 +307,7 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
       if (!next[field].trim()) throw new Error(`A chart needs a ${field}`);
     }
     // Worked out first, so a chart that can't be flagged correctly never renders.
-    flags = chartFlags(next);
+    flags = combinedFlags(chartFlags(next), next.alsoDraws ? chartFlags(next.alsoDraws) : []);
     spec = next;
 
     title.textContent = spec.title;

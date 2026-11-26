@@ -185,3 +185,8 @@ export function chartFlags<Row extends object>({ columns, rows, coverage }: Flag
 
   return FLAG_IDS.filter((id) => flags.has(id));
 }
+
+/** The badges for several sets of figures that share one frame, each once and in the same order. */
+export function combinedFlags(...lists: readonly (readonly FlagId[])[]): FlagId[] {
+  return FLAG_IDS.filter((id) => lists.some((list) => list.includes(id)));
+}

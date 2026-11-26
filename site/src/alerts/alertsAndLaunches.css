@@ -1,4 +1,35 @@
 /* Two stacked panels drawn as one chart: no gap that would break the shared months. */
+.alert-launch-panels {
+  position: relative;
+}
+
 .alert-launch-panels > svg {
   display: block;
+}
+
+/* The month in use, across both panels. Faint enough that the bar and point under it still show. */
+.alert-launch-crosshair {
+  position: absolute;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ink);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.alert-launch-ring {
+  position: absolute;
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--surface);
+  pointer-events: none;
+}
+
+.alert-launch-crosshair[hidden],
+.alert-launch-ring[hidden] {
+  display: none;
 }

@@ -6,7 +6,7 @@
  * Nothing here relates the two series, so the wording mustn't either.
  */
 import * as Plot from "@observablehq/plot";
-import { chartFrame, formatMonth, type Drawing } from "../chart/chartFrame.ts";
+import { chartFrame, formatMonth, type Drawing, type Target } from "../chart/chartFrame.ts";
 import { BALLISTIC_RESTRICTION_FROM, monthPeriod } from "../chart/flags.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { alertMonthly, formatDate, monthlyTable, weaponClasses } from "../data.ts";
@@ -136,7 +136,31 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
   // One target per month, listing both figures, at the top of its bar. A month
   // without a bar still gets one, so its missing figure can be read.
   const targets = plotTargets(launches, rows, { x: (r) => r.month, y: (r) => r.launched ?? 0 });
-  return { element, targets };
+  // One line down both panels marks the month in use, with a ring on its alert hours.
+  // The panels are stacked blocks, so the second starts where the first ends.
+  const crosshair = document.createElement("div");
+  crosshair.className = "alert-launch-crosshair";
+  crosshair.style.top = `${shared.marginTop}px`;
+  crosshair.style.height = `${shared.height * 2 - shared.marginTop - plotDefaults.marginBottom}px`;
+  crosshair.hidden = true;
+  const ring = document.createElement("div");
+  ring.className = "alert-launch-ring";
+  ring.hidden = true;
+  element.append(crosshair, ring);
+
+  const mark = (target: Target<AlertLaunchRow> | null) => {
+    const value = target?.rows[0]?.hours ?? null;
+    crosshair.hidden = !target;
+    // No ring without a figure: a missing month isn't zero.
+    ring.hidden = value === null;
+    if (!target) return;
+    crosshair.style.left = `${target.x}px`;
+    if (value === null) return;
+    ring.style.left = `${target.x}px`;
+    ring.style.top = `${shared.height + Number(hours.scale("y")!.apply(value))}px`;
+  };
+
+  return { element, targets, mark };
 }
 
 function footnote(settings: AlertLaunchSettings, hasHours: boolean): HTMLElement {
