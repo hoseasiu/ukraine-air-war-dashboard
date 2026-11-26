@@ -7,6 +7,7 @@ import csv
 import json
 import pathlib
 import unittest
+from itertools import pairwise
 
 REFERENCE = pathlib.Path(__file__).parents[1] / "data" / "reference"
 
@@ -17,7 +18,7 @@ def read(name):
 
 
 def signed_area(ring):
-    return sum(x1 * y2 - x2 * y1 for (x1, y1), (x2, y2) in zip(ring, ring[1:])) / 2
+    return sum(x1 * y2 - x2 * y1 for (x1, y1), (x2, y2) in pairwise(ring)) / 2
 
 
 class GazetteerTest(unittest.TestCase):

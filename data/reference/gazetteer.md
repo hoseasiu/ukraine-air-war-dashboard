@@ -15,7 +15,7 @@ From [#4](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/4), built
 uv run pipeline/audit/gazetteer.py
 ```
 
-It needs the Kaggle and alert CSVs in `data/raw/`. It fails if an alert-file oblast name or a Kaggle `affected region` item has no alias, if the official file's raion names differ from `raions.csv`, or if `seen_in` is wrong about a file it reads. `python -m unittest discover -s tests` checks the tables and the boundary file without raw data.
+It needs the Kaggle and alert CSVs in `data/raw/`. It fails if an alert-file oblast name or a Kaggle `affected region` item has no alias, if the official file's raion names differ from `raions.csv`, or if `seen_in` is wrong about a file it reads. `uv run pytest` checks the tables and the boundary file without raw data.
 
 On the files above, all 25 names in each English alert file and all 27 distinct `affected region` items (from 217 non-blank rows) resolve.
 

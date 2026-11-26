@@ -1,9 +1,12 @@
 import { weaponClasses } from "./data.ts";
-import { CLASS_STYLES } from "./theme/classStyles.ts";
+import { CLASS_STYLES, type ClassId } from "./theme/classStyles.ts";
 import { classFill, classSymbolPath, svgElement } from "./theme/marks.ts";
 
-/** A table of each class with its bar fill, point symbol and line style. */
-export function classKey(): HTMLElement {
+/**
+ * A table of each class with its bar fill, point symbol and line style. A
+ * highlighted class is marked by weight, a bar and a label, not by color.
+ */
+export function classKey(highlight?: ClassId): HTMLElement {
   const wrapper = document.createElement("div");
   wrapper.className = "table-scroll";
   // Focusable so keyboard users can scroll it on narrow screens.
@@ -31,6 +34,13 @@ export function classKey(): HTMLElement {
     th.scope = "row";
     th.textContent = label;
     row.append(th);
+    if (id === highlight) {
+      row.className = "highlight";
+      const note = document.createElement("span");
+      note.className = "highlight-note";
+      note.textContent = "Highlighted";
+      th.append(" ", note);
+    }
 
     row.insertCell().append(
       swatch(`${pattern} fill`, svgElement("rect", { x: 4, y: 2, width: 40, height: 20, fill: classFill(id) })),

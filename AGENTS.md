@@ -28,13 +28,13 @@ Issues labeled `needs:owner` need a decision, sign-off or manual step from the r
 
 ## Layout
 
-Some folders are still planned. Create them as the work needs them, and update this section if you choose differently.
+Create folders as the work needs them, and update this section if you choose differently.
 
 ```
 data/raw/         source files (gitignored; setup in data/README.md)
 data/reference/   hand-editable tables (weapon-class mapping, oblast gazetteer, annotations) and the generated map boundaries
-data/processed/   pipeline outputs
-pipeline/         Python data build
+data/processed/   pipeline outputs, with their license notice
+pipeline/         Python data build; columns.py is the only place raw columns are renamed
 pipeline/audit/   rerunnable audit scripts (read raw data, write nothing)
 pipeline/reference/ rebuilds generated reference files
 tests/            pipeline tests
@@ -45,8 +45,14 @@ docs/             spec and data audit
 
 ## Commands
 
+Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` installs the locked dependencies on first use.
+
 | Command | What it does |
 |---|---|
+| `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json` and `build_info.json`. It's a stub until #7 and #8 add the tables. |
+| `uv run python -m pipeline fetch` | Only downloads and verifies the pinned alert files. |
+| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. |
+| `uv run ruff check .` | Lints the Python, apart from `.github/`. |
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
 | `uv run pipeline/audit/weapon_classes.py` | Checks that every raw `model` string has exactly one weapon class, and prints the figures in `data/reference/README.md`. Needs `data/raw/`. |
@@ -54,7 +60,6 @@ docs/             spec and data audit
 | `uv run pipeline/reference/build_boundaries.py` | Rebuilds `data/reference/ukraine_admin1.geojson`. Needs the [boundary zip](data/README.md#boundaries) in `data/raw/`. |
 | `python .github/scripts/dependency_graph.py --dry-run` | Prints the body of the generated dependency issue (#31). Without `--dry-run`, updates it. Needs `gh`. |
 | `python -m unittest discover -s .github/scripts` | Tests the dependency-graph script. |
-| `python -m unittest discover -s tests` | Checks `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. |
 
 Site commands run from `site/` and need Node 22.12 or later:
 
@@ -66,11 +71,12 @@ Site commands run from `site/` and need Node 22.12 or later:
 | `npm run build` | Builds the static site into `site/dist/`. Fails on a bad `data/processed/build_info.json`, or if the counted classes in `weapon_classes.csv` don't match `classStyles.ts`. CI runs it. |
 | `npm run preview` | Serves the built site locally. |
 
-The site has no tests yet. No pipeline build or test commands exist yet; #6 adds them. **Whoever adds a command records it here.**
+The site has no tests yet. CI doesn't run the pipeline tests or linter yet (#9). **Whoever adds a command records it here.**
 
 ## Site notes
 
 - Pages are URL hashes (`#attacks`, `#defense`, `#alerts`, `#methods`). Asset paths are relative, so the build works under any subpath. A plain in-page anchor such as `#main` would be read as a route.
+- Guided mode is `#stop-N`. Its stops are data in `site/src/guided/stops.ts`, and a new kind of chart view also needs a case in `views.ts`. A stop's view takes all its settings from that data, and guided mode never reads or writes the query string, which belongs to the exploration filters. #11 should keep it that way.
 - Data is imported at build time through `site/src/data.ts`, never fetched.
 - Charts take colors, patterns, symbols and dashes from `site/src/theme/`. Dashes aren't a Plot scale, so line charts set them per class from `CLASS_STYLES`.
 - After changing a class color, rerun the dataviz palette validator; the command is in `classStyles.ts`. CI doesn't run it.
@@ -82,7 +88,7 @@ The owner develops on Windows, where `make` isn't installed. The plan's `make da
 From the audit of the Nov 21 snapshot (#1). Read [docs/data-audit.md](docs/data-audit.md) before using the strike data.
 
 - The reference file is `missiles_and_uavs.csv` (the plan says `missiles_and_uav.csv`). There are 90 distinct `model` strings; 22 aren't in the reference file.
-- Rows span Sept 28, 2022 to Nov 21, 2026.
+- Rows span Sept 28, 2022 to Nov 21, 2026. The pipeline sets the snapshot date to the latest `time_end` date; the cutoff is still open (plan §11).
 - `status_data = hidden` rows mostly have `launched` = 0. That means unpublished, not zero.
 - `Shahed-136/131` counts include Gerbera, decoys and other types. Decoys can't be separated.
 - Don't sum all rows as attacks: regional reports may repeat national figures, reconnaissance rows are almost all shoot-downs, and daytime and night windows overlap.

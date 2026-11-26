@@ -1,0 +1,42 @@
+{
+  "snapshot_date": "2026-11-21",
+  "sources": {
+    "kaggle": {
+      "url": "https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine",
+      "license": "CC BY-NC-SA 4.0",
+      "files": [
+        {
+          "name": "missile_attacks_daily.csv",
+          "rows": 4399,
+          "bytes": 951013,
+          "sha256": "ac145393429c9434b9b537f3be1bd1ab715eaac807fd32dc33d1ff96a63ba116"
+        },
+        {
+          "name": "missiles_and_uavs.csv",
+          "rows": 69,
+          "bytes": 5729,
+          "sha256": "5bfe01b3c0c62f1b45a5ad105d091bad5256ff32426e49503afd853c0a1ae34c"
+        }
+      ]
+    },
+    "alerts": {
+      "url": "https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset",
+      "commit": "1a349789e45d63a19c8faf46d0e5877cbb36ac8b",
+      "license": "MIT",
+      "files": [
+        {
+          "name": "official_data_en.csv",
+          "rows": 299275,
+          "bytes": 31025633,
+          "sha256": "b396f87696243069eec0219880e87dcd642b20beb0a7bae0d0e1f61e1ed20ec4"
+        },
+        {
+          "name": "volunteer_data_en.csv",
+          "rows": 124468,
+          "bytes": 9558142,
+          "sha256": "c67fb71a19c69e690d4921fd5edc8338892bcf4a5a6b6a23836e600bf2a5f454"
+        }
+      ]
+    }
+  }
+}

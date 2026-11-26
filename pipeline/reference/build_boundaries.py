@@ -22,7 +22,7 @@ import zipfile
 from pathlib import Path
 
 import shapely
-from shapely.geometry import Polygon, shape
+from shapely.geometry import shape
 from shapely.geometry.polygon import orient
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -93,7 +93,7 @@ def main():
     simple = shapely.coverage_simplify(shapes, TOLERANCE)
 
     features = []
-    for code, geometry in zip(codes, simple):
+    for code, geometry in zip(codes, simple, strict=True):
         parts = clockwise_rings(geometry)
         result = ({"type": "Polygon", "coordinates": parts[0]} if len(parts) == 1
                   else {"type": "MultiPolygon", "coordinates": parts})
