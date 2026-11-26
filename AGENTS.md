@@ -10,7 +10,7 @@ A static teaching dashboard on Russia's missile and drone campaign against Ukrai
 
 1. **No fetching data at page load.** Everything is precomputed and versioned with the snapshot date. The snapshot date appears on every page.
 2. **Never show a reported intercept rate without the EW caveat** ("destroyed" includes weapons lost to electronic warfare).
-3. **Never show a launch count after Aug 12, 2026 without the ballistic-restriction flag.**
+3. **Never show a launch count from Aug 11, 2026 on without the missile-restriction flag** (`ballistic_restricted` in code).
 4. **Keep raw source column names in `data/raw/`.** All renaming happens in one mapping module.
 5. **Define weapon-class colors once** and import them everywhere. Don't rely on color alone.
 6. **Describe changes around annotated events neutrally.** No causal language unless an analysis supports it.
@@ -61,6 +61,7 @@ Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` instal
 | `uv run ruff check .` | Lints the Python, apart from `.github/`. |
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
+| `uv run pipeline/audit/definitions.py` | Prints the evidence for the massive-night and intercept-rate definitions in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/weapon_classes.py` | Checks that every raw `model` string has exactly one weapon class, and prints the figures in `data/reference/README.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/gazetteer.py` | Checks that every alert-file oblast name and Kaggle `affected region` item resolves, and that the raion list matches the official alert file. Needs the Kaggle and alert CSVs in `data/raw/`. |
 | `uv run pipeline/reference/build_boundaries.py` | Rebuilds `data/reference/ukraine_admin1.geojson`. Needs the [boundary zip](data/README.md#boundaries) in `data/raw/`. |
@@ -99,12 +100,12 @@ The owner develops on Windows, where `make` isn't installed. The plan's `make da
 
 ## Data notes
 
-From the audit of the Nov 21 snapshot (#1). Read [docs/data-audit.md](docs/data-audit.md) before using the strike data.
+From the audit of the Nov 21 snapshot (#1). Read [docs/data-audit.md](docs/data-audit.md) before using the strike data. Its [definitions](docs/data-audit.md#definitions) say which rows count and how to compute massive nights and intercept rates (#5).
 
 - The reference file is `missiles_and_uavs.csv` (the plan says `missiles_and_uav.csv`). There are 90 distinct `model` strings; 22 aren't in the reference file.
 - Rows span Sept 28, 2022 to Nov 21, 2026. The pipeline sets the snapshot date to the latest `time_end` date; the cutoff is still open (plan §11).
 - `status_data = hidden` rows mostly have `launched` = 0. That means unpublished, not zero.
-- `Shahed-136/131` counts include Gerbera, decoys and other types. Decoys can't be separated.
+- `Shahed-136/131` counts include Gerbera, decoys and other types. Decoys can't be separated, and A5 is dropped from v1.
 - Don't sum all rows as attacks: regional reports may repeat national figures, reconnaissance rows are almost all shoot-downs, and daytime and night windows overlap.
 - `time_start` and `time_end` come both with and without a time of day, sometimes with trailing spaces.
 - Read files as UTF-8 explicitly. Printing the Cyrillic strings fails on the Windows console default (cp1252).

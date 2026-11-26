@@ -30,11 +30,11 @@ This is the handoff spec for coding sessions. Phases in §9 have done-when crite
 ## 2. Questions the dashboard answers
 
 ### A. Scale and rhythm of attacks
-- A1. How has monthly launch volume changed for each weapon class since 2022?
+- A1. How has monthly launch volume changed for each weapon class since Sept 28, 2022?
 - A2. Are salvos getting bigger, or just more frequent? What separates an ordinary night from a "massive" one?
 - A3. What does a massive combined strike consist of?
 - A4. Is there a rhythm: day of week, gaps between massive strikes, seasonal build-ups such as pre-winter energy campaigns?
-- A5. What share of drones are decoys (Gerbera and similar) or jet-powered, and how has that changed? *Include only if the data distinguishes them; check in Phase 0.*
+- A5. What share of drones are decoys (Gerbera and similar) or jet-powered, and how has that changed? ***Dropped from v1** (#5): the data can't separate decoys, and covers jet drones for only about three months.*
 
 ### B. Air defense performance
 - B1. How has the reported intercept rate for each weapon class changed over time?
@@ -70,7 +70,7 @@ This is the handoff spec for coding sessions. Phases in §9 have done-when crite
 
 All processing happens offline in Python. The site only loads small, precomputed JSON or Parquet files.
 
-- **Attack night** is the unit for A and B. An Air Force morning report covers roughly 18:00–09:00 Kyiv time, so one night spans two calendar dates. Key each night by the date it *ends*, and document that.
+- **Attack night** is the unit for night sizes, massive nights and saturation; monthly figures also count daytime reports ([which reports count](data-audit.md#which-rows-count)). An Air Force morning report covers roughly 18:00–09:00 Kyiv time, so one night spans two calendar dates. Key each night by the date it *ends*, and document that.
 - **Weapon-class taxonomy:** map the raw `model` strings to a short list of classes: Shahed-type and decoy drones · cruise missiles (Kh-101/555, Kalibr, Kh-59/69) · ballistic (Iskander-M, KN-23) · aeroballistic and hypersonic (Kinzhal, Zircon) · anti-ship and other (Kh-22/32, Oniks) · guided bombs, if present. Combined entries are never split by guesswork: one whose components share a class (such as "X-101/X-555 and Kalibr") takes that class, and one that crosses classes goes to **mixed**. Reconnaissance, tactical and unidentified UAVs and bombs are excluded from totals. The mapping is an editable CSV in the repo; rules and decisions are in [data/reference/README.md](../data/reference/README.md).
 - **Oblast gazetteer:** one canonical English name and ISO 3166-2 code per oblast, with aliases covering Ukrainian, transliterated and Kaggle spellings. Boundaries come from an Admin-1 GeoJSON (the alerts repo ships Admin-2; dissolve it to Admin-1 or use a standard Admin-1 file).
 - **Derived tables:**
@@ -81,14 +81,14 @@ All processing happens offline in Python. The site only loads small, precomputed
   - `annotations`
 - **Data-quality flags** are carried as columns and shown in the UI:
   - "Destroyed" includes EW-lost weapons.
-  - Ballistic counts are restricted from Aug 12, 2026.
+  - Some missile counts, ballistic among them, are unpublished from Aug 11, 2026.
   - Some alert end times are assumed (`naive`).
   - Luhansk and Crimea are excluded from alert totals.
   - The alert data switches from oblast to raion granularity in Dec 2025.
 
-**Definitions to settle in Phase 0 and show in the UI:**
-- **"Massive" night:** proposed as the top 5% of nights by total launched, or a fixed threshold such as 100 or more combined weapons. Pick one, explain it in plain language, and keep it consistent.
-- **Intercept rate:** destroyed ÷ launched for each class, with the EW caveat shown on every chart that uses it. Don't report a rate for any month with fewer than about 10 launches in a class; show it as a gap instead.
+**Definitions, settled in Phase 0 (#5) and shown in the UI.** The full rules are in [data-audit.md](data-audit.md#definitions).
+- **"Massive" night:** more weapons launched than 95% of the attack nights in the same calendar year. Explain it in plain language, show that year's bar, and keep it consistent.
+- **Intercept rate:** destroyed ÷ launched for each class by month, with the EW caveat shown on every chart that uses it. A class-month with fewer than 10 eligible launches is a gap. Missile classes have no rate from August 2026.
 
 ---
 
@@ -98,9 +98,9 @@ The presenter steps through numbered stops with Next/Back, using the arrow keys 
 
 Draft stops (Hosea to edit):
 
-1. **Title.** "Every night, an air war." Three headline numbers for the full period: total launched, the share intercepted (with the caveat) and total alert-hours nationwide.
-2. **The long view** (A1). Monthly launches by class for 2022–2026, with event markers.
-3. **Drones changed the game** (A1/A5). Shahed-type launches singled out, with the decoy or jet share if the data has it.
+1. **Title.** "Every night, an air war." Three headline numbers, each with its own dates: total launched since Sept 28, 2022, the share intercepted (with the caveat) and mean alert hours per area.
+2. **The long view** (A1). Monthly launches by class since Sept 28, 2022, with event markers.
+3. **Drones changed the game** (A1). Shahed-type launches singled out, noting that the counts include decoys, which can't be separated.
 4. **Ordinary vs. massive nights** (A2). The distribution of salvo sizes and how the threshold is defined.
 5. **Anatomy of one massive strike** (A3). One record night broken down by class and launch area.
 6. **Rhythm** (A4). Calendar heatmap; ask the room "do you see a pattern?" before revealing the day-of-week chart.
@@ -207,7 +207,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 
 ## 10. Conventions for coding sessions (also in the repo's `AGENTS.md`)
 - Data is never fetched at page load. Everything is precomputed and versioned with the snapshot date.
-- Never present a reported intercept rate without the EW caveat. Never present a launch count after Aug 12, 2026 without the ballistic-restriction flag.
+- Never present a reported intercept rate without the EW caveat. Never present a launch count from Aug 11, 2026 on without the missile-restriction flag.
 - Keep raw source column names in `data/raw/`. All renaming happens in one mapping module.
 - Weapon-class colors are defined once and imported everywhere.
 - Describe changes around annotated events neutrally. No causal language unless an analysis actually supports it.
@@ -237,10 +237,18 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - Excluded from totals, the massive-night threshold and intercept rates: reconnaissance, tactical and unidentified UAVs (including Lancet) and bombs. List them on Data & Methods.
   - No separate mixed-cruise bucket (changes the original §4): rows naming only cruise missiles are cruise.
   - Cross-class rows aren't split, so the A and B charts must say that some class series and rates don't cover every launch of that kind.
+- Phase 0 definitions (owner, Nov 25, 2026, #5). The owner chose these from options the coding agent put to them. The full rules are in [data-audit.md](data-audit.md#definitions); details marked *agent's detail* there are the agent's.
+  - **Massive night:** more weapons launched than 95% of the attack nights in the same calendar year. The bar differs by year, so massive nights per year aren't charted as a trend. Chosen over one percentile for all nights, a fixed 300+ and 30+ missiles. The agent didn't offer a fixed 100+: it would mark 87% of 2026 nights.
+  - **Intercept rate:** monthly destroyed ÷ launched for each class, with at least 10 launches. Rows with unpublished, blank or impossible counts are left out. Mixed rows get no class rate. Every chart carries the EW caveat. **Missile-class rates end at July 2026.**
+  - **Rows:** only national military reports count. Daytime reports count in monthly totals, not in a night's size or the massive test. Unpublished counts are unknown, never zero.
+  - **Restriction flag:** from Aug 11, 2026 (not Aug 12), as a missile-reporting restriction. The first `hidden` rows end that day. The Kaggle page says Aug 10, and LIGA and Meduza say the Aug 9 report already gave no missile count; the Air Force confirmed the change on Aug 12 (#15).
+  - **A5 is dropped from v1.** Decoys can't be separated, and jet-drone figures cover only about three months.
+  - **Wording:** "since Sept 28, 2022" for strike figures. Stop 1 shows alert hours as a mean per area (23 oblasts and Kyiv city), not a national total.
+- Weapon-class sign-off (owner, Nov 25, 2026, #5): the owner signed off on the classes decided on #3. `Geran` rows keep their class, but they come from a regional command, so the row rule above leaves them out of figures.
 - Repo: `ukraine-air-war-dashboard` (replaces the name suggested in §8). Private until the data license check and a review are done.
 - Annotation list (#15): on Nov 25, 2026 the owner approved the nine verified rows in [annotations.csv](../data/reference/annotations.csv). The two unverified rows stay off the site.
 - Site scaffold (#10): pages are URL hashes, so static hosting needs no rewrite rules. There's one light theme. The six counted classes have custom colors that pass the dataviz validator on white, for all pairs and not just adjacent ones, plus a pattern, symbol and dash each ([classStyles.ts](../site/src/theme/classStyles.ts)). Excluded classes aren't charted and have no color.
-- Chart frame (#12): badges are derived from what each column measures, the dates the chart covers and pipeline row flags, and a chart can't switch one off ([flags.ts](../site/src/chart/flags.ts)). The restriction flag applies to launch-based figures, including destroyed counts and rates, from Aug 12, 2026; the earlier start suggested under "Open" is still undecided. Besides the §4 flags, launch figures broken down by class say that mixed rows aren't split. Every chart that counts alerts shows the Luhansk and Crimea exclusion, and the alert-area flag applies from 2025. The agent wrote the badge wording; the owner hasn't reviewed it.
+- Chart frame (#12): badges are derived from what each column measures, the dates the chart covers and pipeline row flags, and a chart can't switch one off ([flags.ts](../site/src/chart/flags.ts)). The restriction flag applies to launch-based figures, including destroyed counts and rates, from Aug 12, 2026 (moved to Aug 11 on #5, above). Besides the §4 flags, launch figures broken down by class say that mixed rows aren't split. Every chart that counts alerts shows the Luhansk and Crimea exclusion, and the alert-area flag applies from 2025. The agent wrote the badge wording; the owner hasn't reviewed it.
 - Issue dependencies: GitHub's "blocked by" links are the only record. A GitHub Action generates a graph and list from them in #31, which replaces the hand-kept table in `DEPENDENCIES.md`.
 - Gazetteer and boundaries (Nov 25, 2026, #4; decided by the coding agent): [gazetteer.md](../data/reference/gazetteer.md). 27 areas keyed by ISO 3166-2, matched by exact alias. Luhansk oblast, Crimea and Sevastopol are out of alert totals, leaving 24. Boundaries are OCHA's COD-AB v05 Admin-1 (source: Kartographia, CC BY-IGO), simplified. They include Crimea and Sevastopol as part of Ukraine and show no front line or areas of control. Kaggle's `Kryvyi Rih` counts as Dnipropetrovsk oblast, and `Ukraine` stays nationwide.
 - Alert coverage (owner, Nov 25, 2026, #2): alert figures end at July 2026, because the official file stops Sept 7, 2026 and August is incomplete. No volunteer-only view for later months. Check upstream again at the snapshot refresh (#28). This overrides §3's snapshot date for alert data and affects E1–E3 and stops 9 and 10.
@@ -249,21 +257,13 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Pipeline (#6): one command, `uv run python -m pipeline`, stands in for `make data`. The coding agent defined `snapshot_date` as the latest `time_end` date in the daily strike file, so it doesn't depend on file timestamps. This doesn't settle the snapshot cutoff below.
 - Global filters (#11; decided by the coding agent): the date range is whole months, set with two sliders, from Mar 2022 (the first official alert month) to the snapshot month. Strike data starts later and alert figures end earlier, and each tab says so. The six counted classes can be turned on and off, including all off. The oblast picker takes up to three of the 24 areas in alert totals and starts empty, so it doesn't settle the comparison oblasts below. State is kept in the query string, leaving out defaults. A change replaces the history entry instead of adding one.
 - Alert map (#18; built by the coding agent, not yet reviewed by the owner): one month at a time from the monthly table, with a slider, previous and next buttons and an optional play button (1.2 seconds a month, never automatic, stops at the last month). With the system's reduced-motion setting on, there is no play button. The month filter limits the months offered, the class toggles don't apply, and chosen oblasts are outlined. The map's month isn't in the URL. Colors are six fixed blue steps (under 25, 25–50, 50–100, 100–200, 200–400, 400 or more hours), the same for every month, and each area shows its rounded number. Excluded areas are hatched, labeled and listed in the table, never zero. The alert-area badge keeps the January 2025 start the owner accepted on #8, not the "Dec 2025" in #18's wording. The agent reworded the assumed-end badge to say ends *may* be assumed, because the source doesn't mark them.
-- Glossary and discussion prompts (#24): on Nov 25, 2026 the owner approved the wording of the coding agent's drafts in [terms.ts](../site/src/glossary/terms.ts) and [prompts.ts](../site/src/teaching/prompts.ts). The "salvo" and "reporting window" definitions may need another look once salvo sizes and daytime reports are settled.
+- Glossary and discussion prompts (#24): on Nov 25, 2026 the owner approved the wording of the coding agent's drafts in [terms.ts](../site/src/glossary/terms.ts) and [prompts.ts](../site/src/teaching/prompts.ts). The "salvo" and "reporting window" definitions may need another look once salvo sizes and daytime reports are settled. #5 settled both; the agent found that the two definitions still read correctly and didn't change them.
 
 **Open**
-- Definition of a "massive" night: percentile or fixed threshold (decide in Phase 0).
 - Sources for the glossary (#24). The owner approved the wording (see Settled) without answering this separately: the general descriptions of weapons, EW and decoys in [terms.ts](../site/src/glossary/terms.ts) have no cited source. Suggested: decide before shipping whether they need citations (§9 Phase 5 asks that numbers trace to a source), alongside the Data & Methods page (#23).
-- Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January).
+- Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January). The 2026 massive-night bar and labels can change with it (#28).
 - Which three oblasts to compare in stop 10 (suggested: Kharkiv, Kyiv city, Lviv).
-- Ballistic-restriction flag start date (#1). This plan and `AGENTS.md` rule 3 say after Aug 12, 2026. The Kaggle page says reporting stopped Aug 10, and `hidden` rows end from Aug 11. They also cover some cruise and anti-ship missiles. Suggested: flag every night ending Aug 11 or later and call it a missile-reporting restriction.
-- Rows marked `hidden` mostly carry `launched` = 0 (#1). Suggested: treat `launched` as unknown, never zero, leave these rows out of intercept rates, and decide how to show their published `destroyed` counts.
-- Which rows count as attacks (#1; for #5 and #7): regional-command reports that may repeat national figures (including all `Geran` rows), and reconnaissance and unknown UAV rows, which are almost all logged as destroyed.
-- How daytime reports fit "attack night" keyed by end date, given overlapping windows (#1; for #5 and #7).
-- Scope of A5 (#1; for #5): decoys can't be separated. A jet-drone share is possible only from about Aug 28, 2026, with partial coverage in September. This also affects guided stop 3 and the "Shahed-type and decoy" wording.
-- Wording for "since 2022" and "full period" (A1, stops 1 and 2): strike data starts Sept 28, 2022 (#1). Suggested: say "since Sept 28, 2022".
-- News coverage bearing on the ballistic-flag question above (#15): LIGA says the report for Aug 9 already gave no missile count (Meduza, citing Strana, also gives Aug 9), the Air Force confirmed the change publicly on Aug 12, and LIGA says cruise missiles are affected too.
-- "Total alert-hours nationwide" in stop 1 (#2). Suggested: replace it with a mean per area (23 oblasts and Kyiv city), because a sum of raion averages is hard to interpret.
+- Missiles from August 2026 outside class rates (#5; for #16 and #21). The owner ended missile-class intercept rates at July 2026. This doesn't say what an all-class share (stop 1's "share intercepted") does with missile and mixed rows after July, or whether B2's destroyed counts for those nights have the same bias. Suggested: compute any all-class share through July 31, 2026 and say so, and keep later nights in B2 with the restriction flag and a note.
 
 ---
 
