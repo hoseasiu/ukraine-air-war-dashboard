@@ -8,7 +8,6 @@ import { alertAreas } from "./data.ts";
 import { defenseTab } from "./defense/defenseTab.ts";
 import type { Filters } from "./filters/state.ts";
 import { glossaryList, withTerms } from "./glossary/popover.ts";
-import type { TermId } from "./glossary/terms.ts";
 import { promptList } from "./teaching/promptList.ts";
 import { TAB_PROMPTS } from "./teaching/prompts.ts";
 
@@ -32,19 +31,6 @@ function paragraph(text: string): HTMLParagraphElement {
   const p = document.createElement("p");
   p.append(...withTerms(text));
   return p;
-}
-
-function placeholder(questions: string[], intro: string): HTMLElement {
-  const section = document.createElement("div");
-  const list = document.createElement("ul");
-  const seen = new Set<TermId>();
-  for (const question of questions) {
-    const item = document.createElement("li");
-    item.append(...withTerms(question, seen));
-    list.append(item);
-  }
-  section.append(paragraph(intro), list);
-  return section;
 }
 
 function heading(text: string): HTMLHeadingElement {
@@ -89,7 +75,6 @@ export const PAGES: [Page, ...Page[]] = [
       container.append(
         paragraph("In the source reports, “destroyed” includes weapons lost to electronic warfare."),
         defenseTab(filters),
-        placeholder(["How did reported intercept rates differ before and after notable events?"], "Still to come on this page:"),
         discussion(TAB_PROMPTS.defense),
       );
     },

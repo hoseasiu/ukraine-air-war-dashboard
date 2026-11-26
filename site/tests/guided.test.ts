@@ -51,9 +51,9 @@ test("the alert headline is an average month, as a mean over areas, with its own
   assert.deepEqual(alertHours.flags, ["alert_end_assumed", "alert_regions_excluded", "alert_granularity_change"]);
 });
 
-const CSV_HEADER = "id,date,label,source_url,source_url_2,verification,owner_review\n";
+const CSV_HEADER = "id,date,date_marks,label,description,source_url,source_url_2,verification,owner_review\n";
 const line = (id: string, date: string, verification = "verified", review = "approved") =>
-  `${id},${date},Label ${id},https://example.org/${id},,${verification},${review}\n`;
+  `${id},${date},Day,Label ${id},About ${id},https://example.org/${id},,${verification},${review}\n`;
 
 test("only verified and approved annotations are shown, oldest first", () => {
   const csv =
@@ -70,7 +70,7 @@ test("only verified and approved annotations are shown, oldest first", () => {
 
 test("a shown annotation needs a date and a citation", () => {
   assert.throws(() => parseAnnotations(CSV_HEADER + line("a", "")), /date/);
-  assert.throws(() => parseAnnotations(CSV_HEADER + "a,2025-01-01,A,,,verified,approved\n"), /citation/);
+  assert.throws(() => parseAnnotations(CSV_HEADER + "a,2025-01-01,Day,A,About a,,,verified,approved\n"), /citation/);
 });
 
 test("the committed annotation list parses", () => {
@@ -79,7 +79,7 @@ test("the committed annotation list parses", () => {
 
 test("markers close together go in different rows, and months not shown get none", () => {
   const months = ["2025-01", "2025-02", "2025-03", "2025-04", "2025-05"];
-  const event = (date: string) => ({ id: date, date, label: date, sources: [] });
+  const event = (date: string) => ({ id: date, date, dateMarks: "", label: date, description: "", sources: [] });
   const markers = placeMarkers(
     ["2024-12-31", "2025-01-05", "2025-01-20", "2025-02-01", "2025-05-01"].map(event),
     months,

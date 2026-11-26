@@ -5,6 +5,7 @@ import { parseAlertMonthly, parseBoundaries } from "./src/alerts/alertData.ts";
 import { parseAnnotations } from "./src/annotations/annotationData.ts";
 import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./src/buildData.ts";
 import { parseOutcomes, parseRates } from "./src/defense/defenseData.ts";
+import { panelEvents } from "./src/defense/eventWindowData.ts";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -21,7 +22,8 @@ function checkBuildData(): Plugin {
       // Each also runs the tab A checks on its table.
       parseOutcomes(JSON.parse(read("../data/processed/nights.json")));
       parseRates(JSON.parse(read("../data/processed/monthly_by_class.json")));
-      parseAnnotations(read("../data/reference/annotations.csv"));
+      // The before/after panels' events must be verified, approved and cited.
+      panelEvents(parseAnnotations(read("../data/reference/annotations.csv")));
     },
   };
 }
