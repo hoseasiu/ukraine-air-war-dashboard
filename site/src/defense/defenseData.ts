@@ -202,7 +202,7 @@ export function rateRows(table: RateTable, selection: Selection): RateChartRow[]
   );
 }
 
-/** How many classes a night's reports cover. Panels of the saturation chart, in order. */
+/** How many classes a night's reports cover. Panels of the saturation chart's split view, in order. */
 export const MIX_GROUPS = ["One class reported", "Two classes reported", "Three or more classes reported"] as const;
 export type MixGroup = (typeof MIX_GROUPS)[number];
 
@@ -272,4 +272,77 @@ export function saturationRows(
         },
       ];
     });
+}
+
+/** Bins of night size for the summary beside the saturation chart. `max` is included. */
+export const SIZE_BINS = [
+  { label: "1–9", min: 1, max: 9 },
+  { label: "10–24", min: 10, max: 24 },
+  { label: "25–49", min: 25, max: 49 },
+  { label: "50–99", min: 50, max: 99 },
+  { label: "100–199", min: 100, max: 199 },
+  { label: "200–399", min: 200, max: 399 },
+  { label: "400 or more", min: 400, max: Infinity },
+] as const;
+
+/** Fewer nights than this in a year's bin give no median. The agent's choice (plan §11). */
+export const MIN_BIN_NIGHTS = 5;
+
+export const MEDIAN_SHOWN = "Median shown";
+
+export interface SizeBinRow {
+  year: string;
+  bin: string;
+  /** The first and last nights counted in this year, whatever their size. */
+  from: string;
+  to: string;
+  /**
+   * The median, over the bin's nights, of the share not reported destroyed:
+   * not_intercepted ÷ size. A fraction. null is a gap, never zero.
+   */
+  median_not_destroyed_share: number | null;
+  n_nights: number;
+  status: string;
+  destroyed_includes_ew: boolean;
+  ballistic_restricted: boolean;
+}
+
+function median(values: readonly number[]): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle]! : (sorted[middle - 1]! + sorted[middle]!) / 2;
+}
+
+/**
+ * Every size bin for every year with a counted night. This adds classes
+ * together, so like any all-class share it stops before the month where
+ * missile-class rates end (the owner's decision on #9). A night counts only if
+ * it has a point on the saturation chart.
+ */
+export function sizeBinRows(
+  rows: readonly SaturationRow[],
+  table: Pick<RateTable, "missileRatesEndBefore">,
+): SizeBinRow[] {
+  const end = `${table.missileRatesEndBefore}-01`;
+  const counted = rows.filter((row) => row.date < end && row.size > 0 && row.not_intercepted !== null);
+  const years = [...new Set(counted.map((row) => row.date.slice(0, 4)))].sort();
+  return years.flatMap((year) => {
+    const own = counted.filter((row) => row.date.startsWith(year));
+    const dates = own.map((row) => row.date).sort();
+    return SIZE_BINS.map((bin): SizeBinRow => {
+      const found = own.filter((row) => row.size >= bin.min && row.size <= bin.max);
+      const enough = found.length >= MIN_BIN_NIGHTS;
+      return {
+        year,
+        bin: bin.label,
+        from: dates[0]!,
+        to: dates[dates.length - 1]!,
+        median_not_destroyed_share: enough ? median(found.map((row) => row.not_intercepted! / row.size)) : null,
+        n_nights: found.length,
+        status: enough ? MEDIAN_SHOWN : `Gap: fewer than ${MIN_BIN_NIGHTS} nights`,
+        destroyed_includes_ew: enough,
+        ballistic_restricted: found.some((row) => row.ballistic_restricted),
+      };
+    });
+  });
 }

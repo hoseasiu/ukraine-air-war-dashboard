@@ -1,0 +1,10 @@
+/* One neutral color: the summary compares years by panel, not by color. */
+.bin-bar {
+  fill: var(--ink-secondary);
+}
+
+.bin-track {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.35;
+}
