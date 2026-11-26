@@ -1,0 +1,4 @@
+/* Two stacked panels drawn as one chart: no gap that would break the shared months. */
+.alert-launch-panels > svg {
+  display: block;
+}

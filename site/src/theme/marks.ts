@@ -42,6 +42,11 @@ export function svgElement<K extends keyof SVGElementTagNameMap>(
 /** Fill for bars and areas: the class color with its hatch. Needs installPatterns(). */
 export const classFill = (id: ClassId) => `url(#class-pattern-${id})`;
 
+/** The same, for an oblast line's point symbol. */
+export function areaSymbolPath(style: { symbol: SymbolName }, area = 90): string {
+  return symbol(SYMBOLS[style.symbol], area)() ?? "";
+}
+
 /** Adds the pattern definitions to the page once, so any chart can use classFill(). */
 export function installPatterns(): void {
   // Sized to zero rather than display:none, which stops some browsers painting the patterns.

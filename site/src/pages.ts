@@ -1,6 +1,10 @@
 import { alertMap } from "./alerts/alertMap.ts";
+import { alertsAndLaunches } from "./alerts/alertsAndLaunches.ts";
+import { assignStyles, comparisonAreas, DEFAULT_COMPARISON } from "./alerts/comparisonData.ts";
+import { oblastComparison } from "./alerts/oblastComparison.ts";
 import { attacksTab } from "./strikes/attacksTab.ts";
 import { classKey } from "./classKey.ts";
+import { alertAreas } from "./data.ts";
 import type { Filters } from "./filters/state.ts";
 import { glossaryList, withTerms } from "./glossary/popover.ts";
 import type { TermId } from "./glossary/terms.ts";
@@ -29,7 +33,7 @@ function paragraph(text: string): HTMLParagraphElement {
   return p;
 }
 
-function placeholder(questions: string[], intro = "No charts yet. This page will take up these questions:"): HTMLElement {
+function placeholder(questions: string[]): HTMLElement {
   const section = document.createElement("div");
   const list = document.createElement("ul");
   const seen = new Set<TermId>();
@@ -38,7 +42,7 @@ function placeholder(questions: string[], intro = "No charts yet. This page will
     item.append(...withTerms(question, seen));
     list.append(item);
   }
-  section.append(paragraph(intro), list);
+  section.append(paragraph("No charts yet. This page will take up these questions:"), list);
   return section;
 }
 
@@ -56,6 +60,13 @@ function discussion(prompts: readonly string[]): HTMLElement {
 
 /** The map's month, kept while the filters redraw the page. It isn't a filter, so it isn't in the URL. */
 let mapMonth: string | undefined;
+
+/** Each compared oblast's line style, kept so a line doesn't change color as others come and go. */
+let comparisonStyles = new Map<string, number>();
+
+const defaultComparisonNames = new Intl.ListFormat("en-US").format(
+  DEFAULT_COMPARISON.map((id) => alertAreas.find((area) => area.id === id)!.name),
+);
 
 /** The first page is shown when the hash is empty or unknown. */
 export const PAGES: [Page, ...Page[]] = [
@@ -93,10 +104,14 @@ export const PAGES: [Page, ...Page[]] = [
       oblasts: true,
       notes: [
         "Weapon classes apply only to launch figures, not to alert hours.",
+        "Chosen oblasts are outlined on the map and drawn in the comparison. With none chosen, " +
+          `the comparison shows ${defaultComparisonNames}.`,
         "Alert figures end at July 2026, whatever months are selected.",
       ],
     },
     render(container, filters) {
+      const compared = comparisonAreas(filters.oblasts);
+      comparisonStyles = assignStyles(compared, comparisonStyles);
       container.append(
         alertMap({
           from: filters.from,
@@ -107,13 +122,8 @@ export const PAGES: [Page, ...Page[]] = [
             mapMonth = month;
           },
         }),
-        placeholder(
-          [
-            "How does life under alerts differ between oblasts?",
-            "How does attack intensity relate to alert burden over time?",
-          ],
-          "Still to come on this page:",
-        ),
+        oblastComparison({ from: filters.from, to: filters.to, oblasts: compared, styles: comparisonStyles }),
+        alertsAndLaunches({ from: filters.from, to: filters.to, classes: filters.classes }),
         discussion(TAB_PROMPTS.alerts),
       );
     },
