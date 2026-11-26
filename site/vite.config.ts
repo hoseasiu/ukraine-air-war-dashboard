@@ -6,6 +6,7 @@ import { parseAnnotations } from "./src/annotations/annotationData.ts";
 import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./src/buildData.ts";
 import { parseOutcomes, parseRates } from "./src/defense/defenseData.ts";
 import { panelEvents } from "./src/defense/eventWindowData.ts";
+import { parseManifest, parseReconciliation, parseTaxonomy } from "./src/methods/methodsData.ts";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -15,6 +16,12 @@ function checkBuildData(): Plugin {
     name: "check-build-data",
     buildStart() {
       parseBuildInfo(JSON.parse(read("../data/processed/build_info.json")));
+      parseManifest(JSON.parse(read("../data/processed/manifest.json")));
+      const taxonomy = parseTaxonomy(
+        read("../data/reference/weapon_classes.csv"),
+        read("../data/reference/model_classes.csv"),
+      );
+      parseReconciliation(JSON.parse(read("../data/processed/strike_reconciliation.json")), taxonomy);
       parseWeaponClasses(read("../data/reference/weapon_classes.csv"));
       const areas = parseAreas(read("../data/reference/oblasts.csv"));
       parseAlertMonthly(JSON.parse(read("../data/processed/alert_hours_monthly.json")), areas);

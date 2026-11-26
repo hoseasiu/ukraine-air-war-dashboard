@@ -110,7 +110,9 @@ function render(): void {
       filterNotes(page.filters.notes),
     );
   }
-  main.append(notes.element, content);
+  // Only the chart tabs, which take filters, get the strip. Data & Methods writes the notes out itself.
+  if (page.filters) main.append(notes.element);
+  main.append(content);
   draw();
   document.title = `${page.heading} · ${SITE_TITLE}`;
 }

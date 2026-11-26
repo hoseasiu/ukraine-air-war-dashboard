@@ -325,6 +325,12 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **Raion-switch band:** the comparison uses the January to November 2025 band from #58, which merged first. An earlier January to December band on this branch was dropped. The "How to read" note still says later months are only partly comparable.
   - **Crosshair:** one line through both launches and alert hours panels at the month in use, by pointer or keyboard, with a ring on its alert hours. A month without a figure has no ring.
 - Comparison line focus (owner, Nov 26, 2026, #68): all oblast lines look alike until the reader picks one; no oblast stands out by default. The coding agent had built it this way and asked, and the owner chose to keep it. This doesn't review the rest of the tab E redesign above.
+- Data & Methods page (#23; built by the coding agent, not yet reviewed by the owner, wording included):
+  - **Tracing:** a table maps each figure to its built table, method and code; each year's massive bar, stop 1's three numbers, the raw-row reconciliation and source checksums are read or worked out from the built files. Destroyed totals in the reconciliation aren't shown, apart from the hidden rows' count, because with launches they'd give an all-class share past July 2026 (#9).
+  - **Taxonomy:** generated from `weapon_classes.csv` and `model_classes.csv`, with every raw model string and the excluded classes' row counts. The latter file now counts toward the 2 MB budget, and its CC BY-NC-SA 4.0 notice is in `licenses.txt`.
+  - **How to cite:** the format is the agent's. It asks readers not to cite the dashboard while the preview note is up.
+  - **Links out:** the KAS link is the foundation's Ukraine Air War Monitor page, not the general series page in §13, which didn't show the monitor. The UCSC address, which the plan didn't give, is the council's “Duration of air alarms” page. Both loaded on Nov 26, 2026. CSIS refused the automated check (HTTP 403), so its §13 link is unchecked.
+  - **Glossary sources:** the page says the general descriptions have no cited source. The question stays open.
 
 - Data notes, badges and bands (#58, Nov 26, 2026). The layout is the owner's, from #58; the coding agent built it, and the owner hasn't reviewed the build or these choices:
   - **Notes strip:** a collapsed line at the top of each tab names each badge its charts show, once, and opens to the full text. It reads the badges on the page, so it follows filter and chart changes. It replaces the Defense tab's separate sentence about electronic warfare.

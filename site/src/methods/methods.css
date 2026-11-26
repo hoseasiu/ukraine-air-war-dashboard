@@ -1,0 +1,93 @@
+/* The Data & Methods page: a long text page with reference tables. */
+.methods p,
+.methods > section > ul {
+  max-width: 60rem;
+}
+
+.methods h3 {
+  margin-top: 2.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--rule-faint);
+}
+
+.methods h4 {
+  margin: 1.5rem 0 0.25rem;
+}
+
+.methods-contents ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+}
+
+.methods-contents button {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.75rem;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.methods-table {
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.methods-table th,
+.methods-table td {
+  vertical-align: top;
+}
+
+.methods-table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.methods .hash {
+  display: block;
+  min-width: 18ch;
+  overflow-wrap: anywhere;
+  font-size: 0.85em;
+}
+
+.model-strings {
+  min-width: 16rem;
+}
+
+.model-strings summary {
+  cursor: pointer;
+}
+
+.model-strings ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.citation {
+  padding: 0.5rem 0.75rem;
+  border-left: 0.3rem solid var(--rule);
+  overflow-wrap: anywhere;
+}
+
+.methods a {
+  color: var(--accent);
+}
+
+.gap-notes {
+  max-width: 60rem;
+}
+
+.gap-notes dt {
+  font-weight: 700;
+}
+
+.gap-notes dd {
+  margin: 0 0 0.75rem;
+}

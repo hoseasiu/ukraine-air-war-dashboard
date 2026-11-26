@@ -4,7 +4,7 @@ A teaching dashboard on Russia's missile and drone campaign against Ukraine, bui
 
 **[Open the dashboard](https://hoseasiu.github.io/ukraine-air-war-dashboard/)** (early preview)
 
-**Status:** an unfinished preview that hasn't had its accessibility review, so don't cite it yet. The attacks and alerts tabs have charts, and so does the defense tab, apart from its before-and-after panels. Those panels and the Data & Methods page are still to come, and the guided mode has only placeholder stops. To run it locally, see the site commands in [AGENTS.md](AGENTS.md#commands).
+**Status:** an unfinished preview that hasn't had its accessibility review, so don't cite it yet. The three tabs, the 12 guided stops and the Data & Methods page are built; design changes and review are still to come. To run it locally, see the site commands in [AGENTS.md](AGENTS.md#commands).
 
 It will have two modes:
 
