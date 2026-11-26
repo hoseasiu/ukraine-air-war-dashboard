@@ -23,6 +23,8 @@ export interface Target<Row> {
   y: number;
   /** One row, or several that share a position, such as every class in a month. */
   rows: Row[];
+  /** For "shape" pointing: the part of the drawing that picks this target. */
+  shape?: Element;
 }
 
 export interface Drawing<Row> {
@@ -42,8 +44,17 @@ export interface ChartSpec<Row extends object> extends FlagInput<Row> {
   columns: readonly ColumnSpec[];
   /** Weapon-class legend, shaped like the chart's marks. Needs a "class" column. */
   legend?: "bar" | "line" | "point";
-  /** How the pointer picks a target: the nearest column of the chart, or the nearest point. */
-  pointer: "x" | "xy";
+  /** A key for a scale other than weapon classes, shown above the drawing. */
+  scaleKey?: HTMLElement;
+  /** A source or credit line, shown under both the chart and the table. */
+  footnote?: HTMLElement;
+  /**
+   * Controls that change what the chart shows, such as a month slider. They stay
+   * above the badges, so a badge that comes or goes doesn't move them.
+   */
+  controls?: HTMLElement;
+  /** How the pointer picks a target: the nearest column of the chart, the nearest point, or the shape under it. */
+  pointer: "x" | "xy" | "shape";
   draw(rows: readonly Row[], width: number): Drawing<Row>;
 }
 
@@ -200,44 +211,47 @@ function table<Row extends object>(spec: ChartSpec<Row>): HTMLTableElement {
   return element;
 }
 
+export interface LiveChart<Row extends object> {
+  element: HTMLElement;
+  /**
+   * Shows new figures in the same frame, keeping the table toggle and keyboard
+   * focus. Badges are worked out again. The controls, footnote and pointer mode
+   * stay as they were first given.
+   */
+  update(spec: ChartSpec<Row>): void;
+}
+
 export function chartFrame<Row extends object>(spec: ChartSpec<Row>): HTMLElement {
-  for (const field of ["title", "howToRead", "description"] as const) {
-    if (!spec[field].trim()) throw new Error(`A chart needs a ${field}`);
-  }
-  // Worked out first, so a chart that can't be flagged correctly never renders.
-  const flags = chartFlags(spec);
+  return liveChartFrame(spec).element;
+}
+
+/** chartFrame() for a chart that changes in place. */
+export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): LiveChart<Row> {
   const id = `chart-${++frameCount}`;
 
   const figure = create("figure", "chart-frame");
   figure.setAttribute("aria-labelledby", `${id}-title`);
   figure.setAttribute("aria-describedby", `${id}-description`);
 
-  const title = create("h3", "", spec.title);
+  const title = create("h3");
   title.id = `${id}-title`;
   const howToRead = create("p", "chart-how-to-read");
-  howToRead.append(create("strong", "", "How to read this: "), ...withTerms(spec.howToRead));
-  const description = create("p", "visually-hidden", spec.description);
+  const description = create("p", "visually-hidden");
   description.id = `${id}-description`;
-  figure.append(title, howToRead, description);
   // Badges sit above both views, so the table and any screenshot carry them too.
-  if (flags.length) figure.append(badges(flags));
-
-  if (!spec.rows.length) {
-    figure.append(create("p", "chart-empty", "No data for this selection."));
-    return figure;
-  }
+  const badgeSlot = create("div");
+  const empty = create("p", "chart-empty", "No data for this selection.");
 
   const toggle = create("button", "chart-toggle", "Show as table");
   toggle.type = "button";
   toggle.setAttribute("aria-pressed", "false");
 
   const chartView = create("div", "chart-view");
-  const key = spec.legend ? legend(spec, spec.legend) : null;
+  const keySlot = create("div");
   const scroller = create("div", "chart-scroll");
   const stage = create("div", "chart-stage");
   scroller.append(stage);
-  if (key) chartView.append(key);
-  chartView.append(scroller);
+  chartView.append(keySlot, scroller);
 
   const tableView = create("div", "chart-table table-scroll");
   tableView.id = `${id}-table`;
@@ -248,18 +262,64 @@ export function chartFrame<Row extends object>(spec: ChartSpec<Row>): HTMLElemen
   tableView.setAttribute("aria-labelledby", `${id}-title`);
   toggle.setAttribute("aria-controls", tableView.id);
 
+  figure.append(title, howToRead, description);
+  if (initial.controls) figure.append(initial.controls);
+  figure.append(badgeSlot, empty, toggle, chartView, tableView);
+  if (initial.footnote) figure.append(initial.footnote);
+
+  let spec = initial;
+  let flags: FlagId[] = [];
+  let drawnWidth = 0;
+  const showingTable = () => toggle.getAttribute("aria-pressed") === "true";
+
   toggle.addEventListener("click", () => {
-    const showTable = toggle.getAttribute("aria-pressed") !== "true";
+    const showTable = !showingTable();
     toggle.setAttribute("aria-pressed", String(showTable));
     if (showTable && !tableView.firstChild) tableView.append(table(spec));
     tableView.hidden = !showTable;
     chartView.hidden = showTable;
   });
 
-  figure.append(toggle, chartView, tableView);
+  const tooltips = attachTooltips(stage, initial.pointer);
 
-  const tooltips = attachTooltips(stage, spec.pointer);
-  let drawnWidth = 0;
+  function redraw(): void {
+    if (!drawnWidth || !spec.rows.length) return;
+    const { element, targets } = spec.draw(spec.rows, drawnWidth);
+    // The description, the point labels and the table stand in for the drawing.
+    element.setAttribute("aria-hidden", "true");
+    tooltips.update(
+      element,
+      targets.map(({ x, y, rows, shape }) => ({ x, y, shape, content: tooltipContent(rows, spec.columns, flags) })),
+    );
+  }
+
+  function update(next: ChartSpec<Row>): void {
+    for (const field of ["title", "howToRead", "description"] as const) {
+      if (!next[field].trim()) throw new Error(`A chart needs a ${field}`);
+    }
+    // Worked out first, so a chart that can't be flagged correctly never renders.
+    flags = chartFlags(next);
+    spec = next;
+
+    title.textContent = spec.title;
+    howToRead.replaceChildren(create("strong", "", "How to read this: "), ...withTerms(spec.howToRead));
+    description.textContent = spec.description;
+    badgeSlot.replaceChildren(...(flags.length ? [badges(flags)] : []));
+
+    const hasRows = spec.rows.length > 0;
+    empty.hidden = hasRows;
+    toggle.hidden = !hasRows;
+    chartView.hidden = !hasRows || showingTable();
+    tableView.hidden = !hasRows || !showingTable();
+    const key = hasRows && spec.legend ? legend(spec, spec.legend) : null;
+    keySlot.replaceChildren(...[key, hasRows ? spec.scaleKey : null].filter((part) => !!part));
+    // A hidden table is built when it's first shown.
+    tableView.replaceChildren(...(hasRows && showingTable() ? [table(spec)] : []));
+    redraw();
+  }
+
+  update(initial);
+
   // Fires once the frame is on the page, and again whenever its width changes.
   new ResizeObserver(([entry]) => {
     const available = Math.floor(entry?.contentRect.width ?? 0);
@@ -268,14 +328,8 @@ export function chartFrame<Row extends object>(spec: ChartSpec<Row>): HTMLElemen
     const width = Math.max(available, MIN_WIDTH);
     if (width === drawnWidth) return;
     drawnWidth = width;
-    const { element, targets } = spec.draw(spec.rows, width);
-    // The description, the point labels and the table stand in for the drawing.
-    element.setAttribute("aria-hidden", "true");
-    tooltips.update(
-      element,
-      targets.map((target) => ({ x: target.x, y: target.y, content: tooltipContent(target.rows, spec.columns, flags) })),
-    );
+    redraw();
   }).observe(scroller);
 
-  return figure;
+  return { element: figure, update };
 }

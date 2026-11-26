@@ -20,6 +20,8 @@ export interface TooltipContent {
 export interface PlacedTooltip {
   x: number;
   y: number;
+  /** For "shape" pointing: the part of the drawing that picks this target. */
+  shape?: Element;
   content: TooltipContent;
 }
 
@@ -58,7 +60,7 @@ function fill(box: HTMLElement, { heading, groups, notes }: TooltipContent): voi
   for (const note of notes) box.append(line("tooltip-note", `Note: ${note}`));
 }
 
-export function attachTooltips(stage: HTMLElement, pointer: "x" | "xy") {
+export function attachTooltips(stage: HTMLElement, pointer: "x" | "xy" | "shape") {
   let targets: PlacedTooltip[] = [];
   let buttons: HTMLButtonElement[] = [];
   let tabStop = 0;
@@ -113,7 +115,10 @@ export function attachTooltips(stage: HTMLElement, pointer: "x" | "xy") {
   function track(event: PointerEvent): void {
     if (box.contains(event.target as Node)) return;
     const bounds = stage.getBoundingClientRect();
-    const index = nearest(event.clientX - bounds.left, event.clientY - bounds.top);
+    const index =
+      pointer === "shape"
+        ? targets.findIndex((target) => target.shape?.contains(event.target as Node))
+        : nearest(event.clientX - bounds.left, event.clientY - bounds.top);
     if (index < 0) hide();
     else show(index);
   }
