@@ -134,3 +134,40 @@
     grid-column: 1 / -1;
   }
 }
+
+/*
+ * The map goes beside its controls, badges and key, so it starts right under
+ * the title and more of it is on screen.
+ */
+@media (min-width: 62rem) {
+  .chart-frame:has(.alert-map) {
+    display: grid;
+    grid-template-columns: 19rem minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto 1fr auto auto;
+    column-gap: 1.25rem;
+    align-items: start;
+  }
+
+  .chart-frame:has(.alert-map) > * {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  .chart-frame:has(.alert-map) > :is(h3, .chart-subtitle, .chart-notes, .chart-source) {
+    grid-column: 1 / -1;
+  }
+
+  .chart-frame:has(.alert-map) > :is(.chart-view, .chart-table) {
+    grid-column: 2;
+    grid-row: 3 / span 3;
+  }
+
+  /* Room for the points near the map's lower edge, so it doesn't get a scrollbar. */
+  .chart-frame:has(.alert-map) .chart-scroll {
+    padding-bottom: 0.75rem;
+  }
+
+  .chart-frame:has(.alert-map) .chart-toggle {
+    margin-left: 0;
+  }
+}

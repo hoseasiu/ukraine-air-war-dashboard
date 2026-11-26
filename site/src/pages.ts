@@ -6,7 +6,6 @@ import { attacksTab } from "./strikes/attacksTab.ts";
 import { alertAreas } from "./data.ts";
 import { defenseTab } from "./defense/defenseTab.ts";
 import type { Filters } from "./filters/state.ts";
-import { withTerms } from "./glossary/popover.ts";
 import { methodsPage } from "./methods/methodsPage.ts";
 import { promptList } from "./teaching/promptList.ts";
 import { TAB_PROMPTS } from "./teaching/prompts.ts";
@@ -25,12 +24,6 @@ export interface Page {
   };
   /** Draws the page below the heading and filters. Called again whenever the filters change. */
   render(container: HTMLElement, filters: Filters): void;
-}
-
-function paragraph(text: string): HTMLParagraphElement {
-  const p = document.createElement("p");
-  p.append(...withTerms(text));
-  return p;
 }
 
 function heading(text: string): HTMLHeadingElement {
@@ -72,11 +65,7 @@ export const PAGES: [Page, ...Page[]] = [
     heading: "Air defense performance",
     filters: { notes: ["Strike data starts Sept 28, 2022."] },
     render(container, filters) {
-      container.append(
-        paragraph("In the source reports, “destroyed” includes weapons lost to electronic warfare."),
-        defenseTab(filters),
-        discussion(TAB_PROMPTS.defense),
-      );
+      container.append(defenseTab(filters), discussion(TAB_PROMPTS.defense));
     },
   },
   {

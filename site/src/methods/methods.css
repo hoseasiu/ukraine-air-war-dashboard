@@ -79,3 +79,15 @@
 .methods a {
   color: var(--accent);
 }
+
+.gap-notes {
+  max-width: 60rem;
+}
+
+.gap-notes dt {
+  font-weight: 700;
+}
+
+.gap-notes dd {
+  margin: 0 0 0.75rem;
+}

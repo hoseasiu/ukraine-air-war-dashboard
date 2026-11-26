@@ -5,7 +5,7 @@
 import { chartFrame, type Target } from "../chart/chartFrame.ts";
 import { formatDate, nightTable } from "../data.ts";
 import { svgElement } from "../theme/marks.ts";
-import { barText, barValue, chartSvg, count, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, create, strikeFootnote, svgText, type FixedView } from "./shared.ts";
+import { barText, barValue, chartSvg, count, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, create, footnote, strikeSource, svgText, type FixedView } from "./shared.ts";
 import { isSubset, SIZE_BIN_WIDTH, sizeBins, sizeCap, type Selection, type SizeBinRow } from "./strikeData.ts";
 
 const ROW_HEIGHT = 56;
@@ -71,6 +71,7 @@ export function salvoHistogram(selection: Selection, options: { fixed?: FixedVie
 
   return chartFrame<SizeBinRow>({
     title: "How big is a night? Salvo sizes by year",
+    subtitle: "Each year’s nights, counted by the number of weapons launched.",
     howToRead:
       `Each row’s bars count one year’s nights by weapons launched, in steps of ${SIZE_BIN_WIDTH}; nights of ${cap} ` +
       `or more share the last bar. All rows share both scales. ${MASSIVE_DEFINITION} So the bar differs by ` +
@@ -108,7 +109,8 @@ export function salvoHistogram(selection: Selection, options: { fixed?: FixedVie
     coverage: (row) => ({ from: row.from, to: row.to }),
     scaleKey: sizeKey(!subset),
     pointer: "shape",
-    footnote: strikeFootnote(
+    source: strikeSource(),
+    footnote: footnote(
       "A night is the reports ending on one Kyiv date, without daytime reports. A night’s size is the sum of its " +
         "published launch counts, so it can leave some out. Nights with no published count are not shown.",
       "Dates with no night are not counted as 0: they may have been quiet or unreported. A year’s bar is " +

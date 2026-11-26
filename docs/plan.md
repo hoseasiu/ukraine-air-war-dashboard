@@ -124,10 +124,10 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **B:** intercept rate over time by class, with the low-count gaps; saturation scatter with class coloring and hover details for each night; before/after panels for selected annotations.
   - **E:** choropleth of alert hours with a month slider; line chart comparing up to three oblasts; alert hours against launches over time.
 - **Every chart has:**
-  - a "How to read this" note (one or two sentences)
+  - a one-line subtitle, with a "How to read this" note and methods collapsed under the chart (#58)
   - hover tooltips
   - a "Show as table" toggle (for accessibility, and to show the actual numbers)
-  - the data-quality badges that apply to it
+  - the data-quality badges that apply to it, as labels that open the full text; each tab also lists them once at the top (#58)
 - **Data & Methods page:** sources and licenses, the snapshot date, the taxonomy table, definitions, the known gaps listed in §4, how to cite, and a changelog.
 
 ---
@@ -325,6 +325,14 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **How to cite:** the format is the agent's. It asks readers not to cite the dashboard while the preview note is up.
   - **Links out:** the KAS link is the foundation's Ukraine Air War Monitor page, not the general series page in §13, which didn't show the monitor. The UCSC address, which the plan didn't give, is the council's “Duration of air alarms” page. Both loaded on Nov 26, 2026. CSIS refused the automated check (HTTP 403), so its §13 link is unchecked.
   - **Glossary sources:** the page says the general descriptions have no cited source. The question stays open.
+
+- Data notes, badges and bands (#58, Nov 26, 2026). The layout is the owner's, from #58; the coding agent built it, and the owner hasn't reviewed the build or these choices:
+  - **Notes strip:** a collapsed line at the top of each tab names each badge its charts show, once, and opens to the full text. It reads the badges on the page, so it follows filter and chart changes. It replaces the Defense tab's separate sentence about electronic warfare.
+  - **Badges:** each is its label, which opens the full text in a popover, including on guided stops. Which badges a chart gets hasn't changed.
+  - **Notes under charts:** “How to read this” and the methods notes are collapsed together under each chart. Source and credit lines stay visible. The agent wrote the one-line subtitles. Where a chart marks massive nights, the subtitle or drawing still gives each year's bar, as the data audit asks.
+  - **Restricted band:** on the monthly launch, class-mix, intercept-rate, launches-and-alerts (launch panel), gaps, one-year strip and calendar charts, labeled “missile counts restricted”. On monthly axes it shades all of August 2026, whose figures include the restricted days. On date axes and the calendar it starts at Aug 11 (the calendar by whole weeks). It replaces the dashed marker on the launches-and-alerts chart.
+  - **Raion band:** on the alert-hour line charts, labeled “move to raion alerts”, from January to November 2025, the months in which the audit found areas switching. The badge still applies to every month from January 2025.
+  - **Alerts map:** on wide screens the tab now puts the map beside its slider and badges, as stop 9 does, so it starts on the first screen at 1280 × 720.
 
 **Open**
 - Terms of the sources behind the alert data (#26): the dataset is MIT, but it's collected from Telegram channels, including a volunteer one (eTryvoga), whose terms we don't know ([data audit](data-audit.md#alerts-license)). The site uses only the official-channel file.

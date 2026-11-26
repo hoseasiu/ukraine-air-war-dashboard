@@ -2,9 +2,11 @@
 import * as Plot from "@observablehq/plot";
 import { chartFrame, formatMonth, type Target } from "../chart/chartFrame.ts";
 import { monthPeriod } from "../chart/flags.ts";
+import { monthBand } from "../chart/periodBandMarks.ts";
+import { RESTRICTED_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { rateTable } from "../data.ts";
-import { chartSvg, classLabels, monthAxisTicks, percent, strikeFootnote, svgText, type FixedView } from "../strikes/shared.ts";
+import { chartSvg, classLabels, monthAxisTicks, percent, footnote, strikeSource, svgText, type FixedView } from "../strikes/shared.ts";
 import { monthsShown, type Selection } from "../strikes/strikeData.ts";
 import { CLASS_IDS, CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { classColorScale, classSymbolScale, plotDefaults } from "../theme/plot.ts";
@@ -33,6 +35,7 @@ export function interceptRateChart(selection: Selection, fixed?: FixedView): HTM
 
   return chartFrame<RateChartRow>({
     title: "Reported intercept rate over time, by weapon class",
+    subtitle: "Share of each month’s launches reported destroyed. A break in a line is a gap, not 0%.",
     howToRead:
       "One panel for each weapon class, all from 0% to 100%: the share of each month’s launches reported destroyed, " +
       "daytime reports included. A break in a line is a gap, not 0%: " +
@@ -68,7 +71,8 @@ export function interceptRateChart(selection: Selection, fixed?: FixedView): HTM
     rows,
     coverage: (row) => monthPeriod(row.month),
     pointer: "xy",
-    footnote: strikeFootnote(
+    source: strikeSource(),
+    footnote: footnote(
       "Rate = reported destroyed ÷ launches in the same reports. Reports that are unpublished, blank or give more " +
         "destroyed than launched are left out of both. These are reported figures, not verified performance, and " +
         "say nothing about hits or damage.",
@@ -103,7 +107,8 @@ export function interceptRateChart(selection: Selection, fixed?: FixedView): HTM
           height: panelHeight,
           marginLeft: oneRow ? 44 : 52,
           marginRight: 12,
-          marginTop: 12,
+          // Room for the band's label.
+          marginTop: 22,
           marginBottom: 30,
           x: { type: "point", domain: months, padding: 0.5, label: null, ...monthAxisTicks(months, panelWidth - 64) },
           y: { label: null, domain: [0, 1], ticks: 5, tickFormat: "%", grid: true },
@@ -123,6 +128,7 @@ export function interceptRateChart(selection: Selection, fixed?: FixedView): HTM
             Plot.ruleY([0]),
           ],
         }) as SVGSVGElement & Plot.Plot;
+        monthBand(plot, months, RESTRICTED_BAND);
         for (const target of plotTargets(plot, drawn, { x: (r) => r.month, y: (r) => r.intercept_rate })) {
           targets.push({ ...target, x: target.x + left, y: target.y + top + PANEL_TITLE });
         }

@@ -7,6 +7,8 @@
 import * as Plot from "@observablehq/plot";
 import { chartFrame, formatMonth, type Drawing } from "../chart/chartFrame.ts";
 import { monthPeriod } from "../chart/flags.ts";
+import { monthBand } from "../chart/periodBandMarks.ts";
+import { RAION_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { alertAreas, alertMonthly, excludedAlertAreas } from "../data.ts";
 import { AREA_STYLES } from "../theme/areaStyles.ts";
@@ -102,6 +104,8 @@ function draw(
     ],
   });
 
+  monthBand(plot, months, RAION_BAND);
+
   // One target per month, at its highest line, listing every oblast.
   const highest = new Map<string, number>();
   for (const row of rows) highest.set(row.month, Math.max(highest.get(row.month) ?? 0, row.hours));
@@ -117,17 +121,16 @@ export function oblastComparison(settings: ComparisonSettings): HTMLElement {
 
   const footnote = document.createElement("div");
   footnote.className = "chart-footnote";
-  if (!rows.length) footnote.append(paragraph(alertRangeNote()));
   footnote.append(
     paragraph(
       `A 0 means the file lists no alert counted for that month. ${list.format(excludedAlertAreas())} are excluded ` +
         "and can’t be compared, which doesn’t mean they had no alerts.",
     ),
-    alertCredit(),
   );
 
   return chartFrame<ComparisonRow>({
     title: `Alert hours by month: ${names}`,
+    subtitle: "Hours under air-raid alert each month, averaged over each oblast’s raions.",
     howToRead:
       "Each line is one oblast’s hours under air-raid alert in each month, on a shared scale. For an oblast, " +
       "the figure is the average over its raions, so it isn’t the time that any part of it was under alert. " +
@@ -146,6 +149,8 @@ export function oblastComparison(settings: ComparisonSettings): HTMLElement {
     coverage: (row) => monthPeriod(row.month),
     scaleKey: key(oblasts, styles),
     footnote,
+    source: alertCredit(),
+    emptyText: rows.length ? undefined : alertRangeNote(),
     pointer: "x",
     draw: (data, width) => draw(data, width, oblasts, styles, settings.fixed?.height ?? 380),
   });

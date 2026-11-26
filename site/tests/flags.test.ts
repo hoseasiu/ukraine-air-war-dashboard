@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { chartFlags, monthPeriod, type ColumnSpec, type Measure } from "../src/chart/flags.ts";
+import { chartFlags, FLAG_IDS, FLAG_TEXT, monthPeriod, notesFlags, type ColumnSpec, type Measure } from "../src/chart/flags.ts";
+import { bandMonths, RAION_BAND, RESTRICTED_BAND } from "../src/chart/periodBands.ts";
 
 const number = (key: string, measure: Measure): ColumnSpec => ({ key, label: key, type: "number", measure });
 const before = { from: "2025-01-01", to: "2026-08-10" };
@@ -90,4 +91,45 @@ test("bad input fails loudly instead of dropping a flag", () => {
   assert.throws(() => chartFlags({ columns, rows: [{ ballistic_restricted: "false" }], coverage: before }), /boolean/);
   assert.throws(() => monthPeriod("2026-13"), /YYYY-MM-DD/);
   assert.equal(monthPeriod("2028-02").to, "2028-02-29");
+});
+
+test("the data notes list each badge on the tab once, in badge order", () => {
+  const launches = chartFlags({
+    columns: [{ key: "class", label: "Class", type: "class" }, number("launched", "launched")],
+    rows: [],
+    coverage: spanning,
+  });
+  const rates = chartFlags({ columns: [number("intercept_rate", "intercept_rate")], rows: [], coverage: spanning });
+  const alerts = chartFlags({ columns: [number("hours", "alert_hours")], rows: [], coverage: before });
+  assert.deepEqual(notesFlags([...alerts, ...launches, ...rates]), [
+    "destroyed_includes_ew",
+    "ballistic_restricted",
+    "classes_not_split",
+    "alert_regions_excluded",
+    "alert_granularity_change",
+  ]);
+  assert.deepEqual(notesFlags([]), []);
+  assert.throws(() => notesFlags(["made_up"]), /Unknown/);
+});
+
+test("every badge has a short label and a fuller text for its popover", () => {
+  for (const id of FLAG_IDS) {
+    const { label, text } = FLAG_TEXT[id];
+    assert.ok(label && text.length > label.length, id);
+  }
+});
+
+test("the restricted band starts in August 2026 and runs to the end of the axis", () => {
+  const months = ["2026-06", "2026-07", "2026-08", "2026-09"];
+  assert.deepEqual(bandMonths(months, RESTRICTED_BAND), { first: "2026-08", last: "2026-09" });
+  assert.equal(bandMonths(months.slice(0, 2), RESTRICTED_BAND), null);
+});
+
+test("the raion band covers the months of the 2025 switch that are on the axis", () => {
+  assert.deepEqual(bandMonths(["2024-12", "2025-01", "2025-11", "2025-12"], RAION_BAND), {
+    first: "2025-01",
+    last: "2025-11",
+  });
+  assert.deepEqual(bandMonths(["2025-06", "2025-07"], RAION_BAND), { first: "2025-06", last: "2025-07" });
+  assert.equal(bandMonths(["2024-12", "2025-12"], RAION_BAND), null);
 });

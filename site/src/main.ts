@@ -1,3 +1,4 @@
+import { dataNotes } from "./chart/dataNotes.ts";
 import { alertAreas, buildInfo, formatDate } from "./data.ts";
 import { filterControls, filterNotes } from "./filters/controls.ts";
 import {
@@ -86,9 +87,11 @@ function render(): void {
   main.replaceChildren(heading);
 
   const content = document.createElement("div");
+  const notes = dataNotes(content);
   const draw = () => {
     content.replaceChildren();
     page.render(content, readFilters());
+    notes.refresh();
   };
   if (page.filters) {
     // Only the content is redrawn on a change, so focus stays on the control.
@@ -107,6 +110,8 @@ function render(): void {
       filterNotes(page.filters.notes),
     );
   }
+  // Only the chart tabs, which take filters, get the strip. Data & Methods writes the notes out itself.
+  if (page.filters) main.append(notes.element);
   main.append(content);
   draw();
   document.title = `${page.heading} · ${SITE_TITLE}`;

@@ -544,6 +544,19 @@ function taxonomySection(): Content[] {
   ];
 }
 
+/** Every data-quality note in full. Badges show only their labels until opened. */
+function writtenOutFlags(): HTMLDListElement {
+  const seen = new Set<TermId>();
+  return create(
+    "dl",
+    "gap-notes",
+    ...FLAG_IDS.flatMap((id) => [
+      create("dt", "", FLAG_TEXT[id].label),
+      create("dd", "", ...withTerms(FLAG_TEXT[id].text, seen)),
+    ]),
+  );
+}
+
 function gapsSection(): Content[] {
   const seen = new Set<TermId>();
   const { dates, without } = datesWithoutNight(nightTable);
@@ -551,7 +564,7 @@ function gapsSection(): Content[] {
   const { first, last } = alertMonths();
   return [
     paragraph(seen, "These notes appear on the figures they apply to."),
-    flagList(FLAG_IDS),
+    writtenOutFlags(),
 
     subheading("Strikes"),
     bullets([

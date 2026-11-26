@@ -5,7 +5,7 @@
  */
 import { chartFrame, type Target } from "../chart/chartFrame.ts";
 import { formatDate, outcomeTable, rateTable } from "../data.ts";
-import { chartSvg, classLabels, count, percent, strikeFootnote, svgText } from "../strikes/shared.ts";
+import { chartSvg, classLabels, count, percent, footnote, strikeSource, svgText } from "../strikes/shared.ts";
 import type { Selection } from "../strikes/strikeData.ts";
 import { svgElement } from "../theme/marks.ts";
 import { MIN_BIN_NIGHTS, saturationRows, SIZE_BINS, sizeBinRows, type SizeBinRow } from "./defenseData.ts";
@@ -36,6 +36,7 @@ export function sizeBinChart(selection: Selection): HTMLElement {
 
   return chartFrame<SizeBinRow>({
     title: "Nights of similar size: median share not reported destroyed, by year",
+    subtitle: "For nights in each size group, the middle share of launches not reported destroyed.",
     howToRead:
       "One panel for each year. For the nights in each size group, we take each night’s share of launches not " +
       "reported destroyed, then show the middle one (the median), with the number of nights (n). A group with " +
@@ -65,7 +66,8 @@ export function sizeBinChart(selection: Selection): HTMLElement {
     rows,
     coverage: (row) => ({ from: row.from, to: row.to }),
     pointer: "xy",
-    footnote: strikeFootnote(
+    source: strikeSource(),
+    footnote: footnote(
       "A night’s share is launched minus destroyed, divided by launched. It is not a share that hit anything: it " +
         "can include decoys, weapons still flying or unresolved, and losses to other causes. Only nights with a " +
         "point on the chart above are counted. A year can be partial: the table gives its first and last nights.",
