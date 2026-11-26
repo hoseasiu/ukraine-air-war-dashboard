@@ -1,0 +1,37 @@
+[project]
+name = "air-war-pipeline"
+version = "0.1.0"
+description = "Offline data build for the Ukraine air-war teaching dashboard"
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=1.1",
+    "pandas>=2.2.3",
+    "tzdata>=2025.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+]
+
+[tool.uv]
+# Run from the repo root with `uv run python -m pipeline`; nothing is packaged.
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+# The dependency-graph script is standalone, with its own workflow and tests.
+extend-exclude = [".github"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# The Phase 0 audits are records of what produced the figures in docs/.
+"pipeline/audit/*" = ["B905"]
