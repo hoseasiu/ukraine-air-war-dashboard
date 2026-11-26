@@ -303,8 +303,9 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **Stop 5:** the night with the most published launches, picked from the data, so a refresh can change it.
   - **Stop 6:** Next, or a button, swaps the calendar for the day-of-week chart; a second Next moves on. The prompt is the approved one from #24.
   - **Projector layout:** on stops, “How to read this” sits below the chart, badges sit side by side, page headings are smaller, and chart height follows the window. At 1280 × 720 the calendar's last row, stop 1's last alert notes and most notes under the charts need scrolling.
-- Guided stops 7–12 (#22; built by the coding agent, not yet reviewed by the owner):
-  - **Drafts:** the six titles and captions, stop 7's definition of "destroyed" and stop 11's four points are in [stops.ts](../site/src/guided/stops.ts). Titles are §5's. Stop 8 uses the saturation prompt and stop 12 the three closing prompts, both approved on #24; the closing three are §7's examples.
+- Guided stop text for stops 7–12 (owner, Nov 25, 2026, #22): the owner approved the coding agent's drafts of the six titles and captions, stop 7's definition of "destroyed" and stop 11's four points, with stop 10 retitled from §5's "Three cities" to "Three places". Before approving, they were told that two of the three suggested areas are whole oblasts, that "frontline" in stop 10's caption is §5's description and the map shows no front line, and that the repo's audit records no reason for the withheld figures. This doesn't pick stop 10's oblasts, settle how stop 9's animation starts, approve the other choices below or record a walkthrough.
+- Guided stops 7–12 (#22; built by the coding agent; apart from the text above, not yet reviewed by the owner):
+  - **Text:** it's in [stops.ts](../site/src/guided/stops.ts). The other titles are §5's. Stop 8 uses the saturation prompt and stop 12 the three closing prompts, both approved on #24; the closing three are §7's examples.
   - **Fixed views:** stops 7 and 8 cover every month of the strike data and all classes they can show; stops 9 and 10 cover every month of the alert data. All ignore the exploration filters.
   - **Stop 9:** the map opens on April 2022 with no oblast outlined. Playing stays a button the presenter presses, never automatic (as on #18), and a clicker's Next moves to stop 10 without starting it. With reduced motion on, there is no Play button.
   - **Stop 10:** the areas are tab E's default comparison, until the owner picks.
@@ -316,7 +317,6 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
 - Sources for the glossary (#24). The owner approved the wording (see Settled) without answering this separately: the general descriptions of weapons, EW and decoys in [terms.ts](../site/src/glossary/terms.ts) have no cited source. Suggested: decide before shipping whether they need citations (§9 Phase 5 asks that numbers trace to a source), alongside the Data & Methods page (#23).
 - Snapshot cutoff date: Dec 31, 2026 or the latest complete month (decide in early January). The 2026 massive-night bar and labels can change with it (#28).
 - Which three oblasts to compare in stop 10 (suggested: Kharkiv, Kyiv city, Lviv). The tab E comparison (#19) and stop 10 (#22) show these three until the owner picks.
-- Owner review of stops 7–12 (#22): the drafts above. Two points to settle: §5's title "Three cities" doesn't match the data, since two of the three suggested areas are whole oblasts (suggested: "Three places"); and the draft caption calls one of them "frontline", which is §5's description, not something the data or map shows.
 - Stop 9's animation (#22): is pressing the Play button enough, or should a clicker be able to start it?
 
 ---

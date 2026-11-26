@@ -2,10 +2,10 @@
  * The guided-mode stops (docs/plan.md §5), as data. A stop's number and its
  * #stop-N hash come from its position in STOPS.
  *
- * The owner approved the titles and captions of stops 1–6 on Nov 25, 2026
- * (#21); a change to one needs their review again. Stops 7–12 (#22), with stop
- * 7's definition and stop 11's points, are drafts the owner hasn't reviewed.
- * Leave counts out of all of them, so a data refresh can't make them wrong.
+ * The owner approved the titles and captions of stops 1–6 (#21), and of stops
+ * 7–12 with stop 7's definition and stop 11's points (#22), on Nov 25, 2026. A
+ * change to any of them needs their review again. Leave counts out of them, so
+ * a data refresh can't make them wrong.
  */
 import { DEFAULT_COMPARISON } from "../alerts/comparisonData.ts";
 import { STOP_PROMPTS } from "../teaching/prompts.ts";
@@ -133,7 +133,7 @@ export const STOPS: [Stop, ...Stop[]] = [
     view: { kind: "alert-map" },
   },
   {
-    title: "Three cities",
+    title: "Three places",
     caption:
       "Monthly alert hours in a frontline oblast, Kyiv city and a western oblast, on one scale. Hours under alert " +
       "don’t show how much danger or damage there was.",
