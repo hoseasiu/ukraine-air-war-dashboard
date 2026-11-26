@@ -17,7 +17,7 @@ A static teaching dashboard on Russia's missile and drone campaign against Ukrai
 7. **No real-time data, and nothing that could work as live targeting or warning information.** This is a retrospective tool.
 8. **Don't guess.** If something is ambiguous, add the question under "Open" in [docs/plan.md](docs/plan.md) §11 and raise it on the issue.
 9. **Never commit `archive.zip`, any other archive, or anything in `data/raw/`** (except `.gitkeep`). Don't force-add ignored files.
-10. **Don't commit anything to `data/processed/`** until the license check (#1) says redistribution is allowed, or the owner decides otherwise.
+10. **Kaggle-derived files in `data/processed/` stay CC BY-NC-SA 4.0.** Redistribution is allowed (#1), with attribution, a note of changes, noncommercial use and the same license on adapted data. Ship that notice with the first processed files. See [docs/data-audit.md](docs/data-audit.md#license-and-redistribution).
 11. **Don't change the repo's visibility or deploy publicly** without the owner's explicit go-ahead (#26, #27).
 
 Tone is factual and sober: counts, not spectacle. No weapon imagery and no Russian-source propaganda imagery. English only in v1.
@@ -35,6 +35,7 @@ data/raw/         source files (gitignored; setup in data/README.md)
 data/reference/   hand-editable tables: weapon-class mapping, oblast gazetteer, annotations
 data/processed/   pipeline outputs
 pipeline/         Python data build
+pipeline/audit/   rerunnable audit scripts (read raw data, write nothing)
 tests/            pipeline tests
 site/             Vite + TypeScript front end
 docs/             spec and data audit
@@ -42,20 +43,24 @@ docs/             spec and data audit
 
 ## Commands
 
+| Command | What it does |
+|---|---|
+| `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
+
 No build or test commands exist yet. #6 adds the pipeline commands and #10 the site commands. **Whoever adds a command records it here.**
 
 The owner develops on Windows, where `make` isn't installed. The plan's `make data` means "one command rebuilds the data", so provide an entry point that works in PowerShell and on Linux CI. Python 3.12, `uv` and Node 22 are installed on the owner's machine.
 
 ## Data notes
 
-These come from a quick look at the Nov 21 snapshot. They are leads for the Phase 0 audit, not audited findings.
+From the audit of the Nov 21 snapshot (#1). Read [docs/data-audit.md](docs/data-audit.md) before using the strike data.
 
-- The reference file is `missiles_and_uavs.csv` (the plan says `missiles_and_uav.csv`).
-- `missile_attacks_daily.csv` spans Sept 28, 2022 to Nov 21, 2026.
-- There are 90 distinct `model` strings, and 22 aren't in the reference file. Some are in Cyrillic.
-- Many rows are reconnaissance or tactical UAVs (for example Orlan-10, ZALA, Supercam, "Unknown UAV"), which the plan's class list doesn't cover.
-- Some combined entries mix ballistic, cruise and other types, so a "mixed cruise" bucket alone won't hold them.
-- `time_start` and `time_end` come both with and without a time of day.
+- The reference file is `missiles_and_uavs.csv` (the plan says `missiles_and_uav.csv`). There are 90 distinct `model` strings; 22 aren't in the reference file.
+- Rows span Sept 28, 2022 to Nov 21, 2026.
+- `status_data = hidden` rows mostly have `launched` = 0. That means unpublished, not zero.
+- `Shahed-136/131` counts include Gerbera, decoys and other types. Decoys can't be separated.
+- Don't sum all rows as attacks: regional reports may repeat national figures, reconnaissance rows are almost all shoot-downs, and daytime and night windows overlap.
+- `time_start` and `time_end` come both with and without a time of day, sometimes with trailing spaces.
 - Read files as UTF-8 explicitly. Printing the Cyrillic strings fails on the Windows console default (cp1252).
 
 ## Working on issues

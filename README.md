@@ -2,7 +2,7 @@
 
 A teaching dashboard on Russia's missile and drone campaign against Ukraine, built for **Build for Ukraine 3.0** (Day 1: Wed Jan 13, 2027).
 
-**Status:** planning and repo setup. There is no application code yet.
+**Status:** Phase 0 data audit. There is no application code yet.
 
 It will have two modes:
 
@@ -14,15 +14,18 @@ This is a retrospective teaching tool built on a frozen data snapshot. It shows 
 ## Reading the data
 
 - Reported "destroyed" counts **include weapons lost to electronic warfare**. They are reported figures, not independently verified ones.
-- Ballistic-missile figures have been restricted since **Aug 12, 2026**.
+- Ballistic-missile figures have been restricted since **Aug 12, 2026**. (The [data audit](docs/data-audit.md#ballistic-data-after-august-2026) found restricted rows from Aug 11, some of them cruise missiles. The date is under review.)
+- Shahed-type counts **include decoys** and other drones, which can't be separated.
 - The strike file in the current snapshot starts on **Sept 28, 2022**, not at the start of the full-scale invasion.
 
 ## Data sources
 
 | Source | Used for | License |
 |---|---|---|
-| [Massive Missile Attacks on Ukraine](https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine) (Petro Ivaniuk, Kaggle) | Launches and intercepts | Not yet verified (#1) |
+| [Massive Missile Attacks on Ukraine](https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine) (Petro Ivaniuk, Kaggle) | Launches and intercepts | [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) |
 | [Ukrainian air raid sirens dataset](https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset) (Vadimkin) | Alert hours | MIT |
+
+Processed data derived from the Kaggle dataset may be shared only under CC BY-NC-SA 4.0: credit Petro Ivaniuk and link the dataset and license, say what was changed, keep use noncommercial and license adaptations the same way. This doesn't set a license for the code, which has none yet (#26). See the [data audit](docs/data-audit.md).
 
 Raw files aren't committed. See [data/README.md](data/README.md) to set them up.
 
@@ -49,5 +52,6 @@ Work is tracked in [GitHub issues](https://github.com/hoseasiu/ukraine-air-war-d
 ## Docs
 
 - [docs/plan.md](docs/plan.md): the full spec and decision log
+- [docs/data-audit.md](docs/data-audit.md): what the data can and can't support
 - [AGENTS.md](AGENTS.md): rules for coding sessions
 - [DEPENDENCIES.md](DEPENDENCIES.md): issue order and file-overlap risks
