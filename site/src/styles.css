@@ -160,16 +160,73 @@ tbody th {
   line-height: 1.35;
 }
 
+/* Equal side columns keep Back and Next centered, whatever sits beside them. */
 .stop-controls {
   position: fixed;
   inset: auto 0 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: center;
-  gap: clamp(0.5rem, 3vw, 1.5rem);
+  gap: 0 1rem;
   height: var(--stop-controls-height);
+  padding: 0 1rem;
   background: var(--surface);
   border-top: 1px solid var(--rule);
+}
+
+.stop-hint {
+  grid-area: 1 / 1;
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+.stop-steps {
+  grid-area: 1 / 2;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 3vw, 1.5rem);
+}
+
+.stop-extras {
+  grid-area: 1 / 3;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stop-extras .stop-button {
+  font-size: 0.85rem;
+}
+
+/* Filled and checked when on, so it doesn't depend on color. */
+.stop-projector[aria-pressed="true"] {
+  color: var(--surface);
+  background: var(--ink);
+}
+
+.stop-projector[aria-pressed="true"]::before {
+  content: "\2713\00a0" / "";
+}
+
+.stop-progress {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin-top: 0.2rem;
+}
+
+/* A stop reached is a solid block, and one still to come is an outline. */
+.stop-progress span {
+  width: 0.55rem;
+  height: 0.45rem;
+  border: 1px solid var(--ink);
+}
+
+.stop-progress .reached {
+  background: var(--ink);
 }
 
 .stop-indicator {
@@ -177,6 +234,7 @@ tbody th {
   margin: 0;
   text-align: center;
   font-weight: 700;
+  line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
 
@@ -198,13 +256,43 @@ tbody th {
   cursor: default;
 }
 
-/* Keep the fixed controls from covering the end of the page or a focused element. */
-html:has(.guided) {
-  scroll-padding-bottom: var(--stop-controls-height);
+/*
+ * The controls get their own strip of the screen. The rest of the page scrolls in
+ * a body that ends where they begin, so nothing can pass under them.
+ */
+@media screen {
+  html:has(.guided) {
+    overflow: hidden;
+  }
+
+  body:has(.guided) {
+    height: calc(100vh - var(--stop-controls-height));
+    height: calc(100dvh - var(--stop-controls-height));
+    overflow-y: auto;
+  }
 }
 
-body:has(.guided) {
-  padding-bottom: var(--stop-controls-height);
+/* Two rows where one won't fit: the stepping buttons, then the rest. */
+@media (max-width: 62rem) {
+  :root {
+    --stop-controls-height: 7rem;
+  }
+
+  .stop-controls {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: 0.4rem;
+  }
+
+  .stop-hint {
+    display: none;
+  }
+
+  .stop-steps,
+  .stop-extras {
+    grid-area: auto;
+    justify-content: center;
+  }
 }
 
 .visually-hidden {

@@ -14,7 +14,7 @@ const MIN_ROW_HEIGHT = 40;
 const AXIS_HEIGHT = 44;
 /** The column of year labels, left of the rows. A guided stop's is wider, for two longer lines. */
 const LABEL_WIDTH = 190;
-const FIXED_LABEL_WIDTH = 250;
+const FIXED_LABEL_WIDTH = 305;
 /** The overflow bin sits apart from the axis, after a gap. */
 const OVERFLOW_GAP = 20;
 const OVERFLOW_WIDTH = 40;

@@ -59,10 +59,24 @@ function placesFirst(container: HTMLElement): void {
   }
 }
 
+/**
+ * In a stop, a chart's badges go first, directly under the caption, and "Show as
+ * table" goes in the corner beside the title. The elements move, not just their
+ * looks, so the keyboard reaches them in the order they're seen.
+ */
+function badgesFirst(container: HTMLElement): void {
+  for (const frame of container.querySelectorAll(".chart-frame")) {
+    const bar = frame.querySelector(".chart-bar");
+    const toggle = bar?.querySelector(".chart-toggle");
+    if (bar && toggle) frame.prepend(bar, toggle);
+  }
+}
+
 /** Draws a stop's view into an empty container. */
 export function renderView(container: HTMLElement, view: StopView): void {
   drawView(container, view);
   placesFirst(container);
+  badgesFirst(container);
 }
 
 function drawView(container: HTMLElement, view: StopView): void {

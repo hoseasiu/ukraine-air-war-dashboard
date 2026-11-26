@@ -14,6 +14,21 @@ import { RATE_SHOWN, rateRows, type RateChartRow } from "./defenseData.ts";
 
 const PANEL_HEIGHT = 200;
 const PANEL_TITLE = 28;
+const TITLE_LINE = 20;
+/** About the width of one character of a panel title, at the projector setting's 16px bold. */
+const TITLE_CHARACTER = 8.6;
+
+/** A title broken at spaces to fit its panel. */
+function titleLines(title: string, width: number): string[] {
+  const lines: string[] = [];
+  for (const word of title.split(" ")) {
+    const last = lines.at(-1);
+    if (last !== undefined && (last.length + 1 + word.length) * TITLE_CHARACTER <= width) {
+      lines[lines.length - 1] = `${last} ${word}`;
+    } else lines.push(word);
+  }
+  return lines;
+}
 
 function summary(rows: readonly RateChartRow[], id: ClassId): string {
   const shown = rows.filter((row) => row.class === id && row.intercept_rate !== null);
@@ -88,10 +103,16 @@ export function interceptRateChart(selection: Selection, fixed?: FixedView): HTM
       const perRow = oneRow ? classes.length : fixed && width >= 900 ? 3 : width >= (fixed ? 640 : 880) ? 2 : 1;
       const panelWidth = Math.floor(width / perRow);
       const rowCount = Math.ceil(classes.length / perRow);
+      // A guided stop's text can be larger than its panels are wide, so titles there wrap.
+      const titles = classes.map((id) => {
+        const name = classLabels[id].replace(/ \(not separable\)$/, "");
+        return fixed ? titleLines(name, panelWidth - 8) : [name];
+      });
+      const titleHeight = PANEL_TITLE + (Math.max(1, ...titles.map((lines) => lines.length)) - 1) * TITLE_LINE;
       const panelHeight = fixed
-        ? Math.min(240, Math.max(150, Math.floor(fixed.height / rowCount) - PANEL_TITLE))
+        ? Math.min(240, Math.max(150, Math.floor(fixed.height / rowCount) - titleHeight))
         : PANEL_HEIGHT;
-      const panel = panelHeight + PANEL_TITLE;
+      const panel = panelHeight + titleHeight;
       const svg = chartSvg(width, rowCount * panel);
       const targets: Target<RateChartRow>[] = [];
 
@@ -130,15 +151,17 @@ export function interceptRateChart(selection: Selection, fixed?: FixedView): HTM
         }) as SVGSVGElement & Plot.Plot;
         monthBand(plot, months, RESTRICTED_BAND);
         for (const target of plotTargets(plot, drawn, { x: (r) => r.month, y: (r) => r.intercept_rate })) {
-          targets.push({ ...target, x: target.x + left, y: target.y + top + PANEL_TITLE });
+          targets.push({ ...target, x: target.x + left, y: target.y + top + titleHeight });
         }
         plot.setAttribute("x", String(left));
-        plot.setAttribute("y", String(top + PANEL_TITLE));
-        const name = classLabels[id].replace(/ \(not separable\)$/, "");
-        svg.append(svgText(left + 4, top + 20, name, { "font-weight": 700, "font-size": 14 }), plot);
+        plot.setAttribute("y", String(top + titleHeight));
+        titles[index]!.forEach((line, n) => {
+          svg.append(svgText(left + 4, top + 20 + n * TITLE_LINE, line, { "font-weight": 700, "font-size": 14 }));
+        });
+        svg.append(plot);
         if (!drawn.length) {
           svg.append(
-            svgText(left + panelWidth / 2, top + PANEL_TITLE + panelHeight / 2, "No month with a rate", {
+            svgText(left + panelWidth / 2, top + titleHeight + panelHeight / 2, "No month with a rate", {
               "text-anchor": "middle",
               "font-size": 14,
             }),
