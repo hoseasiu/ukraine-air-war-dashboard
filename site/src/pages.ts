@@ -3,11 +3,11 @@ import { alertsAndLaunches } from "./alerts/alertsAndLaunches.ts";
 import { assignStyles, comparisonAreas, DEFAULT_COMPARISON } from "./alerts/comparisonData.ts";
 import { oblastComparison } from "./alerts/oblastComparison.ts";
 import { attacksTab } from "./strikes/attacksTab.ts";
-import { classKey } from "./classKey.ts";
 import { alertAreas } from "./data.ts";
 import { defenseTab } from "./defense/defenseTab.ts";
 import type { Filters } from "./filters/state.ts";
-import { glossaryList, withTerms } from "./glossary/popover.ts";
+import { withTerms } from "./glossary/popover.ts";
+import { methodsPage } from "./methods/methodsPage.ts";
 import { promptList } from "./teaching/promptList.ts";
 import { TAB_PROMPTS } from "./teaching/prompts.ts";
 
@@ -116,12 +116,7 @@ export const PAGES: [Page, ...Page[]] = [
     nav: "Data & Methods",
     heading: "Data and methods",
     render(container) {
-      container.append(
-        paragraph("Sources, licenses, definitions and known gaps will be listed here."),
-        classKey(),
-        heading("Glossary"),
-        glossaryList(),
-      );
+      container.append(methodsPage());
     },
   },
 ];
