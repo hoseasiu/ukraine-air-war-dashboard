@@ -13,7 +13,7 @@ import { AREA_STYLES } from "../theme/areaStyles.ts";
 import { areaSymbolPath, svgElement } from "../theme/marks.ts";
 import { plotDefaults } from "../theme/plot.ts";
 import { assignStyles, comparisonRows, type ComparisonRow } from "./comparisonData.ts";
-import { monthAxisTicks } from "../strikes/shared.ts";
+import { monthAxisTicks, type FixedView } from "../strikes/shared.ts";
 import { alertCredit, alertRangeNote, paragraph } from "./notes.ts";
 
 export interface ComparisonSettings {
@@ -24,6 +24,8 @@ export interface ComparisonSettings {
   oblasts: readonly string[];
   /** Each oblast's line style, from assignStyles(). Without it, they follow the order given. */
   styles?: ReadonlyMap<string, number>;
+  /** A guided stop's view: a height that fits the screen. */
+  fixed?: FixedView;
 }
 
 function areaName(id: string): string {
@@ -61,13 +63,14 @@ function draw(
   width: number,
   oblasts: readonly string[],
   styles: ReadonlyMap<string, number>,
+  height: number,
 ): Drawing<ComparisonRow> {
   const months = [...new Set(rows.map((row) => row.month))];
   const marginLeft = plotDefaults.marginLeft;
   const plot = Plot.plot({
     ...plotDefaults,
     width,
-    height: 380,
+    height,
     marginRight: 36,
     x: {
       type: "band",
@@ -144,6 +147,6 @@ export function oblastComparison(settings: ComparisonSettings): HTMLElement {
     scaleKey: key(oblasts, styles),
     footnote,
     pointer: "x",
-    draw: (data, width) => draw(data, width, oblasts, styles),
+    draw: (data, width) => draw(data, width, oblasts, styles, settings.fixed?.height ?? 380),
   });
 }

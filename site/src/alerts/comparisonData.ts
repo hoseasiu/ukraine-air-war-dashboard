@@ -9,7 +9,7 @@ import { monthsInRange, type AlertMonth, type AlertTable } from "./alertData.ts"
 
 /**
  * Shown when no oblast is chosen: Kharkiv oblast, Kyiv city and Lviv oblast.
- * They're the plan's suggestion, used until the owner picks (plan §11, "Open").
+ * The owner picked them for stop 10 on Nov 25, 2026 (#22; plan §11).
  */
 export const DEFAULT_COMPARISON: readonly string[] = ["UA-63", "UA-30", "UA-46"];
 

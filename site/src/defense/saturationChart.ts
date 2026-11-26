@@ -16,6 +16,7 @@ import {
   NOTHING_SHOWN,
   strikeFootnote,
   svgText,
+  type FixedView,
 } from "../strikes/shared.ts";
 import type { Selection } from "../strikes/strikeData.ts";
 import { CLASS_IDS } from "../theme/classStyles.ts";
@@ -46,7 +47,8 @@ function hollowKey(): HTMLElement {
   return key;
 }
 
-export function saturationChart(selection: Selection): HTMLElement {
+/** `fixed` is a guided stop's view: no wording about filters, and a height that fits the screen. */
+export function saturationChart(selection: Selection, fixed?: FixedView): HTMLElement {
   const rows = saturationRows(outcomeTable, selection, classLabels);
   const drawable = rows.filter((row) => row.not_intercepted !== null);
   const groups = MIX_GROUPS.filter((group) => drawable.some((row) => row.mix === group));
@@ -114,15 +116,18 @@ export function saturationChart(selection: Selection): HTMLElement {
         "some published launches have no usable destroyed count is in the table but has no point.",
       "Not reported destroyed is launched minus destroyed in the same reports. It can include decoys, weapons " +
         "still flying or unresolved, and losses to other causes.",
-      "“Mixed” counts as one class in the panels, although it covers more than one. With classes turned off, " +
-        "size, mix and the number not reported destroyed count only the classes shown.",
+      "“Mixed” counts as one class in the panels, although it covers more than one." +
+        (fixed ? "" : " With classes turned off, size, mix and the number not reported destroyed count only the classes shown."),
       "Points can lie on top of each other. The arrow keys and the table reach every night.",
     ),
     draw(data, width) {
       const shown = data.filter((row) => row.not_intercepted !== null);
       const perRow = width >= 960 ? 3 : width >= 640 ? 2 : 1;
       const panelWidth = Math.floor(width / perRow);
-      const panel = PANEL_TITLE + PANEL_HEIGHT;
+      const panelHeight = fixed
+        ? Math.min(440, Math.max(240, fixed.height - PANEL_TITLE - AXIS_TITLE))
+        : PANEL_HEIGHT;
+      const panel = PANEL_TITLE + panelHeight;
       const height = Math.max(1, Math.ceil(groups.length / perRow)) * panel + AXIS_TITLE;
       const svg = chartSvg(width, height);
       const targets: Target<SaturationRow>[] = [];
@@ -144,7 +149,7 @@ export function saturationChart(selection: Selection): HTMLElement {
           ...plotDefaults,
           style: { ...plotDefaults.style, fontSize: "14px" },
           width: panelWidth,
-          height: PANEL_HEIGHT,
+          height: panelHeight,
           marginLeft: 48,
           marginRight: 14,
           marginTop: 10,

@@ -65,6 +65,7 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
   const heading = create("h2", "stop-title");
   heading.tabIndex = -1;
   const caption = create("p", "stop-caption");
+  const definition = create("div", "stop-definition");
   const prompts = create("div", "stop-prompts");
   const view = create("div", "stop-view");
   // Hidden on stops with nothing to reveal.
@@ -82,7 +83,7 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
   const announcer = create("p", "visually-hidden");
   announcer.setAttribute("role", "status");
 
-  root.append(heading, caption, prompts, view, controls, announcer);
+  root.append(heading, caption, definition, prompts, view, controls, announcer);
 
   /** The stop on screen, which can lag behind the URL for a moment. */
   let shownStop = 0;
@@ -146,14 +147,26 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
     if (!event.repeat) move(step);
   });
 
+  function fillDefinition(shown: Stop["definition"]): void {
+    definition.hidden = !shown;
+    definition.replaceChildren();
+    if (!shown) return;
+    const name = create("strong", "");
+    name.textContent = shown.heading;
+    const text = create("p", "");
+    text.append(...withTerms(shown.text));
+    definition.append(name, text);
+  }
+
   function fill(stop: Stop, number: number): void {
     // Focus inside any of these, such as on a glossary term, goes away with the old stop.
     const focusWasReplaced =
-      [caption, prompts, view].some((part) => part.contains(document.activeElement)) ||
+      [caption, definition, prompts, view].some((part) => part.contains(document.activeElement)) ||
       (!stop.reveal && document.activeElement === revealButton);
     shownStop = number;
     heading.textContent = stop.title;
     caption.replaceChildren(...withTerms(stop.caption));
+    fillDefinition(stop.definition);
     prompts.replaceChildren(...(stop.prompts ? [promptList(stop.prompts)] : []));
     drawView(stop);
     indicator.textContent = `Stop ${number} / ${STOPS.length}`;
@@ -177,7 +190,9 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
       fill(stop, number);
       const position = `Stop ${number} of ${STOPS.length}`;
       if (!entering) {
-        announcer.textContent = [`${position}.`, `${stop.title}.`, stop.caption, ...(stop.prompts ?? [])].join(" ");
+        const defined = stop.definition ? [`${stop.definition.heading}: ${stop.definition.text}`] : [];
+        const spoken = [`${position}.`, `${stop.title}.`, stop.caption, ...defined, ...(stop.prompts ?? [])];
+        announcer.textContent = spoken.join(" ");
       }
       return `${position}: ${stop.title}`;
     },

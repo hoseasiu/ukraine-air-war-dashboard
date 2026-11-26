@@ -1,12 +1,20 @@
-import { nightTable } from "../data.ts";
+import { alertMap } from "../alerts/alertMap.ts";
+import { assignStyles } from "../alerts/comparisonData.ts";
+import { oblastComparison } from "../alerts/oblastComparison.ts";
+import { alertMonthly, nightTable } from "../data.ts";
+import { interceptRateChart } from "../defense/interceptChart.ts";
+import { saturationChart } from "../defense/saturationChart.ts";
+import { withTerms } from "../glossary/popover.ts";
+import type { TermId } from "../glossary/terms.ts";
 import { monthlyLaunchChart } from "../strikes/monthlyCharts.ts";
 import { nightBreakdown } from "../strikes/nightBreakdown.ts";
 import { nightCalendar, weekdayChart } from "../strikes/rhythm.ts";
 import { salvoHistogram } from "../strikes/salvoHistogram.ts";
+import { create } from "../strikes/shared.ts";
 import { allNights, largestNight, type Selection } from "../strikes/strikeData.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
 import { headlineView } from "./headlines.ts";
-import type { StopView } from "./stops.ts";
+import type { Point, StopView } from "./stops.ts";
 
 /** Every month of the strike data, for the classes given. */
 const allMonths = (classes: readonly ClassId[] = CLASS_IDS): Selection => ({
@@ -17,9 +25,27 @@ const allMonths = (classes: readonly ClassId[] = CLASS_IDS): Selection => ({
 
 /**
  * How tall a chart can be and still share the screen with the caption and
- * badges: what's left of the window, within limits.
+ * badges: what's left of the window, within limits. `reserved` is for whatever
+ * else a stop puts above its drawing, such as a definition or a key.
  */
-const chartHeight = () => Math.min(560, Math.max(260, window.innerHeight - 580));
+const chartHeight = (reserved = 0) => Math.min(560, Math.max(260, window.innerHeight - 580 - reserved));
+
+/** Every month of the alert data. */
+const allAlertMonths = () => ({ from: alertMonthly.months[0]!, to: alertMonthly.months.at(-1)! });
+
+function pointList(points: readonly Point[]): HTMLElement {
+  const list = create("ul", "stop-points");
+  // Shared, so a term repeated across points is marked once.
+  const seen = new Set<TermId>();
+  for (const point of points) {
+    const item = create("li");
+    const text = create("p");
+    text.append(...withTerms(point.text, seen));
+    item.append(create("h3", "", point.heading), text);
+    list.append(item);
+  }
+  return list;
+}
 
 /**
  * Moves each "How to read this" note below its chart. The caption makes the
@@ -66,6 +92,30 @@ function drawView(container: HTMLElement, view: StopView): void {
       return;
     case "weekdays":
       container.append(weekdayChart(allMonths(), { fixed: { height: chartHeight() } }));
+      return;
+    case "intercept-rates":
+      container.append(interceptRateChart(allMonths(view.classes), { height: chartHeight(140) }));
+      return;
+    case "saturation":
+      container.append(saturationChart(allMonths(view.classes), { height: chartHeight(180) }));
+      return;
+    case "alert-map": {
+      const months = allAlertMonths();
+      container.append(alertMap({ ...months, highlight: [], month: months.from, fixed: { height: chartHeight(100) } }));
+      return;
+    }
+    case "oblast-comparison":
+      container.append(
+        oblastComparison({
+          ...allAlertMonths(),
+          oblasts: view.oblasts,
+          styles: assignStyles(view.oblasts),
+          fixed: { height: chartHeight() },
+        }),
+      );
+      return;
+    case "points":
+      container.append(pointList(view.points));
       return;
     default:
       // Fails the type check if a kind of view has no case above.

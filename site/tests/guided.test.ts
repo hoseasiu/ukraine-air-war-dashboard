@@ -8,6 +8,7 @@ import { parseAreas } from "../src/buildData.ts";
 import { parseRates } from "../src/defense/defenseData.ts";
 import { headlines } from "../src/guided/headlineData.ts";
 import { stepFrom, type Position } from "../src/guided/steps.ts";
+import { STOPS } from "../src/guided/stops.ts";
 import { parseMonthly } from "../src/strikes/strikeData.ts";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
@@ -116,4 +117,40 @@ test("a last stop with a reveal can still show it", () => {
   const shown = stepFrom(stops, { stop: 1, revealed: false }, 1);
   assert.deepEqual(shown, { stop: 1, revealed: true });
   assert.equal(stepFrom(stops, shown, 1), shown);
+});
+
+test("the twelve stops of plan §5 are in order", () => {
+  assert.deepEqual(
+    STOPS.map((stop) => stop.view.kind),
+    [
+      "headlines",
+      "monthly-launches",
+      "monthly-launches",
+      "night-sizes",
+      "one-night",
+      "night-calendar",
+      "intercept-rates",
+      "saturation",
+      "alert-map",
+      "oblast-comparison",
+      "points",
+      "none",
+    ],
+  );
+});
+
+test("the intercept stop defines destroyed, electronic warfare included", () => {
+  const stop = STOPS.find((candidate) => candidate.view.kind === "intercept-rates")!;
+  assert.match(stop.definition!.heading, /destroyed/i);
+  assert.match(stop.definition!.text, /electronic warfare/);
+});
+
+test("the comparison stop takes three areas that have alert figures", () => {
+  const view = STOPS.map((stop) => stop.view).find((candidate) => candidate.kind === "oblast-comparison")!;
+  assert.equal(new Set(view.oblasts).size, 3);
+  for (const id of view.oblasts) assert.ok(alerts.rows.some((row) => row.oblast === id), id);
+});
+
+test("the last stop asks three questions", () => {
+  assert.equal(STOPS.at(-1)!.prompts?.length, 3);
 });
