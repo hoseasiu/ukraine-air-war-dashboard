@@ -34,8 +34,8 @@ export const FLAG_TEXT: Record<FlagId, FlagText> = {
     text: "Reported “destroyed” counts include weapons lost to electronic warfare (EW). Launched minus destroyed is not a count of hits.",
   },
   ballistic_restricted: {
-    label: "Ballistic reporting restricted",
-    text: "Since August 2026, some ballistic-missile figures have not been published, and the data also hides some cruise and anti-ship missile counts. Missile figures, totals and class mix from then on are incomplete. An unpublished count is unknown, not zero.",
+    label: "Missile reporting restricted",
+    text: "From Aug 11, 2026, some missile counts have not been published, including ballistic, cruise and anti-ship missiles. Missile figures, totals and class mix from then on are incomplete. An unpublished count is unknown, not zero.",
   },
   classes_not_split: {
     label: "Mixed rows not split",
@@ -74,11 +74,10 @@ export const MEASURES = {
 export type Measure = keyof typeof MEASURES;
 
 /**
- * First day whose launch-based figures are flagged. AGENTS.md rule 3 and #12
- * give Aug 12, 2026. Whether to start earlier is open in plan §11; until it's
- * settled, a `ballistic_restricted` row flag can mark earlier nights.
+ * First day whose launch-based figures are flagged (AGENTS.md rule 3). The
+ * owner chose Aug 11, 2026 on #5: the first `hidden` rows end that day.
  */
-export const BALLISTIC_RESTRICTION_FROM = "2026-08-12";
+export const BALLISTIC_RESTRICTION_FROM = "2026-08-11";
 
 /** The raion switch phased in during 2025 (data audit; the owner accepted this start on #8). */
 export const ALERT_GRANULARITY_CHANGE_FROM = "2025-01-01";

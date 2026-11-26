@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { chartFlags, monthPeriod, type ColumnSpec, type Measure } from "../src/chart/flags.ts";
 
 const number = (key: string, measure: Measure): ColumnSpec => ({ key, label: key, type: "number", measure });
-const before = { from: "2025-01-01", to: "2026-08-11" };
+const before = { from: "2025-01-01", to: "2026-08-10" };
 const spanning = { from: "2026-08-01", to: "2026-08-31" };
 
 test("every interception measure gets the EW caveat, with no row flags at all", () => {
@@ -22,12 +22,12 @@ test("a row flag of false can't remove a required badge", () => {
   assert.deepEqual(flags, ["destroyed_includes_ew", "ballistic_restricted"]);
 });
 
-test("launch-based figures are flagged from Aug 12, 2026", () => {
+test("launch-based figures are flagged from Aug 11, 2026", () => {
   const columns = [number("launched", "launched")];
   const flagged = (to: string) =>
     chartFlags({ columns, rows: [], coverage: { from: "2026-01-01", to } }).includes("ballistic_restricted");
-  assert.equal(flagged("2026-08-11"), false);
-  assert.equal(flagged("2026-08-12"), true);
+  assert.equal(flagged("2026-08-10"), false);
+  assert.equal(flagged("2026-08-11"), true);
   assert.equal(flagged("2026-11-21"), true);
   for (const measure of ["launch_derived", "destroyed", "intercept_rate"] as const) {
     assert.ok(chartFlags({ columns: [number("v", measure)], rows: [], coverage: spanning }).includes("ballistic_restricted"));

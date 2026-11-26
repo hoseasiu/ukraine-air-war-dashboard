@@ -14,7 +14,7 @@ This is a retrospective teaching tool built on a frozen data snapshot. It shows 
 ## Reading the data
 
 - Reported "destroyed" counts **include weapons lost to electronic warfare**. They are reported figures, not independently verified ones.
-- Ballistic-missile figures have been restricted since **Aug 12, 2026**. (The [data audit](docs/data-audit.md#ballistic-data-after-august-2026) found restricted rows from Aug 11, some of them cruise missiles. The date is under review.)
+- Some missile figures, including ballistic and cruise, are unpublished from **Aug 11, 2026** ([data audit](docs/data-audit.md#ballistic-data-after-august-2026)). An unpublished count is unknown, not zero.
 - Shahed-type counts **include decoys** and other drones, which can't be separated.
 - The strike file in the current snapshot starts on **Sept 28, 2022**, not at the start of the full-scale invasion.
 

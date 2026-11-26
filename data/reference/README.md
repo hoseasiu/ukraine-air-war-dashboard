@@ -6,7 +6,7 @@ Other tables here: the [oblast gazetteer and map boundaries](gazetteer.md) and t
 
 ## Weapon classes
 
-**Status: settled Nov 25, 2026 ([#3](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/3)).** The owner delegated the open choices to the coding agent: "Make whichever decision you think serves the overall project the best and document it." The agent made the [decisions](#decisions) below; the owner hasn't reviewed them one by one. The classes start from [plan §4](../../docs/plan.md#4-data-model-after-processing).
+**Status: settled and signed off Nov 25, 2026 ([#3](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/3)).** The owner delegated the open choices to the coding agent: "Make whichever decision you think serves the overall project the best and document it." The agent made the [decisions](#decisions) below. The owner later signed off on the resulting classes ([#5](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/5)). The classes start from [plan §4](../../docs/plan.md#4-data-model-after-processing).
 
 | File | Contents |
 |---|---|
@@ -50,7 +50,7 @@ These figures use all rows as published, from Sept 28, 2022 to Nov 21, 2026. Hid
 
 ### Effect on the massive-night threshold
 
-Provisional: nights keyed by end date, all source accounts, no removal of repeated reports. Which rows count as attacks is still open (plan §11).
+An early check, made before the definitions were chosen: nights keyed by end date, all source accounts, daytime reports included. The [data audit](../../docs/data-audit.md#definitions) now has the counting rules and the massive-night definition.
 
 | | Nights | Median | 95th percentile | Nights with 100+ |
 |---|---|---|---|---|
@@ -66,10 +66,10 @@ Counts here are subject to the same reporting-restriction note as above. The gui
 3. **X-31, X-31P, X-31PD, X-35 and X-35Y are anti-ship and other** (104 rows, 173 launched, 9 destroyed). §4 doesn't name them, and the reference file calls them cruise missiles (some anti-radiation).
 4. **`Unknown Missile` is anti-ship and other** (26 rows, 90 launched), so it counts in totals without a new class. The Methods page must say the class includes unknown types. `Ballistic Missile` and `Intercontinental Ballistic Missile` are in `ballistic` as reported; we haven't verified the ICBM identifications.
 5. **`Banderol` and `Banderol/Dan-T` are cruise** (25 rows, 149 launched), as the reference file says. We haven't checked what the weapon or `Dan-T` is beyond that. Some Shahed rows also have nested Banderol counts, and [we can't tell](../../docs/data-audit.md#decoys-and-jet-shaheds-a5) whether those are already in the Shahed total.
-6. **`Geran` rows are Shahed-type** (45 rows, 1,041 launched, all marked destroyed; all from the western command), as the reference file groups Geran-4 and -5. We haven't independently checked that they are. **This doesn't decide whether the rows count.** They may repeat national figures, and the shoot-down-only pattern would justify leaving them out. That's still open in plan §11, for #5 and #7.
+6. **`Geran` rows are Shahed-type** (45 rows, 1,041 launched, all marked destroyed; all from the western command), as the reference file groups Geran-4 and -5. We haven't independently checked that they are. **The class doesn't make the rows count.** They may repeat national figures, so the [row rule](../../docs/data-audit.md#which-rows-count) chosen on #5 leaves them out as regional reports.
 7. **Lancet, Kub and Молнія are excluded**, with `Orion` and `Mohajer-6`, although they aren't just reconnaissance drones. Every single-model row for these five is all shoot-downs.
 8. **`Shahed-136/131 and Lancet` is `mixed`** (1 row, 16 launched, 10 destroyed), so it counts. The cross-class rule applies without a special case.
-9. **The label stays "Shahed-type and decoy drones."** It warns that decoys are inside the counts, although they can't be separated. The A5 question in plan §11 may reword it.
+9. **The label stays "Shahed-type and decoy drones."** It warns that decoys are inside the counts, although they can't be separated. A5 was dropped on #5, and the label stayed.
 
 ## License
 
