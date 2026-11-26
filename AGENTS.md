@@ -46,8 +46,10 @@ docs/             spec and data audit
 | Command | What it does |
 |---|---|
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
+| `python .github/scripts/dependency_graph.py --dry-run` | Prints the body of the generated dependency issue (#31). Without `--dry-run`, updates it. Needs `gh`. |
+| `python -m unittest discover -s .github/scripts` | Tests the dependency-graph script. |
 
-No build or test commands exist yet. #6 adds the pipeline commands and #10 the site commands. **Whoever adds a command records it here.**
+No pipeline or site build or test commands exist yet. #6 adds the pipeline commands and #10 the site commands. **Whoever adds a command records it here.**
 
 The owner develops on Windows, where `make` isn't installed. The plan's `make data` means "one command rebuilds the data", so provide an entry point that works in PowerShell and on Linux CI. Python 3.12, `uv` and Node 22 are installed on the owner's machine.
 
@@ -67,7 +69,7 @@ From the audit of the Nov 21 snapshot (#1). Read [docs/data-audit.md](docs/data-
 
 Several sessions may run at once from separate worktrees.
 
-1. Check [DEPENDENCIES.md](DEPENDENCIES.md). Pick an open issue whose blockers are closed and that doesn't have `agent:in-progress`.
+1. Pick an issue under "Ready to start" in [#31](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/31), the generated dependency list: open, all blockers closed, and no `agent:in-progress`. It can lag behind, so confirm on the issue itself. Check the file-overlap risks in [DEPENDENCIES.md](DEPENDENCIES.md).
 2. Claim it before writing code: add the `agent:in-progress` label, assign yourself, and comment with your branch name.
 3. Branch from `main` as `claude/issue-<N>-<slug>`.
 4. After the first real commit, push and open a draft PR with `Closes #N` in the body.
@@ -76,7 +78,7 @@ Several sessions may run at once from separate worktrees.
 
 A new worktree has an empty `data/raw/`; see [data/README.md](data/README.md).
 
-If you find new work or a new dependency, open an issue and update `DEPENDENCIES.md`.
+If you find new work, open an issue. Record each dependency as a GitHub "blocked by" link ([how](DEPENDENCIES.md#changing-a-dependency)), not in issue text or a doc. Don't edit #31.
 
 ## Quality bar
 

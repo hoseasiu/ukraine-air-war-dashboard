@@ -17,6 +17,4 @@ about: A unit of work sized for one coding session
 
 Plan sections (`docs/plan.md`):
 
-## Blocked by
-
-none (also add a row to `DEPENDENCIES.md`)
+<!-- Blockers: after creating the issue, set them under Relationships > Mark as blocked by. Don't list them here. -->
