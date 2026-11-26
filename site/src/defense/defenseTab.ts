@@ -8,6 +8,7 @@ import { eventPanels } from "./eventPanels.ts";
 import type { WindowDays } from "./eventWindowData.ts";
 import { interceptRateChart } from "./interceptChart.ts";
 import { saturationChart } from "./saturationChart.ts";
+import { sizeBinChart } from "./sizeBinChart.ts";
 
 function paragraph(text: string): HTMLParagraphElement {
   const p = create("p");
@@ -17,11 +18,22 @@ function paragraph(text: string): HTMLParagraphElement {
 
 /** The before/after choice, kept while the filters redraw the page. It isn't a filter, so it isn't in the URL. */
 let eventChoice: { event: string; days: WindowDays } | undefined;
+/** The saturation chart's view, kept the same way. */
+let saturationSplit = false;
 
 export function defenseTab(filters: Filters): HTMLElement {
   const section = create("div");
   if (monthsShown(rateTable, filters.from, filters.to).length) {
-    section.append(interceptRateChart(filters), saturationChart(filters));
+    section.append(
+      interceptRateChart(filters),
+      saturationChart(filters, undefined, {
+        split: saturationSplit,
+        onSplit: (split) => {
+          saturationSplit = split;
+        },
+      }),
+      sizeBinChart(filters),
+    );
   } else {
     section.append(paragraph("The months chosen are before the strike data starts. Widen “Months shown”."));
   }

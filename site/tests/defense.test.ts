@@ -2,7 +2,19 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { chartFlags, monthPeriod, type ColumnSpec } from "../src/chart/flags.ts";
-import { parseOutcomes, parseRates, RATE_CLASSES, RATE_SHOWN, rateRows, saturationRows } from "../src/defense/defenseData.ts";
+import {
+  MEDIAN_SHOWN,
+  MIN_BIN_NIGHTS,
+  parseOutcomes,
+  parseRates,
+  RATE_CLASSES,
+  RATE_SHOWN,
+  rateRows,
+  saturationRows,
+  SIZE_BINS,
+  sizeBinRows,
+  type SaturationRow,
+} from "../src/defense/defenseData.ts";
 import { allNights, type Selection } from "../src/strikes/strikeData.ts";
 import { CLASS_IDS, type ClassId } from "../src/theme/classStyles.ts";
 
@@ -116,6 +128,47 @@ test("saturation has one row per night with a size, and never counts a missing o
   // 25 cruise launched but only 7 with an outcome, and anti-ship with none.
   const partial = rows.find((r) => r.date === "2025-02-01")!;
   assert.deepEqual([partial.size, partial.launched_with_outcome, partial.not_intercepted], [162, 134, null]);
+});
+
+test("the size-bin summary counts each night with a point once, and stops before August 2026", () => {
+  const rows = saturationRows(outcomes, everything, labels);
+  const bins = sizeBinRows(rows, rates);
+  const counted = rows.filter((r) => r.date < "2026-08-01" && r.not_intercepted !== null && r.size > 0);
+  assert.ok(counted.length < rows.length);
+  assert.equal(bins.reduce((sum, b) => sum + b.n_nights, 0), counted.length);
+  assert.deepEqual([...new Set(bins.map((b) => b.year))], ["2022", "2023", "2024", "2025", "2026"]);
+  assert.equal(bins.length, 5 * SIZE_BINS.length);
+  for (const bin of bins) {
+    assert.ok(bin.to <= "2026-07-31" && !bin.ballistic_restricted, bin.year);
+    assert.equal(bin.median_not_destroyed_share !== null, bin.n_nights >= MIN_BIN_NIGHTS);
+    assert.equal(bin.destroyed_includes_ew, bin.median_not_destroyed_share !== null);
+  }
+  // Every size falls in exactly one bin.
+  for (const size of [1, 9, 10, 24, 25, 49, 50, 99, 100, 199, 200, 399, 400, 5000]) {
+    assert.equal(SIZE_BINS.filter((b) => size >= b.min && size <= b.max).length, 1, String(size));
+  }
+});
+
+test("a bin's figure is the median night's share, and too few nights give a gap, not zero", () => {
+  const night = (date: string, size: number, missed: number | null): SaturationRow => ({
+    ...saturationRows(outcomes, everything, labels)[0]!,
+    date,
+    size,
+    not_intercepted: missed,
+    ballistic_restricted: false,
+  });
+  const odd = [0, 1, 2, 3, 20].map((missed, i) => night(`2024-01-0${i + 1}`, 20, missed));
+  const shown = sizeBinRows([...odd, night("2024-01-09", 20, null)], rates).find((b) => b.bin === "10–24")!;
+  assert.deepEqual([shown.n_nights, shown.median_not_destroyed_share, shown.status], [5, 0.1, MEDIAN_SHOWN]);
+  const even = sizeBinRows([...odd, night("2024-02-01", 10, 3)], rates).find((b) => b.bin === "10–24")!;
+  assert.equal(even.median_not_destroyed_share, (0.1 + 0.15) / 2);
+  const few = sizeBinRows(odd.slice(1), rates).find((b) => b.bin === "10–24")!;
+  assert.deepEqual([few.n_nights, few.median_not_destroyed_share], [4, null]);
+  assert.deepEqual(sizeBinRows([], rates), []);
+  const columns: ColumnSpec[] = [
+    { key: "median_not_destroyed_share", label: "Median share not reported destroyed", type: "number", measure: "not_intercepted" },
+  ];
+  assert.ok(chartFlags({ columns, rows: [few], coverage: (r) => r }).includes("destroyed_includes_ew"));
 });
 
 test("saturation mix, lead class and size follow the classes shown", () => {

@@ -157,9 +157,10 @@ export const NOT_CAUSAL =
 
 export function panelHowToRead(minLaunched: number): string {
   return (
-    "Each panel adds up the nights in one window: the same number of days before and after the event’s date, " +
-    "which is in neither. Bars show the share of each class’s launches reported destroyed, from 0% to 100%, with " +
-    `the counts behind it; a class needs ${minLaunched} launches with an outcome. ${NOT_CAUSAL} ` +
+    "Each row is one weapon class, on a scale from 0% to 100%. The ring adds up the nights in a window before the " +
+    "event’s date, and the filled dot a window of the same length after it; the date is in neither. A dot is the " +
+    "share of the class’s launches reported destroyed, with the counts beside it. A window needs " +
+    `${minLaunched} launches with an outcome to have a dot, and no dot is not 0%. ${NOT_CAUSAL} ` +
     "Try more than one window length."
   );
 }

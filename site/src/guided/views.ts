@@ -97,7 +97,7 @@ function drawView(container: HTMLElement, view: StopView): void {
       container.append(interceptRateChart(allMonths(view.classes), { height: chartHeight(140) }));
       return;
     case "saturation":
-      container.append(saturationChart(allMonths(view.classes), { height: chartHeight(180) }));
+      container.append(saturationChart(allMonths(view.classes), { height: chartHeight(140) }));
       return;
     case "alert-map": {
       const months = allAlertMonths();
