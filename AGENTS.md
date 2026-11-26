@@ -68,6 +68,7 @@ The site has no tests yet. No pipeline build or test commands exist yet; #6 adds
 ## Site notes
 
 - Pages are URL hashes (`#attacks`, `#defense`, `#alerts`, `#methods`). Asset paths are relative, so the build works under any subpath. A plain in-page anchor such as `#main` would be read as a route.
+- Guided mode is `#stop-N`. Its stops are data in `site/src/guided/stops.ts`, and a new kind of chart view also needs a case in `views.ts`. A stop's view takes all its settings from that data, and guided mode never reads or writes the query string, which belongs to the exploration filters. #11 should keep it that way.
 - Data is imported at build time through `site/src/data.ts`, never fetched.
 - Charts take colors, patterns, symbols and dashes from `site/src/theme/`. Dashes aren't a Plot scale, so line charts set them per class from `CLASS_STYLES`.
 - After changing a class color, rerun the dataviz palette validator; the command is in `classStyles.ts`. CI doesn't run it.

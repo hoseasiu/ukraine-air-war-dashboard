@@ -1,4 +1,5 @@
 import { buildInfo, formatDate } from "./data.ts";
+import { createGuidedMode, FIRST_STOP_HASH, parseStopHash } from "./guided/engine.ts";
 import { PAGES, type Page } from "./pages.ts";
 import { installPatterns } from "./theme/marks.ts";
 import "./styles.css";
@@ -18,16 +19,19 @@ const snapshot = element<HTMLTimeElement>("snapshot-date");
 snapshot.dateTime = buildInfo.snapshotDate;
 snapshot.textContent = formatDate(buildInfo.snapshotDate);
 
-const links = new Map<Page, HTMLAnchorElement>();
-for (const page of PAGES) {
+function navLink(hash: string, text: string): HTMLAnchorElement {
   const link = document.createElement("a");
-  link.href = `#${page.id}`;
-  link.textContent = page.nav;
+  link.href = hash;
+  link.textContent = text;
   const item = document.createElement("li");
   item.append(link);
   nav.append(item);
-  links.set(page, link);
+  return link;
 }
+
+const links = new Map<Page, HTMLAnchorElement>(PAGES.map((page) => [page, navLink(`#${page.id}`, page.nav)]));
+const guidedLink = navLink(FIRST_STOP_HASH, "Guided mode");
+const guided = createGuidedMode(main);
 
 // Routes are URL hashes, so static hosting needs no rewrite rules. Following a
 // hash link keeps the query string, which is free for filter state.
@@ -36,13 +40,23 @@ function currentPage(): Page {
   return PAGES.find((page) => page.id === id) ?? PAGES[0];
 }
 
-function render(): void {
-  const page = currentPage();
-  for (const [other, link] of links) {
-    if (other === page) link.setAttribute("aria-current", "page");
+function markCurrent(current: HTMLAnchorElement): void {
+  for (const link of [...links.values(), guidedLink]) {
+    if (link === current) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   }
+}
 
+function render(): void {
+  const stop = parseStopHash(window.location.hash);
+  if (stop !== null) {
+    markCurrent(guidedLink);
+    document.title = `${guided.show(stop)} · ${SITE_TITLE}`;
+    return;
+  }
+
+  const page = currentPage();
+  markCurrent(links.get(page)!);
   const heading = document.createElement("h2");
   heading.textContent = page.heading;
   heading.tabIndex = -1;
@@ -58,9 +72,13 @@ element("skip-link").addEventListener("click", (event) => {
 });
 
 window.addEventListener("hashchange", () => {
+  const wasGuided = main.querySelector(".guided") !== null;
   render();
-  // Tell keyboard and screen-reader users that the page changed.
-  main.querySelector("h2")?.focus({ preventScroll: true });
+  // Tell keyboard and screen-reader users that the page changed. Between stops,
+  // focus stays put and guided mode announces the new stop itself.
+  if (!wasGuided || parseStopHash(window.location.hash) === null) {
+    main.querySelector("h2")?.focus({ preventScroll: true });
+  }
   window.scrollTo(0, 0);
 });
 
