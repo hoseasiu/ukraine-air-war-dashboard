@@ -13,6 +13,7 @@ BUDGET_BYTES = 2_000_000
 # A test fails if the site imports one that isn't listed.
 SITE_REFERENCE_FILES = (
     "annotations.csv",
+    "model_classes.csv",
     "oblasts.csv",
     "ukraine_admin1.geojson",
     "weapon_classes.csv",

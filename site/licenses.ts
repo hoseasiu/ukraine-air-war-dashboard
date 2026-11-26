@@ -18,6 +18,8 @@ function siteNotices(): string {
     "Our definitions, discussion prompts, captions, event labels and explanations are licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Credit: Hosea Siu, The Air War, in Data.",
     "== Map boundaries ==",
     `${boundaries.attribution}\n${boundaries.license}\nNo endorsement by Kartographia or OCHA is implied.`,
+    "== Weapon-class table ==",
+    "The model strings on the Data & Methods page come from Massive Missile Attacks on Ukraine by Petro Ivaniuk (https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine), under CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/). We added the class assignments. The table is shared under the same license.",
     "== Data ==",
     read("../data/processed/LICENSE.md").trim(),
   ];
