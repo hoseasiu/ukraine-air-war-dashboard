@@ -8,6 +8,8 @@
  * a number that isn't in a column.
  */
 import { formatDate, weaponClasses } from "../data.ts";
+import { withTerms } from "../glossary/popover.ts";
+import type { TermId } from "../glossary/terms.ts";
 import { CLASS_IDS, CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { classFill, classSymbolPath, svgElement } from "../theme/marks.ts";
 import { chartFlags, FLAG_TEXT, rowFlags, type ColumnSpec, type FlagId, type FlagInput } from "./flags.ts";
@@ -129,10 +131,12 @@ function tooltipContent<Row extends object>(
 function badges(flags: readonly FlagId[]): HTMLUListElement {
   const list = create("ul", "chart-badges");
   list.setAttribute("aria-label", "Data-quality notes");
+  // Shared, so a term repeated across badges is marked once.
+  const seen = new Set<TermId>();
   for (const id of flags) {
     const item = create("li");
     item.dataset.flag = id;
-    item.append(create("strong", "", FLAG_TEXT[id].label), ` ${FLAG_TEXT[id].text}`);
+    item.append(create("strong", "", FLAG_TEXT[id].label), " ", ...withTerms(FLAG_TEXT[id].text, seen));
     list.append(item);
   }
   return list;
@@ -165,7 +169,10 @@ function legend<Row extends object>(spec: ChartSpec<Row>, mark: "bar" | "line" |
   list.setAttribute("aria-label", "Legend");
   for (const id of CLASS_IDS.filter((candidate) => present.has(candidate))) {
     const item = create("li");
-    item.append(legendKey(id, mark), classLabel(id));
+    // One span, so the legend's flex gap doesn't split the label.
+    const label = create("span");
+    label.append(...withTerms(classLabel(id)));
+    item.append(legendKey(id, mark), label);
     list.append(item);
   }
   return list;
@@ -208,7 +215,7 @@ export function chartFrame<Row extends object>(spec: ChartSpec<Row>): HTMLElemen
   const title = create("h3", "", spec.title);
   title.id = `${id}-title`;
   const howToRead = create("p", "chart-how-to-read");
-  howToRead.append(create("strong", "", "How to read this: "), spec.howToRead);
+  howToRead.append(create("strong", "", "How to read this: "), ...withTerms(spec.howToRead));
   const description = create("p", "visually-hidden", spec.description);
   description.id = `${id}-description`;
   figure.append(title, howToRead, description);

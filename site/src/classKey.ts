@@ -1,4 +1,5 @@
 import { weaponClasses } from "./data.ts";
+import { withTerms } from "./glossary/popover.ts";
 import { CLASS_STYLES, type ClassId } from "./theme/classStyles.ts";
 import { classFill, classSymbolPath, svgElement } from "./theme/marks.ts";
 
@@ -32,7 +33,7 @@ export function classKey(highlight?: ClassId): HTMLElement {
     const row = body.insertRow();
     const th = document.createElement("th");
     th.scope = "row";
-    th.textContent = label;
+    th.append(...withTerms(label));
     row.append(th);
     if (id === highlight) {
       row.className = "highlight";

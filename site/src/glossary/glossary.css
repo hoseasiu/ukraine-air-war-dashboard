@@ -1,0 +1,77 @@
+/* A dotted underline marks a defined term, so it doesn't depend on color. */
+.term {
+  display: inline;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  text-decoration: underline dotted;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+.term:hover {
+  text-decoration-style: solid;
+}
+
+/*
+ * Placed by popover.ts. The type settings are reset because the popover would
+ * otherwise inherit them from wherever the term sits, such as a stop caption.
+ */
+.term-popover {
+  inset: auto;
+  width: max-content;
+  max-width: min(24rem, calc(100vw - 12px));
+  max-height: calc(100vh - 12px);
+  margin: 0;
+  padding: 0.75rem 1rem;
+  overflow: auto;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  white-space: normal;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.25);
+}
+
+.term-name {
+  display: block;
+  font-weight: 700;
+}
+
+.term-definition {
+  display: block;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.term-close {
+  min-height: 24px;
+  padding: 0.25rem 0.9rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.glossary {
+  max-width: 60rem;
+}
+
+.glossary dt {
+  font-weight: 700;
+}
+
+.glossary dd {
+  margin: 0 0 0.75rem;
+}

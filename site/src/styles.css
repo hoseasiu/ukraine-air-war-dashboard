@@ -167,6 +167,13 @@ tbody th {
   line-height: 1.35;
 }
 
+.stop-prompts ul {
+  max-width: 36em;
+  margin-top: 0;
+  font-size: 1.5rem;
+  line-height: 1.35;
+}
+
 .stop-controls {
   position: fixed;
   inset: auto 0 0;
