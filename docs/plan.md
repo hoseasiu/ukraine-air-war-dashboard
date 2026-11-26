@@ -239,6 +239,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - Cross-class rows aren't split, so the A and B charts must say that some class series and rates don't cover every launch of that kind.
 - Repo: `ukraine-air-war-dashboard` (replaces the name suggested in §8). Private until the data license check and a review are done.
 - Annotation list (#15): on Nov 25, 2026 the owner approved the nine verified rows in [annotations.csv](../data/reference/annotations.csv). The two unverified rows stay off the site.
+- Site scaffold (#10): pages are URL hashes, so static hosting needs no rewrite rules. There's one light theme. The six counted classes have custom colors that pass the dataviz validator on white, for all pairs and not just adjacent ones, plus a pattern, symbol and dash each ([classStyles.ts](../site/src/theme/classStyles.ts)). Excluded classes aren't charted and have no color.
 - Issue dependencies: GitHub's "blocked by" links are the only record. A GitHub Action generates a graph and list from them in #31, which replaces the hand-kept table in `DEPENDENCIES.md`.
 
 **Open**
