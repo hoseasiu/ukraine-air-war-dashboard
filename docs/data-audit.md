@@ -355,7 +355,7 @@ Over that period, ranking areas by "any part", "any raion" or "all raions" gives
 5. The area's alert hours are the **mean of its raions' hours**. Kyiv city counts as one unit.
 6. Split intervals at midnight Kyiv time when assigning days and months.
 
-The audit takes each area's raion list from the names in the official file (3 to 8 per oblast). #4 should fix that list in the gazetteer, so a missing or renamed raion fails loudly instead of changing a denominator.
+The audit takes each area's raion list from the names in the official file (3 to 8 per oblast). #4 fixed that list in [`raions.csv`](../data/reference/gazetteer.md#raions), and `uv run pipeline/audit/gazetteer.py` fails on a missing or renamed raion instead of changing a denominator. #8 should enforce the same list.
 
 **What one oblast alert-hour then means:** the average raion of the oblast spent one hour under a raion-wide or oblast-wide alert. Half the raions under alert for two hours counts as one hour. It is **not** "some part of the oblast was under alert", and raions aren't weighted by population or area. A suggested label is "alert hours, average per raion". A national figure should be a mean per area, not a sum of areas.
 
@@ -435,6 +435,6 @@ Background from web search, not checked against the resolution itself: Cabinet R
 - Individual alerts against official or volunteer posts. Only the newest page of the official channel was read.
 - The `_uk` files, including whether they have the same duplicates and end date.
 - Alerts against any independent source, such as alerts.in.ua.
-- Raion boundaries, renames or population (#4).
+- Raion boundaries or population. #4 matched raion [names](../data/reference/gazetteer.md#raions), three of them by elimination, and didn't check renaming decisions.
 - The text of Resolution No. 1092.
 - Whether upstream rewrites past rows. Pinning the commit protects reproducibility either way.

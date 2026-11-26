@@ -2,6 +2,8 @@
 
 Hand-editable tables used by the pipeline.
 
+Other tables here: the [oblast gazetteer and map boundaries](gazetteer.md) and the [event annotations](annotations.md).
+
 ## Weapon classes
 
 **Status: settled Nov 25, 2026 ([#3](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/3)).** The owner delegated the open choices to the coding agent: "Make whichever decision you think serves the overall project the best and document it." The agent made the [decisions](#decisions) below; the owner hasn't reviewed them one by one. The classes start from [plan §4](../../docs/plan.md#4-data-model-after-processing).

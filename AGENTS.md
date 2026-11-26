@@ -32,10 +32,11 @@ Create folders as the work needs them, and update this section if you choose dif
 
 ```
 data/raw/         source files (gitignored; setup in data/README.md)
-data/reference/   hand-editable tables: weapon-class mapping, oblast gazetteer, annotations
+data/reference/   hand-editable tables (weapon-class mapping, oblast gazetteer, annotations) and the generated map boundaries
 data/processed/   pipeline outputs, with their license notice
 pipeline/         Python data build; columns.py is the only place raw columns are renamed
 pipeline/audit/   rerunnable audit scripts (read raw data, write nothing)
+pipeline/reference/ rebuilds generated reference files
 tests/            pipeline tests
 site/             Vite + TypeScript front end
 site/src/theme/   weapon-class styles (the only color definitions), patterns and Plot defaults
@@ -52,11 +53,13 @@ Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` instal
 |---|---|
 | `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json` and `build_info.json`. It's a stub until #7 and #8 add the tables. |
 | `uv run python -m pipeline fetch` | Only downloads and verifies the pinned alert files. |
-| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)). |
+| `uv run pytest` | Runs everything in `tests/`: the pipeline tests (made-up inputs, no `data/raw/` needed) and the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. |
 | `uv run ruff check .` | Lints the Python, apart from `.github/`. |
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
 | `uv run pipeline/audit/weapon_classes.py` | Checks that every raw `model` string has exactly one weapon class, and prints the figures in `data/reference/README.md`. Needs `data/raw/`. |
+| `uv run pipeline/audit/gazetteer.py` | Checks that every alert-file oblast name and Kaggle `affected region` item resolves, and that the raion list matches the official alert file. Needs the Kaggle and alert CSVs in `data/raw/`. |
+| `uv run pipeline/reference/build_boundaries.py` | Rebuilds `data/reference/ukraine_admin1.geojson`. Needs the [boundary zip](data/README.md#boundaries) in `data/raw/`. |
 | `python .github/scripts/dependency_graph.py --dry-run` | Prints the body of the generated dependency issue (#31). Without `--dry-run`, updates it. Needs `gh`. |
 | `python -m unittest discover -s .github/scripts` | Tests the dependency-graph script. |
 
@@ -97,6 +100,12 @@ From the audit of the Nov 21 snapshot (#1). Read [docs/data-audit.md](docs/data-
 - Don't sum all rows as attacks: regional reports may repeat national figures, reconnaissance rows are almost all shoot-downs, and daytime and night windows overlap.
 - `time_start` and `time_end` come both with and without a time of day, sometimes with trailing spaces.
 - Read files as UTF-8 explicitly. Printing the Cyrillic strings fails on the Windows console default (cp1252).
+
+From the gazetteer (#4). Read [data/reference/gazetteer.md](data/reference/gazetteer.md) before matching place names or drawing the map.
+
+- Match area names exactly through `oblast_aliases.csv`. `Kyiv` is the city. `Ukraine` in `affected region` is nationwide, not an oblast.
+- Join map data on `iso_3166_2`. The boundary source's P-codes differ from ISO codes for several areas.
+- The boundary rings are wound for d3-geo, not RFC 7946. Show the boundary credit with the map (CC BY-IGO).
 
 From the alerts audit (#2), at upstream commit `1a34978`. Read the [alerts section](docs/data-audit.md#alerts-ukrainian-air-raid-sirens-dataset) before using alert data.
 
