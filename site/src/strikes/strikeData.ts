@@ -298,46 +298,67 @@ function summary(nights: readonly Night[], classes: readonly ClassId[]): Summary
 
 export const SIZE_BIN_WIDTH = 25;
 
+/** Where the size axis usually ends. Larger nights share one overflow bin. */
+const SIZE_CAP = 600;
+
+/**
+ * The size from which nights share the overflow bin. It rises past SIZE_CAP if
+ * needed, so every year's massive bar stays on the axis. It uses all the bars,
+ * so the filters don't move it.
+ */
+export function sizeCap(table: NightTable): number {
+  const highest = Math.max(...table.years.map((year) => year.massive_above));
+  return Math.max(SIZE_CAP, Math.ceil((highest + SIZE_BIN_WIDTH) / 100) * 100);
+}
+
 export interface SizeBinRow extends Summary {
   year: number;
   /** The bin holds sizes from bin_from to bin_to, both included. */
   bin_from: number;
-  bin_to: number;
+  /** null for the overflow bin, which has no upper end. */
+  bin_to: number | null;
   bin: string;
   /** Nights shown in this year whose size is in the bin. */
   nights: number;
   year_nights: number;
   year_median: number;
+  /** The year's largest night shown, so the overflow bin doesn't hide it. */
+  year_max: number;
   /** null when a class is off: the year's bar is defined on all counted classes. */
   massive_above: number | null;
 }
 
 /**
- * Night sizes by year, in bins of SIZE_BIN_WIDTH from 0. Every bin up to the
- * year's largest night has a row, so an empty bin reads as no nights. A night
+ * Night sizes by year, in bins of SIZE_BIN_WIDTH from 0, with one overflow bin
+ * from sizeCap(). Every bin up to the one holding the year's largest night has
+ * a row, so an empty bin reads as no nights. A night
  * with no known count in the selected classes is left out, never counted as 0.
  */
 export function sizeBins(table: NightTable, selection: Selection): SizeBinRow[] {
   const shown = nightsInRange(allNights(table, selection.classes), selection).filter((night) => night.size !== null);
+  const overflow = sizeCap(table) / SIZE_BIN_WIDTH;
+  const binOf = (size: number) => Math.min(overflow, Math.floor(size / SIZE_BIN_WIDTH));
   return [...groupBy(shown, (night) => Number(night.date.slice(0, 4)))].flatMap(([year, nights]) => {
     const sizes = nights.map((night) => night.size!);
-    const counts = new Array<number>(Math.floor(Math.max(...sizes) / SIZE_BIN_WIDTH) + 1).fill(0);
-    for (const size of sizes) counts[Math.floor(size / SIZE_BIN_WIDTH)]! += 1;
+    const largest = Math.max(...sizes);
+    const counts = new Array<number>(binOf(largest) + 1).fill(0);
+    for (const size of sizes) counts[binOf(size)]! += 1;
     const bar = table.years.find((entry) => entry.year === year)!.massive_above;
     const facts = summary(nights, selection.classes);
     if (!isSubset(selection.classes) && barIsRestricted(table, year)) facts.ballistic_restricted = true;
     return counts.map((count, index) => {
       const bin_from = index * SIZE_BIN_WIDTH;
-      const bin_to = bin_from + SIZE_BIN_WIDTH - 1;
+      const bin_to = index === overflow ? null : bin_from + SIZE_BIN_WIDTH - 1;
       return {
         ...facts,
         year,
         bin_from,
         bin_to,
-        bin: `${bin_from}–${bin_to}`,
+        bin: bin_to === null ? `${bin_from} or more` : `${bin_from}–${bin_to}`,
         nights: count,
         year_nights: nights.length,
         year_median: median(sizes)!,
+        year_max: largest,
         massive_above: isSubset(selection.classes) ? null : bar,
       };
     });
@@ -438,6 +459,37 @@ export function breakdownRows(table: NightTable, date: string, classes: readonly
         massive: row.is_massive === null ? "Massive: unknown" : row.is_massive ? "Massive night" : "Not massive",
       };
     });
+}
+
+export interface YearNightRow {
+  date: string;
+  /** Known launches in all counted classes: the size the massive test uses. */
+  total: number;
+  massive_above: number;
+  massive: string;
+  /** Says whether this is the night the breakdown shows. */
+  shown: string;
+  ballistic_restricted: boolean;
+}
+
+/**
+ * Every night with a known size in the same year as `date`, to set one night's
+ * size against. It counts all counted classes, so the year's bar applies.
+ */
+export function yearNightRows(table: NightTable, date: string): YearNightRow[] {
+  const year = yearOf(date);
+  const bar = table.years.find((entry) => entry.year === year)!.massive_above;
+  const restricted = barIsRestricted(table, year);
+  return allNights(table, CLASS_IDS)
+    .filter((night) => yearOf(night.date) === year && night.total !== null)
+    .map((night) => ({
+      date: night.date,
+      total: night.total!,
+      massive_above: bar,
+      massive: night.is_massive ? "Massive night" : "Not massive",
+      shown: night.date === date ? "The night broken down" : "Another night",
+      ballistic_restricted: night.ballistic_restricted || restricted,
+    }));
 }
 
 /** The massive nights in the months shown. */

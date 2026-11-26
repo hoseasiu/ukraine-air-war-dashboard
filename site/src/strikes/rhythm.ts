@@ -6,7 +6,7 @@ import { nightTable } from "../data.ts";
 import { svgElement } from "../theme/marks.ts";
 import { NIGHT_BINS, nightBin } from "../theme/nightScale.ts";
 import { plotDefaults } from "../theme/plot.ts";
-import { barValue, chartSvg, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, strikeFootnote, svgText, type FixedView } from "./shared.ts";
+import { barText, barValue, chartSvg, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, strikeFootnote, svgText, type FixedView } from "./shared.ts";
 import {
   allNights,
   barIsRestricted,
@@ -31,7 +31,7 @@ function yearBars(dates: readonly string[]): string {
   const shown = new Set(dates.map((date) => Number(date.slice(0, 4))));
   const bars = nightTable.years
     .filter((year) => shown.has(year.year))
-    .map((year) => `${year.year}: more than ${barValue.format(year.massive_above)}`);
+    .map((year) => `${year.year}: more than ${barText(year.massive_above)}`);
   return bars.length ? ` Bars by year: ${bars.join("; ")}.` : "";
 }
 
@@ -63,12 +63,17 @@ function calendarKey(): HTMLElement {
   return key;
 }
 
-/** A white dot with a dark edge, so it shows on every gray, light or dark. */
+/** A dark ring and a white dot over a wider white ring, so it shows on every step, light or dark. */
 function massiveMark(x: number, y: number, cell: number): SVGElement[] {
-  return [
-    svgElement("circle", { cx: x, cy: y, r: cell * 0.34, class: "massive-ring" }),
-    svgElement("circle", { cx: x, cy: y, r: cell * 0.17, class: "massive-dot" }),
-  ];
+  const circle = (r: number, className: string) => svgElement("circle", { cx: x, cy: y, r: cell * r, class: className });
+  return [circle(0.34, "massive-halo"), circle(0.34, "massive-ring"), circle(0.15, "massive-dot")];
+}
+
+/** The line left of a month's first day. It steps around the week when the month starts partway down it. */
+function monthEdge(x: number, top: number, cell: number, weekday: number): SVGPathElement {
+  const bottom = top + 7 * cell;
+  const d = weekday ? `M${x + cell},${top}V${top + weekday * cell}H${x}V${bottom}` : `M${x},${top}V${bottom}`;
+  return svgElement("path", { d, class: "calendar-month" });
 }
 
 /** `fixed` is a guided stop's view: years in two columns, so they fit on a projector. */
@@ -91,8 +96,8 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
   return chartFrame<CalendarRow>({
     title: "Calendar of attack nights",
     howToRead:
-      "Each square is a date, in weeks running left to right from Monday at the top. Darker squares had more " +
-      "weapons launched in the night ending that day. An outlined empty square has no night in the data for the " +
+      "Each square is a date, in weeks running left to right from Monday at the top, with a line between months. " +
+      "Darker squares had more weapons launched in the night ending that day. An outlined empty square has no night in the data for the " +
       `classes shown, which may mean it was quiet or unreported. ${MASSIVE_DEFINITION}${yearBars(rows.map((row) => row.date))}` +
       (subset
         ? " Shades count only the classes shown; the massive mark still comes from all counted classes."
@@ -136,8 +141,15 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
       const left = 44;
       const perRow = options.fixed && width >= 900 ? 2 : 1;
       const columnWidth = Math.floor(width / perRow);
-      // A year spans at most 54 week columns.
-      const cell = Math.max(7, Math.min(20, (columnWidth - left - (perRow - 1) * 12) / 54));
+      // The squares fill the width. A guided stop caps them, so its years stay short enough for the screen.
+      const weeks = Math.max(
+        ...years.map((year) => {
+          const days = (Date.UTC(year + 1, 0, 1) - Date.UTC(year, 0, 1)) / DAY;
+          return Math.ceil((weekdayIndex(`${year}-01-01`) + days) / 7);
+        }),
+      );
+      const fit = (columnWidth - left - 2 - (perRow - 1) * 12) / weeks;
+      const cell = Math.max(7, options.fixed ? Math.min(20, fit) : fit);
       const block = cell * 7 + 44;
       const svg = chartSvg(width, Math.ceil(years.length / perRow) * block);
       const byDate = new Map(data.map((row) => [row.date, row]));
@@ -153,6 +165,7 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
           svg.append(svgText(columnLeft, top + cell * (day + 0.8), WEEKDAYS[day]!.slice(0, 3), { "font-size": 12 }));
         }
 
+        const edges: SVGElement[] = [];
         for (let time = jan1; time < Date.UTC(year + 1, 0, 1); time += DAY) {
           const date = new Date(time).toISOString().slice(0, 10);
           const month = date.slice(0, 7);
@@ -163,9 +176,10 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
           if (date.endsWith("-01")) {
             // Names sit over the week the month starts in.
             svg.append(svgText(x, top - 6, MONTH_NAMES[Number(date.slice(5, 7)) - 1]!, { "font-size": 12 }));
+            if (!date.endsWith("-01-01")) edges.push(monthEdge(x, top, cell, position % 7));
           }
           const row = byDate.get(date);
-          const square = svgElement("rect", { x: x + 0.5, y: y + 0.5, width: cell - 1.5, height: cell - 1.5 });
+          const square = svgElement("rect", { x: x + 1, y: y + 1, width: cell - 2, height: cell - 2 });
           if (!row) square.setAttribute("class", "calendar-none");
           else {
             square.setAttribute("class", row.size === null ? "calendar-unknown" : "calendar-night");
@@ -181,6 +195,8 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
           svg.append(shape);
           targets.push({ x: x + cell / 2, y: y + cell / 2, rows: [row], shape });
         }
+        // Over the squares, in the gaps between them.
+        svg.append(...edges);
       });
       return { element: svg, targets };
     },

@@ -12,6 +12,13 @@ export const count = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }
 /** A year's massive bar, in full. Rounding to one place would disagree with the data audit's figures. */
 export const barValue = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
 
+/**
+ * A bar as labels and captions quote it. It's rounded down, never to the
+ * nearest number: sizes are whole, so "more than 127" picks out the same nights
+ * as "more than 127.55", and "more than 128" wouldn't. Tables use barValue.
+ */
+export const barText = (bar: number): string => count.format(Math.floor(bar));
+
 export const percent = new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 1 });
 
 /** Settings for a guided stop's view of a chart. */

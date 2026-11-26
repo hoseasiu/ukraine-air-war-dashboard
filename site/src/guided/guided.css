@@ -120,28 +120,24 @@ body:has(.guided) nav a {
   }
 }
 
-/* One night's launch areas, beside their class names to keep them short. */
-.stop-view .night-breakdown h4 {
+/* One night's launch areas, kept short. */
+.stop-view .night-places-block h4 {
   margin: 0;
 }
 
-.stop-view .night-breakdown h4 + p {
+.stop-view .night-places-block p {
   margin: 0;
   font-size: 0.85rem;
 }
 
 .stop-view .night-places {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.2rem 1rem;
   max-width: none;
   margin: 0.4rem 0;
-  font-size: 0.9rem;
 }
 
-.stop-view .night-places dt,
-.stop-view .night-places dd {
-  margin: 0;
+.stop-view .night-places th,
+.stop-view .night-places td {
+  padding-block: 0.1rem;
 }
 
 .headlines {

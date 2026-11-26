@@ -40,7 +40,7 @@ pipeline/audit/   rerunnable audit scripts (read raw data, write nothing)
 pipeline/reference/ rebuilds generated reference files
 tests/            pipeline tests
 site/             Vite + TypeScript front end
-site/src/theme/   weapon-class styles (the only class color definitions), oblast line styles, patterns, Plot defaults and the alert-hours scale
+site/src/theme/   weapon-class styles (the only class color definitions), oblast line styles, patterns, Plot defaults, and the calendar and alert-hours scales
 site/src/chart/   the shared chart frame and its data-quality flag rules
 site/src/alerts/  tab E charts (alert-hours map, oblast comparison, alerts and launches) and the checks on their data
 site/src/annotations/ reading the event annotations (only verified, owner-approved rows), and numbered event markers with their citations
@@ -104,7 +104,8 @@ Site tests cover only data and logic (the list above), not rendering. To see the
 - Every chart goes through `chartFrame()` ([chartFrame.ts](site/src/chart/chartFrame.ts); example: [chartSample.ts](site/src/sample/chartSample.ts)). Declare each number the chart draws as a column with a `measure`, and say what dates it `coverage`s. The frame derives the badges from these; don't add or hide them by hand. A new kind of number or caveat goes in [flags.ts](site/src/chart/flags.ts).
 - Pipeline outputs can add a badge with a boolean (or 0/1) row column named for the flag: `destroyed_includes_ew`, `ballistic_restricted`, `classes_not_split`, `alert_end_assumed`, `alert_regions_excluded` or `alert_granularity_change`. Send unpublished or suppressed values as `null`, never 0. `intercept_rate` is a fraction.
 - A chart that changes in place, such as the map under its month slider, uses `liveChartFrame()` and calls `update()`. That keeps the table toggle and keyboard focus and works the badges out again. Put its controls in `controls`, a scale key in `scaleKey` and credits in `footnote`.
-- The one-night breakdown ([nightBreakdown.ts](site/src/strikes/nightBreakdown.ts)) takes its night and classes as settings and reads no filters, so guided stop 5 can use it (#21). Leave out `choices` for a fixed night.
+- The one-night breakdown ([nightBreakdown.ts](site/src/strikes/nightBreakdown.ts)) takes its night and classes as settings and reads no filters, so guided stop 5 can use it (#21). Leave out `choices` for a fixed night. Its year strip ([nightContext.ts](site/src/strikes/nightContext.ts)) counts all counted classes, so the year's bar applies.
+- Quote a massive bar in a label or caption with `barText()` ([shared.ts](site/src/strikes/shared.ts)), which rounds down so it picks out the same nights. Table columns use `barValue`.
 - A massive bar is calculated from a whole year. Flag any figure or label that uses a bar with restricted nights in it (`barIsRestricted()` in [strikeData.ts](site/src/strikes/strikeData.ts)).
 - The parsers in `strikeData.ts` keep only the columns tab A draws. For destroyed counts and rates, use `rateTable` and `outcomeTable` ([defenseData.ts](site/src/defense/defenseData.ts)), which keep `destroyed_includes_ew`.
 - The defense charts read their rows from `rateRows()` and `saturationRows()`. Both chart functions take only months and classes, so a guided stop can use them (#22). Rate rows withhold missile counts after July 2026, and a night with an outcome missing for some published launches has no saturation point.
@@ -112,7 +113,7 @@ Site tests cover only data and logic (the list above), not rendering. To see the
 - The alert map ([alertMap.ts](site/src/alerts/alertMap.ts)) takes its months and outlined oblasts as settings and reads no filters, so a guided stop can use it (#22). Keep the boundary credit with it.
 - The oblast comparison ([oblastComparison.ts](site/src/alerts/oblastComparison.ts)) and the launches and alert hours panels ([alertsAndLaunches.ts](site/src/alerts/alertsAndLaunches.ts)) also take settings and read no filters (#22 can use them). With no oblast chosen, the page passes `DEFAULT_COMPARISON`. The owner picked those three (#22); changing them needs their review. Oblast lines take their styles from [areaStyles.ts](site/src/theme/areaStyles.ts); rerun the validator command there after changing a color.
 - Chart tooltips handle arrow, Home, End and Escape keys while in use and mark them handled. Page-level shortcuts should ignore events with `defaultPrevented`.
-- After changing a class color, rerun the dataviz palette validator; the command is in `classStyles.ts`. CI doesn't run it.
+- After changing a class color or a calendar color step, rerun the dataviz palette validator; the commands are in `classStyles.ts` and `nightScale.ts`. CI doesn't run it.
 
 The owner develops on Windows, where `make` isn't installed. The plan's `make data` means "one command rebuilds the data", so provide an entry point that works in PowerShell and on Linux CI. Python 3.12, `uv` and Node 22 are installed on the owner's machine.
 
