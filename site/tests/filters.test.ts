@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  datePresets,
   defaultFilters,
   filterSearch,
   monthFromNumber,
@@ -76,6 +77,39 @@ test("at most three oblasts are taken, without repeats, in the order given", () 
     "UA-30",
     "UA-46",
   ]);
+});
+
+test("presets are all months, each whole calendar year, and the latest 12 months", () => {
+  assert.deepEqual(datePresets(bounds), [
+    { label: "All", from: "2022-03", to: "2026-11" },
+    { label: "2023", from: "2023-01", to: "2023-12" },
+    { label: "2024", from: "2024-01", to: "2024-12" },
+    { label: "2025", from: "2025-01", to: "2025-12" },
+    { label: "Last 12 months", from: "2025-12", to: "2026-11" },
+  ]);
+});
+
+test("a year is offered only if the filter covers all of it", () => {
+  const years = (firstMonth: string, lastMonth: string) =>
+    datePresets({ ...bounds, firstMonth, lastMonth })
+      .slice(1, -1)
+      .map((preset) => preset.label);
+  assert.deepEqual(years("2022-01", "2023-12"), ["2022", "2023"]);
+  assert.deepEqual(years("2022-02", "2023-11"), []);
+});
+
+test("the latest 12 months don't start before the first month", () => {
+  const latest = datePresets({ ...bounds, firstMonth: "2026-06" }).at(-1)!;
+  assert.deepEqual([latest.from, latest.to], ["2026-06", "2026-11"]);
+});
+
+test("every preset survives a round trip through the URL, and All writes nothing", () => {
+  for (const { label, from, to } of datePresets(bounds)) {
+    const filters: Filters = { ...defaultFilters(bounds), from, to };
+    const search = filterSearch(filters, bounds);
+    assert.deepEqual(parseFilters(search, bounds), filters, label);
+    if (label === "All") assert.equal(search, "");
+  }
 });
 
 test("month numbers are consecutive across a new year", () => {
