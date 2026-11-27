@@ -62,7 +62,38 @@ body:has(.guided) nav .nav-primary a {
   font-size: 0.9rem;
 }
 
+/* The alert map's grid (alerts/alertMap.css) was laid out for the badges below the title. */
+@media (min-width: 62rem) {
+  .stop-view .chart-frame:has(.alert-map) > .chart-bar {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  /* The title and "Show as table" share a row. */
+  .stop-view .chart-frame:has(.alert-map) > h3 {
+    grid-row: 2;
+  }
+
+  .stop-view .chart-frame:has(.alert-map) > .chart-toggle {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
+
+  .stop-view .chart-frame:has(.alert-map) > :is(.chart-view, .chart-table) {
+    grid-row: 4 / span 2;
+  }
+}
+
+/* The badges share one line under the caption. The line keeps its height, so a badge that comes or goes moves nothing. */
+.stop-view .chart-bar {
+  min-height: 1.75rem;
+}
+
+/* The chart's top corner, beside its title. */
 .stop-view .chart-toggle {
+  float: right;
+  margin: 0 0 0 1rem;
   padding: 0.15rem 0.7rem;
   font-size: 0.8rem;
 }
@@ -123,6 +154,13 @@ body:has(.guided) nav .nav-primary a {
   .guided .stop-prompts ul {
     margin-bottom: 0.25rem;
     font-size: 1.15rem;
+  }
+
+  /* The full width, to save lines. */
+  .guided .stop-caption,
+  .guided .stop-prompts ul,
+  .stop-view .chart-source {
+    max-width: none;
   }
 }
 
@@ -188,23 +226,17 @@ body:has(.guided) nav .nav-primary a {
   line-height: 1.4;
 }
 
-/* At the end of the control bar, so showing it doesn't move Back and Next. */
-.stop-controls .stop-reveal {
-  position: absolute;
-  right: 1rem;
-}
-
-/* On a narrow screen it sits above the bar instead. */
-@media (max-width: 52rem) {
-  .stop-controls .stop-reveal {
-    bottom: calc(100% + 0.25rem);
-  }
-}
-
 /* A stop's chart sits right under its caption. */
 .stop-view .chart-frame,
 .stop-view .night-breakdown {
   margin: 0.5rem 0 1rem;
+}
+
+@media (max-height: 850px) {
+  .stop-view .chart-frame,
+  .stop-view .night-breakdown {
+    margin-top: 0.25rem;
+  }
 }
 
 /* A definition the stop turns on, set apart so the room reads it before the chart. */
@@ -259,4 +291,40 @@ body:has(.guided) nav .nav-primary a {
     display: inline;
     margin-left: 0.4em;
   }
+}
+
+/*
+ * The projector setting (engine.ts): chart text at 16px or more, heavier lines,
+ * and the collapsed methods notes put away. Badges, sources, citations and the
+ * notes a stop shows without opening all stay.
+ */
+.guided.projector .chart-notes {
+  display: none;
+}
+
+.guided.projector .stop-view .chart-stage svg,
+.guided.projector .stop-view .chart-stage svg text {
+  font-size: 16px;
+}
+
+.guided.projector .stop-view .chart-legend,
+.guided.projector .stop-view .chart-subtitle {
+  font-size: max(16px, 0.9rem);
+}
+
+/* Data lines, then the axes and the event and period markers. */
+.guided.projector .stop-view .chart-stage g[aria-label="line"] {
+  stroke-width: 3.5;
+}
+
+.guided.projector .stop-view .chart-stage g[aria-label$="tick"] {
+  stroke-width: 1.75;
+}
+
+.guided.projector .stop-view .chart-stage .event-rule {
+  stroke-width: 2;
+}
+
+.guided.projector .stop-view .chart-stage .period-band-edge {
+  stroke-width: 2.5;
 }

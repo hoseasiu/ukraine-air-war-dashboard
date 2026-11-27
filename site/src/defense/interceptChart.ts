@@ -38,6 +38,9 @@ const KEY_HEIGHT = 30;
 /** A plot shorter than this between its margins has no room to label both 90% and 100%. */
 const ROOM_FOR_ALL_TICKS = 180;
 
+/** A guided stop's projector setting draws text this large, so names there are wrapped to fit it. */
+const PROJECTOR_SIZE = 16;
+
 /** Two lines for a name too long for its panel, split near the middle. */
 function nameLines(name: string, width: number, size: number): string[] {
   // A bold character is about 0.6 of the type size wide.
@@ -226,7 +229,7 @@ export function interceptRateChart(selection: Selection, fixed?: FixedView): HTM
         plot.setAttribute("x", String(left));
         plot.setAttribute("y", String(top + titleHeight));
         const size = large ? 16 : 14;
-        nameLines(classLabels[id], panelWidth, size).forEach((line, index) => {
+        nameLines(classLabels[id], panelWidth, fixed ? PROJECTOR_SIZE : size).forEach((line, index) => {
           svg.append(svgText(left + 4, top + 18 + index * 17, line, { "font-weight": 700, "font-size": size }));
         });
         svg.append(plot);

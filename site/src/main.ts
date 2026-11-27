@@ -133,6 +133,8 @@ window.addEventListener("hashchange", () => {
     main.querySelector("h2")?.focus({ preventScroll: true });
   }
   window.scrollTo(0, 0);
+  // Guided mode scrolls the body, which stops short of its controls (styles.css).
+  document.body.scrollTo(0, 0);
 });
 
 installPatterns();

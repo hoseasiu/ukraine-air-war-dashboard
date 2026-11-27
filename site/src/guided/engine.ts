@@ -1,8 +1,8 @@
 /**
  * Guided mode: steps through STOPS. The URL hash is its only lasting state;
- * whether a stop's reveal is showing is kept only while that stop is up. It
- * never reads or writes the query string, which belongs to the exploration
- * filters.
+ * whether a stop's reveal is showing is kept only while that stop is up, and
+ * the projector setting only until the page is reloaded. It never reads or
+ * writes the query string, which belongs to the exploration filters.
  */
 import { withTerms } from "../glossary/popover.ts";
 import { promptList } from "../teaching/promptList.ts";
@@ -74,10 +74,34 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
   const back = button("Back", "stop-button", () => move(-1));
   const next = button("Next", "stop-button", () => move(1));
   const indicator = create("p", "stop-indicator");
+  // A picture of the indicator's text, so screen readers skip it.
+  const progress = create("div", "stop-progress");
+  progress.setAttribute("aria-hidden", "true");
+  progress.append(...STOPS.map(() => create("span", "")));
+  const place = create("div", "stop-place");
+  place.append(indicator, progress);
+
+  // Larger chart labels and heavier lines, with the methods notes put away. On to start with.
+  const projector = button("Projector view", "stop-button stop-projector", () =>
+    setProjector(projector.getAttribute("aria-pressed") !== "true"),
+  );
+  function setProjector(on: boolean): void {
+    projector.setAttribute("aria-pressed", String(on));
+    root.classList.toggle("projector", on);
+  }
+
+  const hint = create("p", "stop-hint");
+  hint.textContent = "Keys: ← → or Page Up, Page Down";
+  const steps = create("div", "stop-steps");
+  steps.append(back, place, next);
+  const extras = create("div", "stop-extras");
+  extras.append(revealButton, projector);
+
   const controls = create("div", "stop-controls");
   controls.setAttribute("role", "group");
   controls.setAttribute("aria-label", "Guided mode controls");
-  controls.append(back, indicator, next, revealButton);
+  controls.append(hint, steps, extras);
+  setProjector(true);
 
   // Screen readers announce a live region only if it was on the page before its text changed.
   const announcer = create("p", "visually-hidden");
@@ -170,6 +194,7 @@ export function createGuidedMode(container: HTMLElement): GuidedMode {
     prompts.replaceChildren(...(stop.prompts ? [promptList(stop.prompts)] : []));
     drawView(stop);
     indicator.textContent = `Stop ${number} / ${STOPS.length}`;
+    [...progress.children].forEach((segment, index) => segment.classList.toggle("reached", index < number));
     if (focusWasReplaced) heading.focus({ preventScroll: true });
   }
 
