@@ -7,8 +7,8 @@
  * anything about cost, interception, launch areas or particular launches.
  *
  * The owner approved the "About the figures", "Mixed", "Decoys" and "Left out"
- * paragraphs and the wording in the tables (#86). The rest is a draft until
- * they approve it (#87).
+ * paragraphs and the wording in the tables (#86), then the rest (#87). Changing
+ * any of it needs their review again.
  */
 import { taxonomy, weaponClasses, weapons } from "../data.ts";
 import { withTerms } from "../glossary/popover.ts";
