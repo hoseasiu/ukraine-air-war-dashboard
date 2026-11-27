@@ -12,6 +12,7 @@ import type { Filters } from "./filters/state.ts";
 import { methodsPage } from "./methods/methodsPage.ts";
 import { promptList } from "./teaching/promptList.ts";
 import { TAB_PROMPTS } from "./teaching/prompts.ts";
+import { primerPage } from "./weapons/primerPage.ts";
 
 export interface Page {
   /** The URL hash, without "#". */
@@ -105,6 +106,14 @@ export const PAGES: [Page, ...Page[]] = [
         alertsAndLaunches({ from: filters.from, to: filters.to, classes: filters.classes }),
         discussion(TAB_PROMPTS.alerts),
       );
+    },
+  },
+  {
+    id: "weapons",
+    nav: "Weapon classes",
+    heading: "What the weapon classes include",
+    render(container) {
+      container.append(primerPage());
     },
   },
   {

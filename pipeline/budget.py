@@ -19,6 +19,9 @@ SITE_REFERENCE_FILES = (
     "oblasts.csv",
     "ukraine_admin1.geojson",
     "weapon_classes.csv",
+    "weapon_figures.csv",
+    "weapon_members.csv",
+    "weapon_sources.csv",
 )
 
 # The font files the site serves. A test fails if there's one that isn't listed.

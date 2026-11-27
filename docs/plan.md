@@ -139,6 +139,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - What would you need to know that this data hides?
   - Why might intercept rate be a misleading metric?
 - **Glossary popovers** for weapon classes, Shahed-type, decoy, EW, salvo and reporting window.
+- **Weapon-class primer** (#87), on its own page: a card for each of the five classes with cited published figures, and notes on mixed counts and excluded types. It isn't a guided stop.
 - **Tone:** factual and sober. Counts, not spectacle. No weapon imagery and no Russian-source propaganda imagery.
 
 ---
@@ -352,6 +353,8 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **Photo links:** no separate links to outside pages with photos in v1. The cited source pages are still linked.
   - **Placement:** the primer gets its own page.
   - **Wikipedia-only figures:** show them, and say which rest only on Wikipedia.
+- Weapon primer build (#87, Nov 27, 2026; drafted and built by the coding agent; the owner's wording approval is below): the page is `#weapons`, and `#weapons-<class>` opens a card. Wikipedia-only statements and figures are labeled "Wikipedia only" in words instead of †. Each figure is a span with links to its sources, and each source's own figure and note open under the table. Cards link to the attacks and defense tabs filtered to their class, keeping the other filters; the alerts tab uses classes only for one launch panel, so it has no link. Chart legends, the class filter and the Data & Methods class key link to the primer through a separate link, so class labels keep their glossary popovers. A chart with no legend has no link of its own. Guided mode hides the legend link.
+- Weapon primer wording approval (owner, Nov 27, 2026, #87): the owner approved the coding agent's new wording: the page's tab name and heading, intro, section headings, field and column labels, the "Wikipedia only" label, the "About the figures" points after the first, the chart and primer links, and the new Data & Methods text, trace and changelog entry. The agent listed these items and didn't quote the text in full. The approval doesn't record a check of any figure against its source, or an accessibility or projector check.
 
 **Open**
 - Terms of the sources behind the alert data (#26): the dataset is MIT, but it's collected from Telegram channels, including a volunteer one (eTryvoga), whose terms we don't know ([data audit](data-audit.md#alerts-license)). The site uses only the official-channel file.

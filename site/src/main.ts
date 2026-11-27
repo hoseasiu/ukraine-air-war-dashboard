@@ -12,6 +12,7 @@ import {
 import { createGuidedMode, FIRST_STOP_HASH, parseStopHash } from "./guided/engine.ts";
 import { PAGES, type Page } from "./pages.ts";
 import { installPatterns } from "./theme/marks.ts";
+import { primerCard, primerHash } from "./weapons/weaponData.ts";
 import "./styles.css";
 
 const SITE_TITLE = "The Air War, in Data";
@@ -61,7 +62,9 @@ function writeFilters(filters: Filters): void {
 // Routes are URL hashes, so static hosting needs no rewrite rules. Following a
 // hash link keeps the query string, which holds the filters.
 function currentPage(): Page {
-  const id = window.location.hash.slice(1);
+  // A weapon class's card has its own route on the primer, such as #weapons-cruise.
+  const hash = primerCard(window.location.hash) ? primerHash() : window.location.hash;
+  const id = hash.slice(1);
   return PAGES.find((page) => page.id === id) ?? PAGES[0];
 }
 
@@ -135,7 +138,17 @@ window.addEventListener("hashchange", () => {
   window.scrollTo(0, 0);
   // Guided mode scrolls the body, which stops short of its controls (styles.css).
   document.body.scrollTo(0, 0);
+  showRouteTarget();
 });
+
+/** Moves to the part of the page that the route names, if it names one. */
+function showRouteTarget(): void {
+  if (!primerCard(window.location.hash)) return;
+  const target = main.querySelector<HTMLElement>(`[data-route="${window.location.hash}"]`);
+  target?.scrollIntoView();
+  target?.focus({ preventScroll: true });
+}
 
 installPatterns();
 render();
+showRouteTarget();

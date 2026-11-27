@@ -12,6 +12,7 @@ import { formatDate, weaponClasses } from "../data.ts";
 import { popover, withTerms } from "../glossary/popover.ts";
 import { CLASS_IDS, CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { classKeyFill, classSymbolPath, svgElement } from "../theme/marks.ts";
+import { primerHash } from "../weapons/weaponData.ts";
 import { chartFlags, combinedFlags, FLAG_TEXT, rowFlags, type ColumnSpec, type FlagId, type FlagInput } from "./flags.ts";
 import { attachTooltips, type TooltipContent } from "./tooltips.ts";
 import "./chart.css";
@@ -212,6 +213,18 @@ function legend<Row extends object>(spec: ChartSpec<Row>, mark: "bar" | "line" |
   return list;
 }
 
+/**
+ * Beside a class legend, not in it: legend labels hold glossary buttons, which
+ * can't go inside a link. Guided mode hides it.
+ */
+function primerLink(): HTMLElement {
+  const link = create("a", "", "What each weapon class includes");
+  link.href = primerHash();
+  const line = create("p", "primer-link");
+  line.append(link);
+  return line;
+}
+
 function table<Row extends object>(spec: ChartSpec<Row>): HTMLTableElement {
   const element = create("table");
   element.createCaption().textContent = spec.title;
@@ -361,7 +374,9 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
     chartView.hidden = !hasRows || showingTable();
     tableView.hidden = !hasRows || !showingTable();
     const key = hasRows && spec.legend ? legend(spec, spec.legend) : null;
-    keySlot.replaceChildren(...[key, hasRows ? spec.scaleKey : null].filter((part) => !!part));
+    keySlot.replaceChildren(
+      ...[key, key && primerLink(), hasRows ? spec.scaleKey : null].filter((part) => !!part),
+    );
     // A hidden table is built when it's first shown.
     tableView.replaceChildren(...(hasRows && showingTable() ? [table(spec)] : []));
     redraw();

@@ -2,6 +2,7 @@ import { weaponClasses } from "./data.ts";
 import { withTerms } from "./glossary/popover.ts";
 import { CLASS_STYLES } from "./theme/classStyles.ts";
 import { classKeyFill, classSymbolPath, svgElement } from "./theme/marks.ts";
+import { primerHash } from "./weapons/weaponData.ts";
 
 /** A table of each class with its bar fill, point symbol and line style. */
 export function classKey(): HTMLElement {
@@ -17,7 +18,7 @@ export function classKey(): HTMLElement {
   table.createCaption().textContent = "Weapon classes and how charts mark them";
 
   const head = table.createTHead().insertRow();
-  for (const title of ["Class", "Bars", "Points", "Lines", "Own intercept rate"]) {
+  for (const title of ["Class", "Bars", "Points", "Lines", "Own intercept rate", "What’s in it"]) {
     const th = document.createElement("th");
     th.scope = "col";
     th.textContent = title;
@@ -49,6 +50,14 @@ export function classKey(): HTMLElement {
       ),
     );
     row.insertCell().textContent = hasOwnInterceptRate ? "Yes" : "No";
+    // A cell of its own: the class name holds a glossary button, which can't go inside a link.
+    const about = document.createElement("a");
+    about.href = primerHash(id);
+    const name = document.createElement("span");
+    name.className = "visually-hidden";
+    name.textContent = `: ${label}`;
+    about.append(id === "mixed" ? "About mixed counts" : "See the card", name);
+    row.insertCell().append(about);
   }
 
   wrapper.append(table);

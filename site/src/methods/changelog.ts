@@ -13,6 +13,12 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: readonly ChangelogEntry[] = [
   {
+    date: "2026-11-27",
+    changes: [
+      "Added the weapon-class primer: a card for each of the five classes, with each member’s role, launch platform, speed category and cited published figures, and notes on mixed counts and excluded types. Data & Methods lists the pages it cites. No count or rate changed.",
+    ],
+  },
+  {
     date: "2026-11-26",
     changes: [
       "Attacks, defense and alerts tabs: each starts with a few summary figures, with their dates and data-quality badges. Charts are headed by a line worked out from the figures they draw, with the chart’s name under it.",

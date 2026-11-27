@@ -1,0 +1,182 @@
+/* The weapon-class primer: a card for each class, then two notes. */
+.primer a {
+  color: var(--accent);
+}
+
+.primer-contents ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+}
+
+.primer-contents button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 32px;
+  padding: var(--space-half) var(--space-2);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.class-mark {
+  flex: none;
+  vertical-align: -0.1em;
+}
+
+.primer-card,
+.primer-note,
+.primer-about {
+  margin: var(--space-4) 0;
+  padding: 0 var(--space-3) var(--space-2);
+  border: 1px solid var(--rule-faint);
+  border-radius: var(--radius);
+}
+
+/* The top edge takes the class color, set in primerPage.ts. The heading names the class. */
+.primer-card {
+  border-top-width: 6px;
+}
+
+/* A wide screen takes two members across; a narrow one, one. */
+.members {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(26rem, 100%), 1fr));
+  gap: 0 var(--space-4);
+}
+
+.member {
+  min-width: 0;
+  border-top: 1px solid var(--rule-faint);
+}
+
+.member h4 {
+  margin: var(--space-2) 0 var(--space-half);
+}
+
+.member p {
+  margin: var(--space-1) 0;
+}
+
+.member code {
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+.member-models,
+.cited-from,
+.by-source,
+.figures {
+  font-size: var(--text-sm);
+}
+
+.member-facts {
+  margin: var(--space-1) 0;
+}
+
+.member-facts dt {
+  font-weight: var(--weight-bold);
+}
+
+.member-facts dd {
+  margin: 0 0 var(--space-1);
+}
+
+.cited-from {
+  display: block;
+  color: var(--ink-secondary);
+}
+
+/* A label in words, boxed so it reads apart from the figure. */
+.wikipedia-only {
+  display: inline-block;
+  padding: 0 var(--space-half);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  background: var(--flag-surface);
+  border: 1px solid var(--flag-border);
+  border-radius: 4px;
+}
+
+.unknown {
+  font-style: italic;
+}
+
+.figures {
+  width: 100%;
+}
+
+.figures caption {
+  /* The member's heading is just above, so the caption is for screen readers. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.figures th,
+.figures td {
+  vertical-align: top;
+}
+
+/* Lines far enough apart that citation links on two lines stay separate targets. */
+.figures .citations,
+.by-source .citations {
+  line-height: 1.6;
+}
+
+/* On a phone the tables need the width more than the cards need padding. */
+@media (max-width: 40rem) {
+  .primer-card,
+  .primer-note,
+  .primer-about {
+    padding-inline: var(--space-1);
+  }
+
+  .figures th,
+  .figures td {
+    padding-inline: 0 var(--space-1);
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  .figures th {
+    overflow-wrap: normal;
+  }
+
+  .figures .wikipedia-only {
+    white-space: normal;
+  }
+}
+
+.by-source {
+  margin: var(--space-1) 0 var(--space-2);
+}
+
+.by-source summary,
+.mixed-models summary {
+  min-height: 24px;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.by-source dt {
+  margin-top: var(--space-1);
+  font-weight: var(--weight-bold);
+}
+
+.by-source dd {
+  margin: var(--space-half) 0 0 var(--space-2);
+}

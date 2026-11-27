@@ -6,6 +6,7 @@
  */
 import { alertAreas, excludedAlertAreas, weaponClasses } from "../data.ts";
 import { classKeyFill, svgElement } from "../theme/marks.ts";
+import { primerHash } from "../weapons/weaponData.ts";
 import { dateRange, formatRange } from "./dateRange.ts";
 import { disclosure, reserveSpace } from "./disclosure.ts";
 import { create, type Part } from "./dom.ts";
@@ -66,6 +67,11 @@ function classToggles(options: FilterOptions, commit: (change: Partial<Filters>)
     });
     return { id, input };
   });
+
+  // The labels belong to the checkboxes, so the link to the primer is a line of its own.
+  const primer = create("a", "filter-primer", "What each weapon class includes");
+  primer.href = primerHash();
+  fieldset.append(primer);
 
   return {
     element: fieldset,

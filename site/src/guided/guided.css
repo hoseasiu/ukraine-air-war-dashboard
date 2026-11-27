@@ -98,6 +98,11 @@ body:has(.guided) nav .nav-primary a {
   font-size: 0.8rem;
 }
 
+/* The primer isn't a guided stop, so stops don't link to it. */
+.guided .primer-link {
+  display: none;
+}
+
 .stop-view .chart-legend {
   gap: 0 1rem;
   margin-top: 0.3rem;

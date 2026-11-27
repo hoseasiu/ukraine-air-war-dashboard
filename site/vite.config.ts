@@ -7,6 +7,7 @@ import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./src/buildData.
 import { parseOutcomes, parseRates } from "./src/defense/defenseData.ts";
 import { panelEvents } from "./src/defense/eventWindowData.ts";
 import { parseManifest, parseReconciliation, parseTaxonomy } from "./src/methods/methodsData.ts";
+import { parseWeapons } from "./src/weapons/weaponData.ts";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -23,6 +24,12 @@ function checkBuildData(): Plugin {
       );
       parseReconciliation(JSON.parse(read("../data/processed/strike_reconciliation.json")), taxonomy);
       parseWeaponClasses(read("../data/reference/weapon_classes.csv"));
+      // Each weapon figure and statement must be cited or marked unknown.
+      parseWeapons(
+        read("../data/reference/weapon_members.csv"),
+        read("../data/reference/weapon_figures.csv"),
+        read("../data/reference/weapon_sources.csv"),
+      );
       const areas = parseAreas(read("../data/reference/oblasts.csv"));
       parseAlertMonthly(JSON.parse(read("../data/processed/alert_hours_monthly.json")), areas);
       parseBoundaries(read("../data/reference/ukraine_admin1.geojson"), areas);

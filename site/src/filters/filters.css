@@ -233,6 +233,15 @@ html:has(.filters) {
   gap: 0 1.25rem;
 }
 
+/* A line of its own under the class boxes. */
+.filter-primer {
+  flex-basis: 100%;
+  width: fit-content;
+  min-height: 24px;
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
 .filter-check {
   display: inline-flex;
   align-items: center;
