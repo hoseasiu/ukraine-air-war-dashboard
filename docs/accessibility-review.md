@@ -7,7 +7,7 @@ The #25 review, done Nov 26, 2026, on `main` at `0999b4e` plus the fixes listed 
 | Check | Status |
 |---|---|
 | Zoom screen-share | **Assumed to pass, on the owner's instruction (Nov 26, 2026). Nobody performed or observed it in this review.** |
-| Projector | **Not done.** The owner's check is still open on #25. |
+| Projector | **Passed, as reported by the owner (Nov 26, 2026).** This review didn't observe it. The report didn't give the screen resolution or which build was shown. |
 
 ## Method
 
@@ -59,4 +59,4 @@ After the fixes, these checks found no WCAG 2.2 AA failure.
 
 - A screen reader.
 - Firefox, Safari, touch devices, forced colors and printing.
-- A real projector, and Zoom (see above).
+- A real projector and Zoom, by this review (see [Physical checks](#physical-checks)).
