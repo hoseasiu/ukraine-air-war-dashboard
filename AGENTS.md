@@ -33,11 +33,11 @@ Create folders as the work needs them, and update this section if you choose dif
 
 ```
 data/raw/         source files (gitignored; setup in data/README.md)
-data/reference/   hand-editable tables (weapon-class mapping, oblast gazetteer, annotations) and the generated map boundaries
+data/reference/   hand-editable tables (weapon-class mapping, weapon reference data, oblast gazetteer, annotations) and the generated map boundaries
 data/processed/   pipeline outputs, with their license notice
 pipeline/         Python data build; columns.py is the only place raw columns are renamed
 pipeline/audit/   rerunnable audit scripts (read raw data, write nothing)
-pipeline/reference/ rebuilds generated reference files
+pipeline/reference/ rebuilds generated reference files and summaries
 tests/            pipeline tests
 site/             Vite + TypeScript front end
 site/src/theme/   weapon-class styles (the only class color definitions), oblast line styles, patterns, Plot defaults, the calendar and alert-hours scales, the type and spacing tokens, and the font
@@ -66,13 +66,14 @@ Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` instal
 |---|---|
 | `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json`, `build_info.json`, the [alert tables](data/README.md#alert-tables) and the [strike tables](data/README.md#strike-tables). Fails if the site's data and fonts would pass 2 MB, and ends by printing the [summary report](data/README.md#build). |
 | `uv run python -m pipeline fetch` | Only downloads and verifies the pinned alert files. |
-| `uv run pytest` | Runs everything in `tests/`: the pipeline tests on made-up inputs, checks on the real raw files (including that a build reproduces `data/processed/`; skipped unless all four CSVs are in `data/raw/`, and `-rs` says so), the 2 MB budget for data and fonts, checks on the committed alert and strike tables, the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. CI runs it, without the real files. |
+| `uv run pytest` | Runs everything in `tests/`: the pipeline tests on made-up inputs, checks on the real raw files (including that a build reproduces `data/processed/`; skipped unless all four CSVs are in `data/raw/`, and `-rs` says so), the 2 MB budget for data and fonts, checks on the committed alert and strike tables, the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [weapon reference tables](data/reference/weapons.md), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. CI runs it, without the real files. |
 | `uv run ruff check .` | Lints the Python, apart from `.github/`. CI runs it. |
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
 | `uv run pipeline/audit/definitions.py` | Prints the evidence for the massive-night and intercept-rate definitions in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/weapon_classes.py` | Checks that every raw `model` string has exactly one weapon class, and prints the figures in `data/reference/README.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/gazetteer.py` | Checks that every alert-file oblast name and Kaggle `affected region` item resolves, and that the raion list matches the official alert file. Needs the Kaggle and alert CSVs in `data/raw/`. |
+| `uv run pipeline/reference/weapon_summary.py` | Rewrites the summary table in `data/reference/weapons.md` from the weapon tables. A test fails if it's out of date. |
 | `uv run pipeline/reference/build_boundaries.py` | Rebuilds `data/reference/ukraine_admin1.geojson`. Needs the [boundary zip](data/README.md#boundaries) in `data/raw/`. |
 | `python .github/scripts/dependency_graph.py --dry-run` | Prints the body of the generated dependency issue (#31). Without `--dry-run`, updates it. Needs `gh`. |
 | `python -m unittest discover -s .github/scripts` | Tests the dependency-graph script. CI runs it. |

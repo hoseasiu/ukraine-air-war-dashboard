@@ -1,0 +1,247 @@
+member,measure,low,high,unit,source,note
+shahed_136,length,3.3,3.5,m,csis-shahed,
+shahed_136,length,3.5,3.5,m,wp-shahed,
+shahed_136,wingspan,2.5,3,m,csis-shahed,
+shahed_136,wingspan,2.5,2.5,m,wp-shahed,
+shahed_136,diameter,,,,,No figure found on the pages opened.
+shahed_136,warhead,20,50,kg,csis-shahed,Given as payload.
+shahed_136,warhead,50,90,kg,wp-shahed,Includes the 52 kg and 90 kg Geran-2 options.
+shahed_136,range,1000,2500,km,csis-shahed,
+shahed_136,range,650,2500,km,wp-shahed,"The page gives both 650 km and 1,000 km for the 90 kg warhead version."
+shahed_136,speed,180,180,km/h,csis-shahed,Not said to be cruise or maximum.
+shahed_136,speed,185,185,km/h,wp-shahed,
+shahed_131,length,2.6,2.6,m,csis-shahed,
+shahed_131,length,2.6,2.6,m,gur-shahed131,
+shahed_131,wingspan,2.2,2.2,m,csis-shahed,
+shahed_131,wingspan,2.2,2.2,m,gur-shahed131,
+shahed_131,diameter,,,,,No figure found on the pages opened.
+shahed_131,warhead,10,20,kg,csis-shahed,Given as payload.
+shahed_131,warhead,15,15,kg,gur-shahed131,
+shahed_131,range,700,1000,km,csis-shahed,
+shahed_131,range,900,900,km,gur-shahed131,
+shahed_131,speed,180,180,km/h,csis-shahed,Stated for the Shahed-131 and -136 together.
+gerbera,length,2,2,m,wp-gerbera,Original.
+gerbera,length,2.6,2.6,m,gur-gerbera2,Gerbera-2.
+gerbera,wingspan,2.5,2.5,m,gur-gerbera,Original.
+gerbera,wingspan,3,3,m,gur-gerbera2,Gerbera-2.
+gerbera,diameter,,,,,No figure found on the pages opened.
+gerbera,warhead,5,5,kg,wp-gerbera,"Original, upper limit. Only some are reported to carry explosives."
+gerbera,warhead,10,10,kg,pravda-gerbera2,Gerbera-2 specimen examined.
+gerbera,warhead,25,25,kg,gur-gerbera2,Gerbera-2 upper limit. The news report calls it a Russian specification.
+gerbera,range,600,600,km,gur-gerbera,Original.
+gerbera,range,300,600,km,wp-gerbera,Original.
+gerbera,range,1200,1200,km,gur-gerbera2,Gerbera-2.
+gerbera,speed,160,160,km/h,gur-gerbera,"Original, maximum."
+gerbera,speed,180,200,km/h,gur-gerbera2,"Gerbera-2, cruise to maximum."
+geran_4,length,3.6,3.6,m,gur-geran4,
+geran_4,wingspan,3.05,3.05,m,gur-geran4,
+geran_4,diameter,,,,,No figure found on the pages opened.
+geran_4,warhead,90,90,kg,gur-geran4,The page also names 50 kg-class warhead types without listing their weight.
+geran_4,range,770,770,km,gur-geran4,
+geran_4,speed,320,450,km/h,gur-geran4,Cruise to maximum.
+geran_5,length,6.5,6.5,m,gur-geran5,
+geran_5,wingspan,3.2,3.2,m,gur-geran5,
+geran_5,diameter,,,,,No figure found on the pages opened.
+geran_5,warhead,90,90,kg,gur-geran5,
+geran_5,range,1000,1000,km,gur-geran5,
+geran_5,speed,400,450,km/h,gur-geran5,Cruise.
+shahed_other,length,,,,,Types not identified.
+shahed_other,wingspan,,,,,Types not identified.
+shahed_other,diameter,,,,,Types not identified.
+shahed_other,warhead,,,,,Types not identified.
+shahed_other,range,,,,,Types not identified.
+shahed_other,speed,,,,,Types not identified.
+kh_101,length,7.45,7.45,m,csis-kh101,
+kh_101,length,7.45,7.45,m,gur-kh101,
+kh_101,wingspan,4.3,4.3,m,gur-kh101,
+kh_101,diameter,0.51,0.51,m,csis-kh101,
+kh_101,diameter,0.742,0.742,m,gur-kh101,
+kh_101,warhead,450,450,kg,csis-kh101,
+kh_101,warhead,400,800,kg,gur-kh101,
+kh_101,warhead,400,800,kg,wp-kh101,800 kg is a newer version with less fuel and range.
+kh_101,range,2500,2800,km,csis-kh101,
+kh_101,range,3500,3500,km,wp-kh101,
+kh_101,range,5500,5500,km,gur-kh101,Upper limit.
+kh_101,speed,0.58,0.78,Mach,csis-kh101,Cruise to maximum.
+kh_101,speed,900,1000,km/h,gur-kh101,
+kh_555,length,,,,,No figure found on the pages opened.
+kh_555,wingspan,,,,,No figure found on the pages opened.
+kh_555,diameter,,,,,No figure found on the pages opened.
+kh_555,warhead,400,400,kg,csis-kh55,
+kh_555,range,3500,3500,km,csis-kh55,
+kh_555,speed,,,,,No figure found on the pages opened.
+kalibr,length,6.2,6.2,m,csis-kalibr,
+kalibr,length,6.2,8.9,m,wp-kalibr,Submarine and surface-ship versions.
+kalibr,wingspan,,,,,No figure found on the pages opened.
+kalibr,diameter,0.514,0.533,m,wp-kalibr,Given for the whole family.
+kalibr,warhead,450,450,kg,csis-kalibr,
+kalibr,warhead,450,450,kg,wp-kalibr,3M14K.
+kalibr,range,1500,2500,km,csis-kalibr,
+kalibr,range,1400,2500,km,wp-kalibr,Estimates and Russian statements.
+kalibr,speed,0.8,0.8,Mach,wp-kalibr,
+kh_59,length,5.7,5.7,m,wp-kh59,Family entry.
+kh_59,length,5.7,5.7,m,gur-kh59,"Kh-59M2/M2A, upper limit."
+kh_59,wingspan,1.3,1.3,m,wp-kh59,Family entry.
+kh_59,wingspan,1.3,1.3,m,gur-kh59,Kh-59M2/M2A.
+kh_59,diameter,0.38,0.38,m,wp-kh59,Family entry.
+kh_59,diameter,0.38,0.42,m,gur-kh59,Kh-59M2/M2A.
+kh_59,warhead,320,320,kg,wp-kh59,Family entry.
+kh_59,warhead,320,320,kg,gur-kh59,Kh-59M2/M2A.
+kh_59,range,115,290,km,wp-kh59,"Across listed versions, export ones included."
+kh_59,range,285,285,km,gur-kh59,Kh-59M2/M2A.
+kh_59,speed,0.72,0.88,Mach,wp-kh59,Family maximum.
+kh_59,speed,310,310,m/s,gur-kh59,Kh-59M2/M2A.
+kh_59mk2,length,,,,,No figure found on the pages opened.
+kh_59mk2,wingspan,,,,,No figure found on the pages opened.
+kh_59mk2,diameter,,,,,No figure found on the pages opened.
+kh_59mk2,warhead,285,320,kg,wp-kh59,Two warhead types.
+kh_59mk2,range,290,290,km,wp-kh59,
+kh_59mk2,speed,,,,,No figure found on the pages opened.
+kh_69,length,,,,,No figure found on the pages opened.
+kh_69,wingspan,,,,,No figure found on the pages opened.
+kh_69,diameter,,,,,No figure found on the pages opened.
+kh_69,warhead,300,300,kg,wp-kh69,About.
+kh_69,range,400,400,km,wp-kh69,
+kh_69,speed,1000,1000,km/h,wp-kh69,Upper limit.
+iskander_k,length,6.02,6.02,m,gur-iskander-k,9M727.
+iskander_k,wingspan,,,,,No figure found on the pages opened.
+iskander_k,diameter,0.514,0.514,m,gur-iskander-k,9M727.
+iskander_k,warhead,450,450,kg,gur-iskander-k,9M727.
+iskander_k,warhead,480,480,kg,rusi-iskander,RUSI cites another outlet.
+iskander_k,range,500,500,km,gur-iskander-k,9M727.
+iskander_k,range,500,500,km,rusi-iskander,RUSI cites another outlet.
+iskander_k,range,500,500,km,wp-iskander,"9M728, upper limit as published."
+iskander_k,speed,800,900,km/h,gur-iskander-k,"9M727, cruise."
+banderol,length,5,5,m,gur-banderol,About.
+banderol,wingspan,,,,,"The portal has an unlabeled size of about 2.2 m, which isn't used."
+banderol,diameter,0.3,0.3,m,gur-banderol,
+banderol,warhead,150,150,kg,wp-banderol,Upper limit; attributed to reporting of Ukrainian intelligence claims.
+banderol,range,500,500,km,gur-banderol,
+banderol,range,500,500,km,wp-banderol,
+banderol,speed,520,650,km/h,gur-banderol,Cruise to maximum.
+banderol,speed,700,700,km/h,wp-banderol,Maximum.
+dan_t,length,,,,,No figure found on the pages opened.
+dan_t,wingspan,,,,,No figure found on the pages opened.
+dan_t,diameter,,,,,No figure found on the pages opened.
+dan_t,warhead,,,,,No figure found on the pages opened.
+dan_t,range,,,,,No figure found on the pages opened.
+dan_t,speed,,,,,No figure found on the pages opened.
+iskander_m,length,7.3,7.3,m,csis-iskander,
+iskander_m,length,7.185,7.185,m,gur-iskander-m,
+iskander_m,wingspan,,,,,No wingspan given.
+iskander_m,diameter,0.92,0.92,m,csis-iskander,
+iskander_m,diameter,0.92,0.92,m,gur-iskander-m,
+iskander_m,warhead,480,700,kg,csis-iskander,Given as payload; 480 kg is also the export figure.
+iskander_m,warhead,450,450,kg,gur-iskander-m,
+iskander_m,warhead,480,700,kg,rusi-iskander,
+iskander_m,range,400,500,km,csis-iskander,
+iskander_m,range,390,550,km,gur-iskander-m,550 km is for the 9M723-2.
+iskander_m,range,500,500,km,rusi-iskander,"About, with a 700 kg warhead."
+iskander_m,range,400,500,km,wp-iskander,
+iskander_m,speed,2100,2100,m/s,wp-iskander,Maximum.
+iskander_m,speed,2100,2600,m/s,gur-iskander-m,Two points in the flight.
+kn_23,length,7.5,7.5,m,csis-kn23,
+kn_23,length,8.77,8.77,m,wp-kn23,Estimate.
+kn_23,wingspan,,,,,No figure found on the pages opened.
+kn_23,diameter,0.95,0.95,m,csis-kn23,
+kn_23,diameter,1.1,1.1,m,wp-kn23,Estimate.
+kn_23,warhead,500,500,kg,csis-kn23,Given as payload.
+kn_23,warhead,500,1500,kg,wp-kn23,
+kn_23,range,450,690,km,csis-kn23,Depends on payload.
+kn_23,range,190,900,km,wp-kn23,Estimates and tests; 190 km is a minimum range.
+kn_23,speed,,,,,No figure found on the pages opened.
+ballistic_unidentified,length,,,,,Type not stated.
+ballistic_unidentified,wingspan,,,,,Type not stated.
+ballistic_unidentified,diameter,,,,,Type not stated.
+ballistic_unidentified,warhead,,,,,Type not stated.
+ballistic_unidentified,range,,,,,Type not stated.
+ballistic_unidentified,speed,,,,,Type not stated.
+icbm_unverified,length,,,,,Type not identified.
+icbm_unverified,wingspan,,,,,Type not identified.
+icbm_unverified,diameter,,,,,Type not identified.
+icbm_unverified,warhead,,,,,Type not identified.
+icbm_unverified,range,,,,,Type not identified.
+icbm_unverified,speed,,,,,Type not identified.
+kinzhal,length,8,8,m,csis-kinzhal,
+kinzhal,length,7.175,8,m,gur-kinzhal,8 m includes a tail fairing.
+kinzhal,length,7.2,7.2,m,wp-kinzhal,Estimate.
+kinzhal,wingspan,1.6,1.6,m,wp-kinzhal,
+kinzhal,diameter,1,1,m,csis-kinzhal,
+kinzhal,diameter,0.92,0.92,m,gur-kinzhal,
+kinzhal,diameter,1.2,1.2,m,wp-kinzhal,Estimate.
+kinzhal,warhead,480,480,kg,csis-kinzhal,Given as payload.
+kinzhal,warhead,450,450,kg,gur-kinzhal,
+kinzhal,range,460,480,km,wp-kinzhal,"Estimate for the missile alone. The page's 2,000 km figure includes the aircraft and isn't used."
+kinzhal,range,1000,1000,km,gur-kinzhal,Upper limit.
+kinzhal,range,1500,2000,km,csis-kinzhal,The page doesn't say whether the aircraft's reach is included.
+kinzhal,speed,4,10,Mach,csis-kinzhal,The page says it may reach Mach 10.
+kinzhal,speed,3333,3333,m/s,gur-kinzhal,Maximum.
+zircon,length,8,8,m,gur-zircon,
+zircon,length,9,9,m,wp-zircon,
+zircon,wingspan,,,,,No figure found on the pages opened.
+zircon,diameter,0.666,0.666,m,gur-zircon,
+zircon,diameter,0.6,0.6,m,wp-zircon,
+zircon,warhead,120,120,kg,gur-zircon,
+zircon,warhead,120,120,kg,ki-zircon,About; attributed to Ukrainian intelligence.
+zircon,range,1000,1000,km,ki-zircon,Attributed to Ukrainian intelligence.
+zircon,range,1000,1000,km,wp-zircon,
+zircon,speed,6.8,6.8,Mach,gur-zircon,"Highest recorded. Higher figures, up to Mach 9, are claims."
+kh_22,length,11.65,11.65,m,wp-kh22,
+kh_22,wingspan,3,3,m,wp-kh22,
+kh_22,diameter,0.92,0.92,m,wp-kh22,
+kh_22,warhead,960,1000,kg,wp-kh22,Conventional versions.
+kh_22,range,600,600,km,wp-kh22,Kh-22M/MA.
+kh_22,speed,3.3,4.6,Mach,wp-kh22,Across versions.
+kh_32,length,,,,,The page says it shares the Kh-22's body but marks that claim as needing a citation.
+kh_32,wingspan,,,,,The page says it shares the Kh-22's body but marks that claim as needing a citation.
+kh_32,diameter,,,,,The page says it shares the Kh-22's body but marks that claim as needing a citation.
+kh_32,warhead,500,500,kg,wp-kh32,
+kh_32,range,600,1000,km,wp-kh32,
+kh_32,range,1000,1000,km,wp-kh22,
+kh_32,speed,3.5,4.6,Mach,wp-kh32,
+kh_32,speed,5,5,Mach,wp-kh22,
+oniks,length,8.3,8.6,m,csis-oniks,
+oniks,length,8.9,8.9,m,wp-oniks,
+oniks,wingspan,1.7,1.7,m,wp-oniks,
+oniks,diameter,0.67,0.67,m,csis-oniks,
+oniks,diameter,0.7,0.7,m,wp-oniks,
+oniks,warhead,200,250,kg,csis-oniks,
+oniks,warhead,200,300,kg,wp-oniks,
+oniks,range,120,300,km,csis-oniks,Depends on flight path.
+oniks,range,120,800,km,wp-oniks,800 km is the Oniks-M.
+oniks,speed,2,2.2,Mach,csis-oniks,
+oniks,speed,2,2.9,Mach,wp-oniks,The page gives conflicting figures.
+kh_31,length,4.7,5.3,m,wp-kh31,"5.3 m is the longer version, which includes the Kh-31PD."
+kh_31,wingspan,0.914,0.914,m,wp-kh31,
+kh_31,diameter,0.36,0.36,m,wp-kh31,
+kh_31,warhead,87,94,kg,wp-kh31,Kh-31P and Kh-31A.
+kh_31,range,70,110,km,wp-kh31,Maximum for the Kh-31A and Kh-31P.
+kh_31,speed,2160,2520,km/h,wp-kh31,
+kh_35,length,3.85,4.4,m,wp-kh35,Air-launched and surface-launched.
+kh_35,wingspan,1.33,1.33,m,wp-kh35,
+kh_35,diameter,0.42,0.42,m,wp-kh35,
+kh_35,warhead,145,145,kg,wp-kh35,
+kh_35,range,130,300,km,wp-kh35,Includes a 2015 upgrade.
+kh_35,speed,0.8,0.85,Mach,wp-kh35,
+s_300,length,7.25,7.5,m,csis-s300,
+s_300,length,7.25,7.5,m,wp-s300,"5V55K, 5V55R and 48N6 rows. Rows marked as needing a citation are left out."
+s_300,wingspan,,,,,No figure found on the pages opened.
+s_300,diameter,0.51,0.51,m,csis-s300,
+s_300,diameter,0.514,0.519,m,wp-s300,Same rows.
+s_300,warhead,133,143,kg,csis-s300,
+s_300,warhead,130,143,kg,wp-s300,
+s_300,range,,,,,"The cited ranges are for use in air defense, so they aren't used. No ground-attack range was found."
+s_300,speed,1900,2000,m/s,wp-s300,Maximum.
+s_400,length,,,,,No figure found on the pages opened.
+s_400,wingspan,,,,,No figure found on the pages opened.
+s_400,diameter,,,,,No figure found on the pages opened.
+s_400,warhead,143,143,kg,csis-s400,
+s_400,warhead,180,180,kg,wp-s400,
+s_400,range,,,,,"The cited ranges are for use in air defense, so they aren't used. No ground-attack range was found."
+s_400,speed,2000,2000,m/s,wp-s400,Maximum.
+unknown_missile,length,,,,,Type unknown.
+unknown_missile,wingspan,,,,,Type unknown.
+unknown_missile,diameter,,,,,Type unknown.
+unknown_missile,warhead,,,,,Type unknown.
+unknown_missile,range,,,,,Type unknown.
+unknown_missile,speed,,,,,Type unknown.

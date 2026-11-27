@@ -10,6 +10,7 @@ This repo mixes our own work with material from three data sources and one font,
 | Our writing: the Markdown docs, and the on-screen teaching text (definitions, discussion prompts, captions and explanations), including where it sits in code files | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Credit "Hosea Siu, The Air War, in Data", link to this repo and say what you changed. |
 | `data/reference/annotations.csv`: our event labels, descriptions and notes | CC BY 4.0. The linked sources belong to their publishers. |
 | `data/reference/weapon_classes.csv` | CC BY 4.0 |
+| `data/reference/weapon_figures.csv`, `weapon_sources.csv`: our choice of weapon figures, notes and citations | CC BY 4.0. The figures are facts taken from the linked pages, which belong to their publishers. |
 
 ## Data from other sources
 
@@ -19,6 +20,7 @@ This repo mixes our own work with material from three data sources and one font,
 | Files in `data/processed/` derived from the strike data | **CC BY-NC-SA 4.0** (noncommercial, share-alike). Adapted from [Massive Missile Attacks on Ukraine](https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine) by Petro Ivaniuk. See [data/processed/LICENSE.md](data/processed/LICENSE.md). |
 | `data/reference/model_classes.csv` | **CC BY-NC-SA 4.0**, from the same dataset: its `model` strings and quotes from its reference file, with our class assignments, components and notes added. |
 | `data/processed/alert_hours_monthly.json`, `alert_daily.json` | **MIT, Copyright (c) 2022 Vadym Klymenko.** Made from the [Ukrainian air-raid sirens dataset](https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset). The full notice and our changes are in [data/processed/LICENSE.md](data/processed/LICENSE.md). |
+| `data/reference/weapon_members.csv` | **CC BY-NC-SA 4.0**, to be safe: it copies `model` strings from the same dataset, with our names, roles, notes and citations added ([details](data/reference/weapons.md#license)). |
 | `data/reference/ukraine_admin1.geojson` | **[CC BY-IGO](https://creativecommons.org/licenses/by/3.0/igo/legalcode).** State Scientific Production Enterprise "Kartographia", via OCHA (COD-AB Ukraine v05, HDX). Simplified, with other properties dropped and rings rewound ([details](data/reference/gazetteer.md#processing)). No endorsement by either is implied. |
 | `data/reference/oblasts.csv`, `oblast_aliases.csv`, `raions.csv` | Our tables, which include place names, spellings or codes from the sources above: the alert files (MIT notice above), the boundary source (CC BY-IGO, credit above) and the strike dataset. Our additions are CC BY 4.0. To be safe, treat rows of `oblast_aliases.csv` seen only in the strike dataset (`seen_in` is `kaggle_affected_region`) as CC BY-NC-SA 4.0. |
 

@@ -1,0 +1,45 @@
+source,publisher,title,kind,url,page_date,checked_on
+csis-shahed,CSIS Missile Threat,Shahed-131 and -136,research,https://missilethreat.csis.org/missile/shahed-131-and-136/,2026-06-02,2026-11-27
+csis-kh101,CSIS Missile Threat,Kh-101 / Kh-102,research,https://missilethreat.csis.org/missile/kh-101-kh-102/,2024-04-23,2026-11-27
+csis-kh55,CSIS Missile Threat,"Kh-55 (AS-15), covering the Kh-555",research,https://missilethreat.csis.org/missile/kh-55/,2024-04-23,2026-11-27
+csis-kalibr,CSIS Missile Threat,3M-14 Kalibr (SS-N-30A),research,https://missilethreat.csis.org/missile/ss-n-30a/,2024-04-23,2026-11-27
+csis-iskander,CSIS Missile Threat,9K720 Iskander (SS-26),research,https://missilethreat.csis.org/missile/ss-26-2/,2024-04-23,2026-11-27
+csis-kn23,CSIS Missile Threat,KN-23,research,https://missilethreat.csis.org/missile/kn-23/,2024-04-23,2026-11-27
+csis-kinzhal,CSIS Missile Threat,Kh-47M2 Kinzhal,research,https://missilethreat.csis.org/missile/kinzhal/,2024-04-23,2026-11-27
+csis-oniks,CSIS Missile Threat,P-800 Oniks (SS-N-26),research,https://missilethreat.csis.org/missile/ss-n-26/,2024-04-23,2026-11-27
+csis-s300,CSIS Missile Threat,S-300,research,https://missilethreat.csis.org/defsys/s-300/,2021-07-06,2026-11-27
+csis-s400,CSIS Missile Threat,S-400 Triumf,research,https://missilethreat.csis.org/defsys/s-400-triumf/,2021-07-06,2026-11-27
+rusi-iskander,RUSI,The Iskander-M and Iskander-K: A Technical Profile,research,https://rusi.org/explore-our-research/publications/commentary/iskander-m-and-iskander-k-technical-profile,2022-08-08,2026-11-27
+gur-shahed131,"War & Sanctions portal, Defence Intelligence of Ukraine",Geran-1 (Shahed-131),ukrainian_official,https://war-sanctions.gur.gov.ua/en/uav/338,2026-05-04,2026-11-27
+gur-gerbera,"War & Sanctions portal, Defence Intelligence of Ukraine",Gerbera,ukrainian_official,https://war-sanctions.gur.gov.ua/en/uav/329,2026-05-04,2026-11-27
+gur-gerbera2,"War & Sanctions portal, Defence Intelligence of Ukraine",Gerbera-2 (in Ukrainian),ukrainian_official,https://war-sanctions.gur.gov.ua/page-gerbera-2,,2026-11-27
+gur-geran4-news,Defence Intelligence of Ukraine,War&Sanctions: DIU reveals structure of Russia's new jet-powered strike UAV,ukrainian_official,https://gur.gov.ua/en/content/warsanctions-hur-rozkryvaie-budovu-novoho-rosiiskoho-reaktyvnoho-udarnoho-bpla-yeran4,2026-05-25,2026-11-27
+gur-geran4,"War & Sanctions portal, Defence Intelligence of Ukraine",Geran-4 UAV (October 2026),ukrainian_official,https://war-sanctions.gur.gov.ua/en/page-geran-4-2,,2026-11-27
+gur-geran5,"War & Sanctions portal, Defence Intelligence of Ukraine",Small-sized cruise missile Geran-5,ukrainian_official,https://war-sanctions.gur.gov.ua/en/page-geran-5,,2026-11-27
+gur-kh101,"War & Sanctions portal, Defence Intelligence of Ukraine",Kh-101 missile,ukrainian_official,https://war-sanctions.gur.gov.ua/en/page-kh-101,,2026-11-27
+gur-kh59,"War & Sanctions portal, Defence Intelligence of Ukraine",Kh-59M2/M2A missile,ukrainian_official,https://war-sanctions.gur.gov.ua/en/page-kh-59,,2026-11-27
+gur-iskander-k,"War & Sanctions portal, Defence Intelligence of Ukraine",9M727 cruise missile from the Iskander-K system,ukrainian_official,https://war-sanctions.gur.gov.ua/en/page-iskander-k,,2026-11-27
+gur-banderol,"War & Sanctions portal, Defence Intelligence of Ukraine",S8000 Banderol cruise missile,ukrainian_official,https://war-sanctions.gur.gov.ua/en/page-s8000-banderol,,2026-11-27
+gur-iskander-m,"War & Sanctions portal, Defence Intelligence of Ukraine",Ballistic missile 9M723 Iskander-M,ukrainian_official,https://war-sanctions.gur.gov.ua/en/ballistics/iskander,,2026-11-27
+gur-kinzhal,"War & Sanctions portal, Defence Intelligence of Ukraine",Aeroballistic missile 9-S-7760 Kinzhal (Kh-47M2),ukrainian_official,https://war-sanctions.gur.gov.ua/en/ballistics/kinzhal,,2026-11-27
+gur-zircon,"War & Sanctions portal, Defence Intelligence of Ukraine",3M22 Zircon ballistic missile,ukrainian_official,https://war-sanctions.gur.gov.ua/en/ballistics/zircon,,2026-11-27
+pravda-gerbera2,Ukrainska Pravda,"Ukraine's Defence Intelligence reveals upgraded Gerbera drone with 1,200 km range",news,https://www.pravda.com.ua/eng/news/2026/11/02/8060813/,2026-11-02,2026-11-27
+ki-zircon,Kyiv Independent,Ukraine's military intelligence reveals technical details of Russian Zircon missiles,news,https://kyivindependent.com/ukraines-military-intelligence-reveals-technical-details-of-russian-zircon-missiles/,2026-08-31,2026-11-27
+wp-shahed,Wikipedia,HESA Shahed 136,encyclopedia,https://en.wikipedia.org/wiki/HESA_Shahed_136,,2026-11-27
+wp-gerbera,Wikipedia,Gerbera (drone),encyclopedia,https://en.wikipedia.org/wiki/Gerbera_(drone),2026-10-27,2026-11-27
+wp-kh101,Wikipedia,Kh-101,encyclopedia,https://en.wikipedia.org/wiki/Kh-101,,2026-11-27
+wp-kalibr,Wikipedia,Kalibr (missile family),encyclopedia,https://en.wikipedia.org/wiki/Kalibr_(missile_family),,2026-11-27
+wp-kh59,Wikipedia,Kh-59,encyclopedia,https://en.wikipedia.org/wiki/Kh-59,,2026-11-27
+wp-kh69,Wikipedia,Kh-69,encyclopedia,https://en.wikipedia.org/wiki/Kh-69,2026-10-11,2026-11-27
+wp-banderol,Wikipedia,S8000 Banderol,encyclopedia,https://en.wikipedia.org/wiki/S8000_Banderol,2026-11-03,2026-11-27
+wp-iskander,Wikipedia,9K720 Iskander,encyclopedia,https://en.wikipedia.org/wiki/9K720_Iskander,,2026-11-27
+wp-kn23,Wikipedia,Hwasong-11A (KN-23),encyclopedia,https://en.wikipedia.org/wiki/KN-23,,2026-11-27
+wp-kinzhal,Wikipedia,Kh-47M2 Kinzhal,encyclopedia,https://en.wikipedia.org/wiki/Kh-47M2_Kinzhal,,2026-11-27
+wp-zircon,Wikipedia,3M22 Zircon,encyclopedia,https://en.wikipedia.org/wiki/3M22_Zircon,,2026-11-27
+wp-kh22,Wikipedia,Kh-22,encyclopedia,https://en.wikipedia.org/wiki/Kh-22,,2026-11-27
+wp-kh32,Wikipedia,Kh-32,encyclopedia,https://en.wikipedia.org/wiki/Kh-32,2026-09-27,2026-11-27
+wp-oniks,Wikipedia,P-800 Oniks,encyclopedia,https://en.wikipedia.org/wiki/P-800_Oniks,,2026-11-27
+wp-kh31,Wikipedia,Kh-31,encyclopedia,https://en.wikipedia.org/wiki/Kh-31,,2026-11-27
+wp-kh35,Wikipedia,Kh-35,encyclopedia,https://en.wikipedia.org/wiki/Kh-35,,2026-11-27
+wp-s300,Wikipedia,S-300 missile system,encyclopedia,https://en.wikipedia.org/wiki/S-300_missile_system,,2026-11-27
+wp-s400,Wikipedia,S-400 missile system,encyclopedia,https://en.wikipedia.org/wiki/S-400_missile_system,,2026-11-27
