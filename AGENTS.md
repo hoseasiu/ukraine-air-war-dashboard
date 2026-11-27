@@ -52,7 +52,7 @@ site/src/guided/  guided mode: the stops, the engine that steps through them, an
 site/src/strikes/ the attacks tab: its charts, and the checks on and sums from the strike tables
 site/src/teaching/ discussion prompts for tabs and guided stops
 site/tests/       site tests
-docs/             spec and data audit
+docs/             spec, data audit and accessibility review
 ```
 
 [LICENSING.md](LICENSING.md) says which terms cover which files. Add a row there for a new data source or a data file with its own terms.

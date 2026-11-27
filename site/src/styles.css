@@ -381,6 +381,18 @@ tbody th {
   }
 }
 
+/* The narrowest screens, such as 400% zoom: Back and Next shrink so both stay on screen. */
+@media (max-width: 24rem) {
+  .stop-steps .stop-button {
+    min-width: 0;
+    padding-inline: 0.6rem;
+  }
+
+  .stop-indicator {
+    min-width: 0;
+  }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
