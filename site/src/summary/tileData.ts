@@ -3,8 +3,8 @@
  * tab's filters, and each has its own dates and badges, worked out by the same
  * rules as the charts'.
  *
- * The choice of tiles and their wording are drafts until the owner approves
- * them on #69.
+ * The owner approved the choice of tiles and their wording on Nov 26, 2026
+ * (#69). A change to either needs their review again.
  *
  * No DOM or Vite imports here, so Node can test this file directly.
  */

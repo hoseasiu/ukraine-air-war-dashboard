@@ -4,7 +4,8 @@
  * refresh, and the chart's badges cover its figures. It says what the chart
  * shows and never why (AGENTS.md rule 6).
  *
- * The wording is a draft until the owner approves it on #69.
+ * The owner approved the wording on Nov 26, 2026 (#69). A change to it needs
+ * their review again.
  *
  * The before/after chart has none, on the owner's choice (#69): a rate before and
  * after an event, as a heading, could read as the event's effect.
