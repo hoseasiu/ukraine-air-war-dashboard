@@ -11,7 +11,7 @@
 import { formatDate, weaponClasses } from "../data.ts";
 import { popover, withTerms } from "../glossary/popover.ts";
 import { CLASS_IDS, CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
-import { classFill, classSymbolPath, svgElement } from "../theme/marks.ts";
+import { classKeyFill, classSymbolPath, svgElement } from "../theme/marks.ts";
 import { chartFlags, combinedFlags, FLAG_TEXT, rowFlags, type ColumnSpec, type FlagId, type FlagInput } from "./flags.ts";
 import { attachTooltips, type TooltipContent } from "./tooltips.ts";
 import "./chart.css";
@@ -173,7 +173,7 @@ function legendKey(id: ClassId, mark: "bar" | "line" | "point"): SVGSVGElement {
   const { color, dash } = CLASS_STYLES[id];
   const svg = svgElement("svg", { width: 40, height: 18, "aria-hidden": "true", focusable: "false" });
   if (mark === "bar") {
-    svg.append(svgElement("rect", { x: 8, y: 1, width: 24, height: 16, fill: classFill(id) }));
+    svg.append(svgElement("rect", { x: 8, y: 1, width: 24, height: 16, fill: classKeyFill(id) }));
   } else {
     if (mark === "line") {
       svg.append(
