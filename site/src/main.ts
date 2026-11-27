@@ -41,6 +41,7 @@ function navLink(hash: string, text: string): HTMLAnchorElement {
 
 const links = new Map<Page, HTMLAnchorElement>(PAGES.map((page) => [page, navLink(`#${page.id}`, page.nav)]));
 const guidedLink = navLink(FIRST_STOP_HASH, "Guided mode");
+guidedLink.parentElement!.className = "nav-primary";
 const guided = createGuidedMode(main);
 
 const filterBounds: FilterBounds = {

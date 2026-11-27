@@ -15,7 +15,7 @@ import { alertMonthly, monthlyTable, weaponClasses } from "../data.ts";
 import { COMBINED_LAUNCH_FILL } from "../theme/areaStyles.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
 import { classFill } from "../theme/marks.ts";
-import { plotDefaults } from "../theme/plot.ts";
+import { plotDefaults, titledScale } from "../theme/plot.ts";
 import { alertLaunchRows, type AlertLaunchRow } from "./alertLaunchData.ts";
 import { footnote, monthAxisTicks, strikeSource } from "../strikes/shared.ts";
 import { alertCredit, alertRangeNote } from "./notes.ts";
@@ -104,7 +104,13 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
   const launches = Plot.plot({
     ...shared,
     x: { ...x, axis: "top", tickFormat: () => "", tickSize: 0 },
-    y: { label: "Reported launches", domain: top(rows.map((row) => row.launched)), nice: true, grid: true, ticks: noLaunches.ticks },
+    y: titledScale({
+      label: "Reported launches",
+      domain: top(rows.map((row) => row.launched)),
+      nice: true,
+      grid: true,
+      ticks: noLaunches.ticks,
+    }),
     marks: [
       Plot.barY(rows, { x: "month", y: "launched", fill }),
       Plot.ruleY([0]),
@@ -118,7 +124,13 @@ function draw(rows: readonly AlertLaunchRow[], width: number, classes: readonly 
     marginTop: 56,
     height: HOURS_HEIGHT,
     x,
-    y: { label: "Alert hours, mean across areas", domain: top(rows.map((row) => row.hours)), nice: true, grid: true, ticks: noHours.ticks },
+    y: titledScale({
+      label: "Alert hours, mean across areas",
+      domain: top(rows.map((row) => row.hours)),
+      nice: true,
+      grid: true,
+      ticks: noHours.ticks,
+    }),
     marks: [
       Plot.ruleY([0]),
       Plot.lineY(rows, { x: "month", y: "hours", stroke: "var(--ink)", strokeWidth: 2 }),

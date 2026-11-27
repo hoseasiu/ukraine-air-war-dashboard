@@ -6,6 +6,8 @@ import {
   allNights,
   breakdownRows,
   largestNight,
+  LAUNCH_PANELS,
+  launchPanels,
   massiveDates,
   massiveGaps,
   median,
@@ -49,6 +51,17 @@ test("bad strike tables are rejected", () => {
   const monthCopy = structuredClone(monthlyJson);
   monthCopy.rows[0].ballistic_restricted = "false";
   assert.throws(() => parseMonthly(monthCopy), /true or false/);
+});
+
+test("every counted class is in exactly one monthly panel, and a panel with no rows is left out", () => {
+  assert.deepEqual(LAUNCH_PANELS.flatMap((panel) => [...panel.classes]), CLASS_IDS);
+  const rows = monthRows(monthly, everything, day);
+  const panels = launchPanels(rows);
+  assert.deepEqual(panels.map((panel) => panel.id), ["drones", "missiles"]);
+  const launched = (list: typeof rows) => total(list.map((row) => row.launched));
+  assert.equal(launched(panels.flatMap((panel) => panel.rows)), launched(rows));
+  const cruise = launchPanels(monthRows(monthly, { ...everything, classes: ["cruise"] }, day));
+  assert.deepEqual(cruise.map((panel) => panel.id), ["missiles"]);
 });
 
 test("the month filter is clamped to the strike data", () => {

@@ -9,7 +9,7 @@ import { plotTargets } from "../chart/plotTargets.ts";
 import { buildInfo, formatDate, weaponClasses } from "../data.ts";
 import { CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { installPatterns } from "../theme/marks.ts";
-import { classColorScale, classFillScale, classSymbolScale, plotDefaults } from "../theme/plot.ts";
+import { classColorScale, classFillScale, classSymbolScale, plotDefaults, titledScale } from "../theme/plot.ts";
 import "../styles.css";
 
 interface SampleRow {
@@ -74,7 +74,7 @@ const rateChart = chartFrame<SampleRow>({
       width,
       height: 360,
       x: { ...monthAxis, type: "point", domain: MONTHS, padding: 0.3 },
-      y: { label: "Reported intercept rate", domain: [0, 1], tickFormat: "%", grid: true },
+      y: titledScale({ label: "Reported intercept rate", domain: [0, 1], tickFormat: "%", grid: true }),
       color: classColorScale(labels),
       symbol: classSymbolScale(labels),
       marks: [
@@ -115,7 +115,7 @@ const launchChart = chartFrame<SampleRow>({
       width,
       height: 360,
       x: { ...monthAxis, type: "band", domain: MONTHS, padding: 0.4 },
-      y: { label: "Published launches", grid: true },
+      y: titledScale({ label: "Published launches", grid: true }),
       color: classFillScale(labels),
       marks: [
         Plot.barY(data, {

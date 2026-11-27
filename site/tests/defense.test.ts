@@ -13,8 +13,10 @@ import {
   saturationRows,
   SIZE_BINS,
   sizeBinRows,
+  tooFewStatus,
   type SaturationRow,
 } from "../src/defense/defenseData.ts";
+import { rateLayout } from "../src/defense/ratePanels.ts";
 import { allNights, type Selection } from "../src/strikes/strikeData.ts";
 import { CLASS_IDS, type ClassId } from "../src/theme/classStyles.ts";
 
@@ -75,6 +77,43 @@ test("every month shown has a row for each rate class, so lines break wherever t
       .filter((r) => r.status === "Gap: no report for this class")
       .every((r) => r.destroyed === null && r.launched_with_outcome === null),
   );
+});
+
+test("a month below the minimum is marked as too few, with no rate", () => {
+  const few = rateRows(rates, everything).filter((r) => r.status === tooFewStatus(rates.minLaunched));
+  assert.equal(few.length, rates.rows.filter((r) => r.intercept_rate_gap === "below_minimum").length);
+  assert.ok(few.every((r) => r.intercept_rate === null));
+});
+
+test("drones and cruise missiles get large panels, and the rare classes a compact row", () => {
+  const { panels, height } = rateLayout(RATE_CLASSES, 1200);
+  assert.deepEqual(panels.map((p) => p.id).sort(), [...RATE_CLASSES].sort());
+  const large = panels.filter((p) => p.large);
+  const compact = panels.filter((p) => !p.large);
+  assert.deepEqual(large.map((p) => p.id), ["shahed_drone", "cruise"]);
+  assert.ok(compact.every((p) => p.top === compact[0]!.top && p.width < large[0]!.width && p.height < large[0]!.height));
+  assert.equal(height, large[0]!.height + compact[0]!.height);
+  // A rare class on its own doesn't fill the chart.
+  assert.equal(rateLayout(["ballistic"], 1200).panels[0]!.width, 600);
+  assert.equal(rateLayout(["cruise"], 1200).panels[0]!.width, 1200);
+});
+
+test("every panel stays inside the chart, and a guided view's panels fit its height", () => {
+  for (const width of [480, 700, 900, 1200, 1500]) {
+    for (const fixed of [undefined, 260, 360, 560]) {
+      const { panels, height } = rateLayout(RATE_CLASSES, width, fixed);
+      assert.equal(panels.length, RATE_CLASSES.length);
+      for (const p of panels) {
+        assert.ok(p.left >= 0 && p.left + p.width <= width, `${p.id} at ${width}, ${fixed}`);
+        assert.ok(p.top >= 0 && p.top + p.height <= height, `${p.id} at ${width}, ${fixed}`);
+      }
+    }
+  }
+  // On a short wide screen, one row; on a taller one, two.
+  assert.equal(rateLayout(RATE_CLASSES, 1200, 260).height, 260);
+  const tall = rateLayout(RATE_CLASSES, 1500, 400);
+  assert.ok(tall.height <= 400, String(tall.height));
+  assert.equal(new Set(tall.panels.map((p) => p.top)).size, 2);
 });
 
 test("missile months from August 2026 have no rate and no counts that would give one back", () => {

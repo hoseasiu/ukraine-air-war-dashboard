@@ -4,6 +4,7 @@ import type { TermId } from "../glossary/terms.ts";
 /** Discussion prompts as a list. */
 export function promptList(prompts: readonly string[]): HTMLUListElement {
   const list = document.createElement("ul");
+  list.className = "prompt-list";
   const seen = new Set<TermId>();
   for (const prompt of prompts) {
     const item = document.createElement("li");

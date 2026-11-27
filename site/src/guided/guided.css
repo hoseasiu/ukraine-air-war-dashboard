@@ -1,5 +1,11 @@
 /* Guided stop views. The shared guided-mode type and controls are in styles.css. */
 
+/* A stop has the screen to itself, so its charts skip the card. */
+.stop-view .chart-frame {
+  padding: 0;
+  border: 0;
+}
+
 /* Tighter page chrome, so a stop's view and its caveats get the screen. */
 body:has(.guided) .preview-note {
   margin-top: 0.25rem;
@@ -19,6 +25,11 @@ body:has(.guided) .snapshot {
 body:has(.guided) nav a {
   padding-block: 0.2rem;
   font-size: 0.85rem;
+}
+
+body:has(.guided) nav .nav-primary a {
+  margin-block: 0;
+  padding-block: 0.1rem;
 }
 
 .guided .stop-title {

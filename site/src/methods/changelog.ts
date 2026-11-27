@@ -15,6 +15,8 @@ export const CHANGELOG: readonly ChangelogEntry[] = [
   {
     date: "2026-11-26",
     changes: [
+      "Defense tab: the intercept-rate chart has large panels for drones and cruise missiles and dot plots for rarer classes, with reference lines. Months with too few launches for a rate now show as hollow markers under each panel; they still have no rate.",
+      "Attacks tab: monthly launches show drones and the other classes in two panels, each on its own scale, with optional event markers; the class-mix panels are now one compact row, each labeled with its highest share.",
       "Added this Data & Methods page: sources, the weapon-class table, definitions, known gaps, how figures are traced and how to cite.",
       "Time charts shade the missile-reporting restriction, and alert-hour line charts shade the move to raion alerts. Data-quality badges now open their full text, and each chart tab lists its notes at the top.",
       "Attacks tab: salvo sizes for all years in one chart; new calendar colors; the one-night breakdown now shows the night among all of its year’s nights.",
