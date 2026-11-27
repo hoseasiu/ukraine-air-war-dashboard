@@ -1,7 +1,7 @@
 import { weaponClasses } from "./data.ts";
 import { withTerms } from "./glossary/popover.ts";
 import { CLASS_STYLES } from "./theme/classStyles.ts";
-import { classFill, classSymbolPath, svgElement } from "./theme/marks.ts";
+import { classKeyFill, classSymbolPath, svgElement } from "./theme/marks.ts";
 
 /** A table of each class with its bar fill, point symbol and line style. */
 export function classKey(): HTMLElement {
@@ -33,7 +33,7 @@ export function classKey(): HTMLElement {
     th.append(...withTerms(label));
     row.append(th);
     row.insertCell().append(
-      swatch(`${pattern} fill`, svgElement("rect", { x: 4, y: 2, width: 40, height: 20, fill: classFill(id) })),
+      swatch(`${pattern} fill`, svgElement("rect", { x: 4, y: 2, width: 40, height: 20, fill: classKeyFill(id) })),
     );
     row.insertCell().append(
       swatch(

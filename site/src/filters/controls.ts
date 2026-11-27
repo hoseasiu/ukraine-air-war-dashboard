@@ -5,7 +5,7 @@
  * and report each change.
  */
 import { alertAreas, excludedAlertAreas, weaponClasses } from "../data.ts";
-import { classFill, svgElement } from "../theme/marks.ts";
+import { classKeyFill, svgElement } from "../theme/marks.ts";
 import { dateRange, formatRange } from "./dateRange.ts";
 import { disclosure, reserveSpace } from "./disclosure.ts";
 import { create, type Part } from "./dom.ts";
@@ -55,7 +55,7 @@ function classToggles(options: FilterOptions, commit: (change: Partial<Filters>)
   const boxes = weaponClasses.map(({ id, label: name }) => {
     const { label, input } = checkbox(name);
     const swatch = svgElement("svg", { width: 24, height: 16, "aria-hidden": "true", focusable: "false" });
-    swatch.append(svgElement("rect", { width: 24, height: 16, fill: classFill(id) }));
+    swatch.append(svgElement("rect", { width: 24, height: 16, fill: classKeyFill(id) }));
     input.after(swatch);
     fieldset.append(label);
     input.addEventListener("change", () => {
