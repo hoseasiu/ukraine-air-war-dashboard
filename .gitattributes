@@ -2,3 +2,4 @@
 *.png binary
 *.jpg binary
 *.parquet binary
+*.woff2 binary

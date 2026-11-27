@@ -7,7 +7,7 @@ import { plotTargets } from "../chart/plotTargets.ts";
 import { nightTable } from "../data.ts";
 import { svgElement } from "../theme/marks.ts";
 import { NIGHT_BINS, nightBin } from "../theme/nightScale.ts";
-import { plotDefaults } from "../theme/plot.ts";
+import { plotDefaults, titledScale } from "../theme/plot.ts";
 import { barValue, chartSvg, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, footnote, strikeSource, svgText, yearBars, type FixedView } from "./shared.ts";
 import {
   allNights,
@@ -354,7 +354,7 @@ export function massiveGapChart(selection: Pick<Selection, "from" | "to">): HTML
         width,
         height: 340,
         x: { type: "utc", domain: [start, end], label: null, ticks: Math.max(2, Math.floor(width / 110)) },
-        y: { label: "Days since the massive night before", grid: true, zero: true },
+        y: titledScale({ label: "Days since the massive night before", grid: true, zero: true }),
         marks: [
           Plot.ruleX(drawn, { x: day, y: "gap_days", stroke: "var(--ink-secondary)" }),
           Plot.dot(drawn, { x: day, y: "gap_days", r: 4.5, fill: "var(--ink)", stroke: "#ffffff" }),

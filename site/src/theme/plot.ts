@@ -17,6 +17,15 @@ export const plotDefaults = {
   marginBottom: 44,
 } satisfies PlotOptions;
 
+/**
+ * A scale with an axis title, without Plot's arrow: beside a title, the arrow
+ * can read as a figure. Use it for every titled axis.
+ */
+export const titledScale = (options: ScaleOptions & { label: string }): ScaleOptions => ({
+  labelArrow: "none",
+  ...options,
+});
+
 type Labels = Record<ClassId, string>;
 
 function classScale(range: string[], labels: Labels): ScaleOptions {

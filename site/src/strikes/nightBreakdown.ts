@@ -13,7 +13,7 @@ import { plotTargets } from "../chart/plotTargets.ts";
 import { formatDate, nightTable } from "../data.ts";
 import { withTerms } from "../glossary/popover.ts";
 import type { ClassId } from "../theme/classStyles.ts";
-import { classFillScale, plotDefaults } from "../theme/plot.ts";
+import { classFillScale, plotDefaults, titledScale } from "../theme/plot.ts";
 import { nightContext } from "./nightContext.ts";
 import { barText, barValue, classLabels, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, footnote, strikeSource } from "./shared.ts";
 import { barIsRestricted, breakdownRows, type BreakdownRow } from "./strikeData.ts";
@@ -109,7 +109,11 @@ function spec(
         marginTop: 6,
         marginLeft: margin,
         marginRight: 64,
-        x: { label: "Published launches", grid: true, domain: [0, Math.max(1, ...data.map((r) => r.launched ?? 0))] },
+        x: titledScale({
+          label: "Published launches",
+          grid: true,
+          domain: [0, Math.max(1, ...data.map((r) => r.launched ?? 0))],
+        }),
         y: {
           type: "band",
           domain: data.map((row) => row.class),

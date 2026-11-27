@@ -9,8 +9,11 @@ import pytest
 
 from pipeline.budget import (
     BUDGET_BYTES,
+    FONT_DIR,
+    SITE_FONT_FILES,
     SITE_REFERENCE_FILES,
     check_budget,
+    font_sizes,
     reference_sizes,
 )
 from pipeline.errors import PipelineError
@@ -87,7 +90,7 @@ def test_report_gives_the_stop_1_figures_with_their_dates():
     assert "2026-07-03 to 2026-07-31: 59.1% (650 of 1,100" in text
     assert "2026-06-01 to 2026-07-31:\n    15.0 hours in an average month. Areas: 2." in text
     assert "Excluded, not zero: Excluded oblast." in text
-    assert "Site data: 3 of 100 bytes" in text
+    assert "Site data and font: 3 of 100 bytes" in text
 
 
 def test_report_keeps_the_caveats():
@@ -125,7 +128,17 @@ def test_committed_site_data_is_within_budget():
     assert set(sizes) == set(SITE_REFERENCE_FILES)
     for path in PROCESSED_DIR.glob("*.json"):
         sizes[path.name] = len(path.read_bytes().replace(b"\r\n", b"\n"))
+    sizes.update(font_sizes())
     assert check_budget(sizes) <= BUDGET_BYTES
+
+
+def test_the_budget_counts_every_font_the_site_serves():
+    assert {path.name for path in FONT_DIR.glob("*.woff*")} == set(SITE_FONT_FILES)
+    urls = set()
+    for path in (ROOT / "site" / "src").rglob("*.css"):
+        text = path.read_text(encoding="utf-8")
+        urls |= set(re.findall(r'url\("([^"]+\.(?:woff2?|ttf|otf))"\)', text))
+    assert {url.rsplit("/", 1)[-1] for url in urls} == set(SITE_FONT_FILES)
 
 
 def test_the_budget_counts_every_data_file_the_site_imports():
