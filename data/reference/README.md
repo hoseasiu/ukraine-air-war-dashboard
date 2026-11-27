@@ -2,7 +2,7 @@
 
 Hand-editable tables used by the pipeline.
 
-Other tables here: the [oblast gazetteer and map boundaries](gazetteer.md) and the [event annotations](annotations.md).
+Other tables here: the [oblast gazetteer and map boundaries](gazetteer.md), the [event annotations](annotations.md) and the [weapon reference data](weapons.md).
 
 ## Weapon classes
 
