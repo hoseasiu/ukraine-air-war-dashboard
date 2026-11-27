@@ -21,6 +21,7 @@ import { monthsShown, type Selection } from "../strikes/strikeData.ts";
 import { CLASS_IDS, CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { classSymbolPath, svgElement } from "../theme/marks.ts";
 import { classColorScale, classSymbolScale, plotDefaults } from "../theme/plot.ts";
+import { interceptHeadline } from "../summary/headlineText.ts";
 import { RATE_SHOWN, rateRows, tooFewStatus, type RateChartRow } from "./defenseData.ts";
 import { rateLayout } from "./ratePanels.ts";
 
@@ -109,6 +110,7 @@ export function interceptRateChart(selection: Selection, fixed?: FixedView): HTM
 
   return chartFrame<RateChartRow>({
     title: "Reported intercept rate over time, by weapon class",
+    headline: fixed ? undefined : interceptHeadline(rows, classLabels),
     subtitle: "Share of each month’s launches reported destroyed. A missing point or a break in a line is a gap, not 0%.",
     howToRead:
       "One panel for each weapon class, all from 0% to 100%: the share of each month’s launches reported destroyed, " +

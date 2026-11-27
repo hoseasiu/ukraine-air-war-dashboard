@@ -8,6 +8,7 @@ import { formatDate, outcomeTable, rateTable } from "../data.ts";
 import { chartSvg, classLabels, count, percent, footnote, strikeSource, svgText } from "../strikes/shared.ts";
 import type { Selection } from "../strikes/strikeData.ts";
 import { svgElement } from "../theme/marks.ts";
+import { sizeBinHeadline } from "../summary/headlineText.ts";
 import { MIN_BIN_NIGHTS, saturationRows, SIZE_BINS, sizeBinRows, type SizeBinRow } from "./defenseData.ts";
 import "./sizeBins.css";
 
@@ -36,6 +37,7 @@ export function sizeBinChart(selection: Selection): HTMLElement {
 
   return chartFrame<SizeBinRow>({
     title: "Nights of similar size: median share not reported destroyed, by year",
+    headline: sizeBinHeadline(rows),
     subtitle: "For nights in each size group, the middle share of launches not reported destroyed.",
     howToRead:
       "One panel for each year. For the nights in each size group, we take each night’s share of launches not " +

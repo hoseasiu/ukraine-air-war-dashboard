@@ -128,4 +128,35 @@ export const TRACES: readonly Trace[] = [
     tables: ["monthly_by_class.json", "alert_hours_monthly.json"],
     code: ["site/src/alerts/alertLaunchData.ts"],
   },
+  {
+    figure: "Attacks tab summary: weapons launched, and the median and largest night",
+    shownOn: "Tab A",
+    method:
+      "Published launches in the months and classes shown. Launches come from the monthly table, daytime reports included; the two night figures from the nights table, without them.",
+    tables: ["monthly_by_class.json", "nights.json"],
+    code: ["site/src/summary/tileData.ts"],
+  },
+  {
+    figure: "Defense tab summary: shares reported destroyed",
+    shownOn: "Tab B",
+    method:
+      "Reported destroyed ÷ launches with an outcome over the months shown, with the monthly minimum count. The share over several classes and the missile-class shares stop at July 2026.",
+    tables: ["monthly_by_class.json"],
+    code: ["site/src/summary/tileData.ts"],
+  },
+  {
+    figure: "Alerts tab summary: alert hours in an average month",
+    shownOn: "Tab E",
+    method: "The mean of the monthly alert table’s hours over the months shown: all areas, then each compared area.",
+    tables: ["alert_hours_monthly.json"],
+    code: ["site/src/summary/tileData.ts"],
+  },
+  {
+    figure: "Chart headlines",
+    shownOn: "Tabs A, B and E",
+    method:
+      "Each is worked out from the rows its chart draws, so it follows the filters. The chart’s table gives those rows.",
+    tables: ["monthly_by_class.json", "nights.json", "alert_hours_monthly.json"],
+    code: ["site/src/summary/headlineText.ts"],
+  },
 ];

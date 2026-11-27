@@ -14,6 +14,7 @@ import { formatDate, nightTable } from "../data.ts";
 import { withTerms } from "../glossary/popover.ts";
 import type { ClassId } from "../theme/classStyles.ts";
 import { classFillScale, plotDefaults, titledScale } from "../theme/plot.ts";
+import { breakdownHeadline } from "../summary/headlineText.ts";
 import { nightContext } from "./nightContext.ts";
 import { barText, barValue, classLabels, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, footnote, strikeSource } from "./shared.ts";
 import { barIsRestricted, breakdownRows, type BreakdownRow } from "./strikeData.ts";
@@ -59,6 +60,8 @@ function spec(
   return {
     controls,
     title: `What was in one night: ${formatDate(date)}`,
+    // A guided stop is the compact view.
+    headline: compact ? undefined : breakdownHeadline(rows, classLabels),
     subtitle: sentence,
     howToRead:
       `Each bar is the published launches in one weapon class for the night ending ${formatDate(date)}. ` +
@@ -203,7 +206,7 @@ export function nightBreakdown(settings: NightBreakdownSettings): HTMLElement {
   const chart = liveChartFrame(spec(settings, controls));
   const places = create("div", "night-places-block");
   places.append(...placeList(settings.date, settings.classes));
-  const context = nightContext(settings.date);
+  const context = nightContext(settings.date, !settings.compact);
   // A guided stop shows what its caption describes first, so the year strip goes last there.
   wrapper.append(chart.element, ...(settings.compact ? [places, context.element] : [context.element, places]));
 

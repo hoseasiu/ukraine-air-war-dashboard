@@ -1,5 +1,5 @@
 /**
- * The wrapper every chart goes through. It adds a one-line subtitle, the
+ * The wrapper every chart goes through. It adds a headline, a one-line subtitle, the
  * data-quality badges, a text description, tooltips that work with a mouse,
  * touch or keyboard, the "Show as table" toggle, the collapsed "How to read"
  * notes and the source line.
@@ -37,7 +37,14 @@ export interface Drawing<Row> {
 }
 
 export interface ChartSpec<Row extends object> extends FlagInput<Row> {
+  /** The chart's name. */
   title: string;
+  /**
+   * What the chart shows, as its heading, with the name under it (#69). It must
+   * come from the chart's rows, so the badges cover its figures. Left out of
+   * guided stops and where there's nothing to say.
+   */
+  headline?: string;
   /** One short line under the title, always visible. */
   subtitle: string;
   /** How to read the chart, in the collapsed notes under it. */
@@ -246,11 +253,13 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
   const id = `chart-${++frameCount}`;
 
   const figure = create("figure", "chart-frame");
-  figure.setAttribute("aria-labelledby", `${id}-title`);
   figure.setAttribute("aria-describedby", `${id}-description`);
 
   const title = create("h3");
   title.id = `${id}-title`;
+  // The chart's name, under a headline that has taken its place as the heading.
+  const name = create("p", "chart-name");
+  name.id = `${id}-name`;
   const subtitle = create("p", "chart-subtitle");
   const description = create("p", "visually-hidden");
   description.id = `${id}-description`;
@@ -275,7 +284,6 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
   // Focusable so keyboard users can scroll it.
   tableView.tabIndex = 0;
   tableView.setAttribute("role", "region");
-  tableView.setAttribute("aria-labelledby", `${id}-title`);
   toggle.setAttribute("aria-controls", tableView.id);
 
   // One row, so the badges and the toggle take little height.
@@ -292,7 +300,7 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
   const source = create("div", "chart-source");
   source.append(initial.source);
 
-  figure.append(title, subtitle, description);
+  figure.append(title, name, subtitle, description);
   if (initial.controls) figure.append(initial.controls);
   figure.append(bar, empty, chartView, tableView, notes, source);
 
@@ -331,7 +339,14 @@ export function liveChartFrame<Row extends object>(initial: ChartSpec<Row>): Liv
     flags = combinedFlags(chartFlags(next), next.alsoDraws ? chartFlags(next.alsoDraws) : []);
     spec = next;
 
-    title.textContent = spec.title;
+    const headline = spec.rows.length ? spec.headline : undefined;
+    title.textContent = headline ?? spec.title;
+    name.textContent = headline ? spec.title : "";
+    name.hidden = !headline;
+    // The name comes first, so a chart is still found by it.
+    const labelledBy = headline ? `${name.id} ${id}-title` : `${id}-title`;
+    figure.setAttribute("aria-labelledby", labelledBy);
+    tableView.setAttribute("aria-labelledby", labelledBy);
     subtitle.replaceChildren(...withTerms(spec.subtitle));
     howToRead.replaceChildren(...withTerms(spec.howToRead));
     // Read out after the summary, so one chart's notes can be told from another's.

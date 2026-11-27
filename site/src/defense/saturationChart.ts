@@ -22,6 +22,7 @@ import {
   type FixedView,
 } from "../strikes/shared.ts";
 import type { Selection } from "../strikes/strikeData.ts";
+import { saturationHeadline } from "../summary/headlineText.ts";
 import { CLASS_IDS } from "../theme/classStyles.ts";
 import { svgElement } from "../theme/marks.ts";
 import { PERIOD_STYLES } from "../theme/periodStyles.ts";
@@ -137,6 +138,7 @@ export function saturationChart(selection: Selection, fixed?: FixedView, view: S
 
   const spec = (split: boolean): ChartSpec<SaturationRow> => ({
     title: "Salvo size and weapons not reported destroyed, night by night",
+    headline: fixed ? undefined : saturationHeadline(rows),
     subtitle: "A point for each night: weapons launched, against those not reported destroyed (not a count of hits).",
     howToRead:
       "Each point is one attack night: weapons launched across, and the number not reported destroyed up. That " +

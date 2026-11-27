@@ -3,7 +3,10 @@ import { alertsAndLaunches } from "./alerts/alertsAndLaunches.ts";
 import { assignStyles, comparisonAreas, DEFAULT_COMPARISON } from "./alerts/comparisonData.ts";
 import { oblastComparison } from "./alerts/oblastComparison.ts";
 import { attacksTab } from "./strikes/attacksTab.ts";
-import { alertAreas } from "./data.ts";
+import { alertAreas, alertMonthly, excludedAlertAreas } from "./data.ts";
+import { alertCredit } from "./alerts/notes.ts";
+import { alertTiles } from "./summary/tileData.ts";
+import { summaryTiles } from "./summary/tiles.ts";
 import { defenseTab } from "./defense/defenseTab.ts";
 import type { Filters } from "./filters/state.ts";
 import { methodsPage } from "./methods/methodsPage.ts";
@@ -85,6 +88,10 @@ export const PAGES: [Page, ...Page[]] = [
       const compared = comparisonAreas(filters.oblasts);
       comparisonStyles = assignStyles(compared, comparisonStyles);
       container.append(
+        ...summaryTiles(
+          alertTiles(alertMonthly, alertAreas, compared, excludedAlertAreas(), filters),
+          alertCredit(),
+        ),
         alertMap({
           from: filters.from,
           to: filters.to,

@@ -2,8 +2,10 @@
 import { rateTable } from "../data.ts";
 import type { Filters } from "../filters/state.ts";
 import { withTerms } from "../glossary/popover.ts";
-import { create } from "../strikes/shared.ts";
+import { create, strikeSource } from "../strikes/shared.ts";
 import { monthsShown } from "../strikes/strikeData.ts";
+import { defenseTiles } from "../summary/tileData.ts";
+import { summaryTiles } from "../summary/tiles.ts";
 import { eventPanels } from "./eventPanels.ts";
 import type { WindowDays } from "./eventWindowData.ts";
 import { interceptRateChart } from "./interceptChart.ts";
@@ -25,6 +27,7 @@ export function defenseTab(filters: Filters): HTMLElement {
   const section = create("div");
   if (monthsShown(rateTable, filters.from, filters.to).length) {
     section.append(
+      ...summaryTiles(defenseTiles(rateTable, filters), strikeSource()),
       interceptRateChart(filters),
       saturationChart(filters, undefined, {
         split: saturationSplit,

@@ -8,6 +8,7 @@ import { geoConicEqualArea, geoPath } from "d3-geo";
 import { formatMonth, liveChartFrame, type ChartSpec, type Drawing } from "../chart/chartFrame.ts";
 import { monthPeriod } from "../chart/flags.ts";
 import { alertAreas, alertMonthly, boundaries, excludedAlertAreas } from "../data.ts";
+import { mapHeadline } from "../summary/headlineText.ts";
 import { ALERT_BINS, alertBin } from "../theme/alertScale.ts";
 import type { FixedView } from "../strikes/shared.ts";
 import { svgElement } from "../theme/marks.ts";
@@ -232,11 +233,14 @@ function spec(
   highlight: readonly string[],
   parts: Pick<ChartSpec<MapRow>, "controls" | "scaleKey" | "footnote" | "source" | "emptyText" | "alsoDraws">,
   maxHeight = 600,
+  /** Off in a guided stop's view. */
+  headline = true,
 ): ChartSpec<MapRow> {
   const outlined = highlight.length ? " Oblasts chosen in the filters have a double outline." : "";
   return {
     ...parts,
     title: rows.length ? `${TITLE}, ${formatMonth(month)}` : TITLE,
+    headline: headline ? mapHeadline(rows) : undefined,
     subtitle: "Darker means more hours under alert, averaged over raions. Hatched means no figures, not no alerts.",
     howToRead:
       "Darker areas had more hours under air-raid alert in the month, averaged over the oblast’s raions, so it " +
@@ -336,7 +340,7 @@ export function alertMap(settings: AlertMapSettings): HTMLElement {
 
   const current = () => offered[index]!;
   const currentSpec = () =>
-    spec(current(), mapRows(alertMonthly, alertAreas, current()), settings.highlight, parts, settings.fixed?.height);
+    spec(current(), mapRows(alertMonthly, alertAreas, current()), settings.highlight, parts, settings.fixed?.height, !settings.fixed);
   // A guided stop's view has no sparkline: its height is for the map.
   const national = offered.map((month) => nationalMonth(alertMonthly, month));
   const sparkline = !settings.fixed && offered.length > 1 ? monthSparkline(national) : undefined;

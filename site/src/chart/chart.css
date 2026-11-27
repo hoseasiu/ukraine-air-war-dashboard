@@ -23,6 +23,12 @@
   font-size: var(--text-lg);
 }
 
+/* The chart's name, under its headline. */
+.chart-name {
+  margin: 0 0 var(--space-half);
+  font-weight: var(--weight-medium);
+}
+
 .chart-subtitle {
   margin: 0 0 var(--space-2);
   color: var(--ink-secondary);
