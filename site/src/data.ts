@@ -10,12 +10,16 @@ import modelClassesCsv from "../../data/reference/model_classes.csv?raw";
 import boundariesText from "../../data/reference/ukraine_admin1.geojson?raw";
 import oblastsCsv from "../../data/reference/oblasts.csv?raw";
 import weaponClassesCsv from "../../data/reference/weapon_classes.csv?raw";
+import weaponFiguresCsv from "../../data/reference/weapon_figures.csv?raw";
+import weaponMembersCsv from "../../data/reference/weapon_members.csv?raw";
+import weaponSourcesCsv from "../../data/reference/weapon_sources.csv?raw";
 import { parseAlertMonthly, parseBoundaries } from "./alerts/alertData.ts";
 import { parseAnnotations } from "./annotations/annotationData.ts";
 import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./buildData.ts";
 import { parseOutcomes, parseRates } from "./defense/defenseData.ts";
 import { parseManifest, parseReconciliation, parseTaxonomy } from "./methods/methodsData.ts";
 import { parseMonthly, parseNights } from "./strikes/strikeData.ts";
+import { parseWeapons } from "./weapons/weaponData.ts";
 
 export const buildInfo = parseBuildInfo(buildInfoJson);
 export const weaponClasses = parseWeaponClasses(weaponClassesCsv);
@@ -28,6 +32,8 @@ export const annotations = parseAnnotations(annotationsCsv);
 // Tab B's copies, which keep destroyed counts and rates.
 export const outcomeTable = parseOutcomes(nightsJson);
 export const rateTable = parseRates(monthlyByClassJson);
+// The weapon reference tables, for the primer and Data & Methods.
+export const weapons = parseWeapons(weaponMembersCsv, weaponFiguresCsv, weaponSourcesCsv);
 // For Data & Methods.
 export const taxonomy = parseTaxonomy(weaponClassesCsv, modelClassesCsv);
 export const manifest = parseManifest(manifestJson);

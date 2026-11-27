@@ -31,6 +31,7 @@ import {
   rateTable,
   reconciliation,
   taxonomy,
+  weapons,
 } from "../data.ts";
 import { MIN_BIN_NIGHTS, SIZE_BINS } from "../defense/defenseData.ts";
 import { WINDOW_DAYS } from "../defense/eventWindowData.ts";
@@ -42,6 +43,7 @@ import { barIsRestricted } from "../strikes/strikeData.ts";
 import { CHANGELOG } from "./changelog.ts";
 import { datesWithoutNight, type BucketId, type SourceFile } from "./methodsData.ts";
 import { TRACES } from "./traces.ts";
+import { primerHash, SOURCE_KINDS } from "../weapons/weaponData.ts";
 import "./methods.css";
 
 const REPO = "https://github.com/hoseasiu/ukraine-air-war-dashboard";
@@ -252,6 +254,31 @@ function sourcesSection(): Content[] {
       ]),
     ),
 
+    subheading("Weapon reference figures"),
+    paragraph(
+      seen,
+      "The ",
+      link(primerHash(), "weapon-class primer"),
+      " draws on tables compiled by hand, apart from the data build (",
+      repoFile("data/reference/weapons.md", "how to read them"),
+      "). A coding agent compiled them from the pages below, read with an automated tool that returns extracts, some " +
+        "of them summaries. The project owner approved the tables and their wording, which doesn’t mean that anyone " +
+        "has checked each figure against its page. The figures are facts taken from those pages, which belong to " +
+        "their publishers; no text or images are copied. Our choice of figures, notes and citations is under CC BY " +
+        "4.0. The table of members copies model strings from the strike dataset, so it is under CC BY-NC-SA 4.0.",
+    ),
+    table(
+      "Pages cited for the weapon reference figures",
+      ["Publisher", "Page", "Kind", "Page’s date", "Checked"],
+      weapons.sources.map((source) => [
+        text(source.publisher),
+        text(link(source.url, source.title)),
+        text(SOURCE_KINDS[source.kind]),
+        text(source.pageDate ? formatDate(source.pageDate) : "Not read"),
+        text(formatDate(source.checkedOn)),
+      ]),
+    ),
+
     subheading("This project’s own work"),
     paragraph(
       seen,
@@ -330,16 +357,14 @@ function rawRows(): Content[] {
 
 function traceSection(): Content[] {
   const seen = new Set<TermId>();
-  const files = (paths: string[], prefix = "") =>
-    paths.flatMap((path, index) => [
-      ...(index ? [create("br")] : []),
-      repoFile(`${prefix}${path}`, path.split("/").at(-1)!),
-    ]);
+  const files = (paths: string[]) =>
+    paths.flatMap((path, index) => [...(index ? [create("br")] : []), repoFile(path, path.split("/").at(-1)!)]);
   return [
     paragraph(
       seen,
-      "A number goes from a raw source file, through the Python build, into a table committed to the repository, " +
-        "and from there to the page. Each chart also has a “Show as table” button with the numbers it draws. To " +
+      "A count from the data goes from a raw source file, through the Python build, into a table committed to the " +
+        "repository, and from there to the page. The weapon primer’s figures are typed by hand into reference tables, " +
+        "each with its cited page. Each chart also has a “Show as table” button with the numbers it draws. To " +
         "trace one, find its figure here, then open the built table and the code that reads it. Column meanings are " +
         "in ",
       repoFile("data/README.md", "the data notes"),
@@ -347,12 +372,12 @@ function traceSection(): Content[] {
     ),
     table(
       "Where each figure comes from",
-      ["Figure", "Shown on", "How it’s worked out", "Built table", "Code"],
+      ["Figure", "Shown on", "How it’s worked out", "Table", "Code"],
       TRACES.map((trace) => [
         text(trace.figure),
         text(trace.shownOn),
         text(trace.method),
-        text(...files(trace.tables, "data/processed/")),
+        text(...files(trace.tables.map((name) => `data/${trace.handCompiled ? "reference" : "processed"}/${name}`))),
         text(...files(trace.code)),
       ]),
     ),
@@ -541,6 +566,12 @@ function taxonomySection(): Content[] {
       withTerms("Mixed rows hold many missiles. A single class’s monthly launches and intercept rate don’t cover every launch of that kind."),
     ]),
     classKey(),
+    paragraph(
+      seen,
+      "What the members of each class are, with cited figures, is in the ",
+      link(primerHash(), "weapon-class primer"),
+      ".",
+    ),
   ];
 }
 
@@ -589,6 +620,15 @@ function gapsSection(): Content[] {
       ["Donetsk oblast’s raions include areas under occupation, and we can’t tell how those alerts relate to what residents there hear."],
       ["The data has no yellow or red alert levels and can’t separate drone alerts from missile alerts."],
       ["Gaps in a single area’s alerts can’t be detected by our checks. A zero means the file lists no alert, not that none was missed."],
+    ]),
+
+    subheading("Weapon reference figures"),
+    bullets([
+      ["They are published estimates and claims, not measurements, and some come from a party to the war. The War & Sanctions portal belongs to Ukraine’s Defence Intelligence; its figures haven’t been independently checked."],
+      ["Most haven’t been re-read against their pages since an automated tool collected them."],
+      ["Some statements and figures rest only on Wikipedia, and the primer says which. These are the weakest."],
+      ["Where no figure we could cite was found, the primer says “Unknown”. That doesn’t mean none is published, and it never means zero. Little or nothing is known here about unidentified types and the other drones in the Shahed count."],
+      ["A span covers different versions, or sources that disagree. It isn’t a likely range."],
     ]),
 
     subheading("Definitions of terms"),

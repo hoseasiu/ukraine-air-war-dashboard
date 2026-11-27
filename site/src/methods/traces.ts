@@ -11,8 +11,10 @@ export interface Trace {
   shownOn: string;
   /** How it's worked out from the built file. */
   method: string;
-  /** Files in data/processed/. */
+  /** Files in data/processed/, or in data/reference/ if handCompiled. */
   tables: string[];
+  /** True for figures typed by hand into reference tables, not built from the data. */
+  handCompiled?: true;
   /** Files that work it out, as paths from the repo root. */
   code: string[];
 }
@@ -150,6 +152,15 @@ export const TRACES: readonly Trace[] = [
     method: "The mean of the monthly alert table’s hours over the months shown: all areas, then each compared area.",
     tables: ["alert_hours_monthly.json"],
     code: ["site/src/summary/tileData.ts"],
+  },
+  {
+    figure: "Weapon primer: speed categories, sizes, warheads, ranges and speeds",
+    shownOn: "Weapon classes",
+    method:
+      "Copied by hand from the cited pages. Each figure is the widest span of the cited rows in one unit, and each row can be opened with its source. Nothing comes from the strike data except the names in each class.",
+    tables: ["weapon_members.csv", "weapon_figures.csv", "weapon_sources.csv", "model_classes.csv"],
+    handCompiled: true,
+    code: ["site/src/weapons/weaponData.ts"],
   },
   {
     figure: "Chart headlines",

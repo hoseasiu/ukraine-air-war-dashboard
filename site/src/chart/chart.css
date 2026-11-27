@@ -112,6 +112,18 @@
   gap: 0.4rem;
 }
 
+/* Under the legend, to the weapon primer. */
+.primer-link {
+  margin: var(--space-half) 0 0;
+  font-size: var(--text-sm);
+}
+
+.primer-link a {
+  display: inline-block;
+  min-height: 24px;
+  color: var(--accent);
+}
+
 .chart-scroll {
   margin-top: 0.75rem;
   overflow-x: auto;

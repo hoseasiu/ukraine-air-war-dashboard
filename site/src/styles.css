@@ -160,6 +160,8 @@ body:not(:has(.guided))
     .event-details :is(p, li),
     .methods p,
     .methods > section > ul,
+    .primer p,
+    .primer-about li,
     .gap-notes dd,
     .glossary dd
   ) {

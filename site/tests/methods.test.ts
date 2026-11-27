@@ -69,7 +69,8 @@ test("dates without a night are counted over the whole strike span", () => {
 test("every trace names built tables and code that exist", () => {
   for (const trace of TRACES) {
     assert.ok(trace.tables.length && trace.code.length, trace.figure);
-    for (const table of trace.tables) assert.ok(existsSync(new URL(`../../data/processed/${table}`, import.meta.url)), table);
+    const folder = trace.handCompiled ? "reference" : "processed";
+    for (const table of trace.tables) assert.ok(existsSync(new URL(`../../data/${folder}/${table}`, import.meta.url)), table);
     for (const path of trace.code) assert.ok(existsSync(new URL(`../../${path}`, import.meta.url)), path);
   }
 });

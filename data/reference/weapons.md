@@ -1,6 +1,6 @@
 # Weapon reference data
 
-**Status: the owner approved the tables and their wording on Nov 27, 2026 ([#86](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/86)).** A coding agent compiled them and wrote the wording. Changing a figure or the wording needs the owner's review again. The approval doesn't mean anyone has checked each figure against its page (see [Sources](#sources)). Nothing here is on the site yet.
+**Status: the owner approved the tables and their wording on Nov 27, 2026 ([#86](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/86)).** A coding agent compiled them and wrote the wording. Changing a figure or the wording needs the owner's review again. The approval doesn't mean anyone has checked each figure against its page (see [Sources](#sources)). The site's [weapon primer](../../site/src/weapons/primerPage.ts) (#87) shows these tables. It repeats parts of [Reading the figures](#reading-the-figures) and the wording below, so change them together.
 
 What the members of the five weapon classes are, with cited figures. It's background for teaching: published nominal figures about types of weapon, with nothing about particular launches, places or times.
 
@@ -105,7 +105,7 @@ Spans of every cited row. † as above.
 
 <!-- end summary -->
 
-## Draft wording for the primer
+## Wording for the primer
 
 Approved with the tables.
 
