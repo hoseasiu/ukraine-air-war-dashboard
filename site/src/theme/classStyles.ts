@@ -11,7 +11,7 @@
  * changing a color, rerun the validator with the colors in the order below,
  * with `--pairs adjacent` and with `--pairs all`:
  *
- *   node validate_palette.js "#4a8bf9,#c4863d,#3227d8,#f43aba,#466e1e,#893d79" --mode light --surface "#ffffff" --pairs all
+ *   node validate_palette.js "#5d97d0,#cb8321,#d0030b,#5d32a7,#08723e,#f1579d" --mode light --surface "#ffffff" --pairs all
  *
  * Excluded classes (other UAVs, bombs) aren't charted, so they have no style.
  */
@@ -31,12 +31,12 @@ export interface ClassStyle {
 
 /** Key order is the stacking and legend order. */
 export const CLASS_STYLES = {
-  shahed_drone: { color: "#4a8bf9", pattern: "solid", symbol: "circle", dash: "none" },
-  cruise: { color: "#c4863d", pattern: "diagonal", symbol: "square", dash: "10 4" },
-  ballistic: { color: "#3227d8", pattern: "horizontal", symbol: "triangle", dash: "3 3" },
-  aeroballistic_hypersonic: { color: "#f43aba", pattern: "dots", symbol: "diamond", dash: "10 3 3 3" },
-  antiship_other: { color: "#466e1e", pattern: "vertical", symbol: "star", dash: "16 5" },
-  mixed: { color: "#893d79", pattern: "crosshatch", symbol: "cross", dash: "10 3 3 3 3 3" },
+  shahed_drone: { color: "#5d97d0", pattern: "solid", symbol: "circle", dash: "none" },
+  cruise: { color: "#cb8321", pattern: "diagonal", symbol: "square", dash: "10 4" },
+  ballistic: { color: "#d0030b", pattern: "horizontal", symbol: "triangle", dash: "3 3" },
+  aeroballistic_hypersonic: { color: "#5d32a7", pattern: "dots", symbol: "diamond", dash: "10 3 3 3" },
+  antiship_other: { color: "#08723e", pattern: "vertical", symbol: "star", dash: "16 5" },
+  mixed: { color: "#f1579d", pattern: "crosshatch", symbol: "cross", dash: "10 3 3 3 3 3" },
 } as const satisfies Record<string, ClassStyle>;
 
 export type ClassId = keyof typeof CLASS_STYLES;
