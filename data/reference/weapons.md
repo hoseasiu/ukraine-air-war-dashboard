@@ -1,6 +1,6 @@
 # Weapon reference data
 
-**Status: draft, not approved ([#86](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/86)).** A coding agent compiled these tables and wrote their wording. Nothing here is on the site yet. The owner approves the figures and the wording before the primer (#87) shows them.
+**Status: the owner approved the tables and their wording on Nov 27, 2026 ([#86](https://github.com/hoseasiu/ukraine-air-war-dashboard/issues/86)).** A coding agent compiled them and wrote the wording. Changing a figure or the wording needs the owner's review again. The approval doesn't mean anyone has checked each figure against its page (see [Sources](#sources)). Nothing here is on the site yet.
 
 What the members of the five weapon classes are, with cited figures. It's background for teaching: published nominal figures about types of weapon, with nothing about particular launches, places or times.
 
@@ -107,14 +107,14 @@ Spans of every cited row. † as above.
 
 ## Draft wording for the primer
 
-Not approved. #87 uses these only once the owner approves them.
+Approved with the tables.
 
 - **About the figures:** "These are published estimates and claims, not measurements. A span covers different versions, or sources that disagree. “Unknown” means we found no figure we could cite."
 - **Mixed:** "“Mixed” is a way of reporting, not a type of weapon. It's one count that covers weapons from two or more classes. It counts toward totals and is never split between classes."
 - **Decoys:** "The source counts decoy and imitator drones together with Shahed-type drones. This data can't separate them, so it can't show how many of the drones counted were decoys."
 - **Left out:** "Reconnaissance, tactical and unidentified drones, including Lancet, and bombs aren't in totals, massive nights or intercept rates."
 
-The names, roles, launch platforms and notes in `weapon_members.csv`, and the notes in `weapon_figures.csv`, are drafts too.
+The approval also covers the names, roles, launch platforms and notes in `weapon_members.csv`, and the notes in `weapon_figures.csv`.
 
 ## What these sources cover in the glossary
 
