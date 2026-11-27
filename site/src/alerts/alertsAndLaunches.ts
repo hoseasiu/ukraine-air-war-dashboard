@@ -12,6 +12,7 @@ import { monthBand } from "../chart/periodBandMarks.ts";
 import { RAION_BAND, RESTRICTED_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { alertMonthly, monthlyTable, weaponClasses } from "../data.ts";
+import { alertLaunchHeadline } from "../summary/headlineText.ts";
 import { COMBINED_LAUNCH_FILL } from "../theme/areaStyles.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
 import { classFill } from "../theme/marks.ts";
@@ -206,6 +207,7 @@ export function alertsAndLaunches(settings: AlertLaunchSettings): HTMLElement {
 
   return chartFrame<AlertLaunchRow>({
     title: `Launches and alert hours by month (launches: ${chosen})`,
+    headline: alertLaunchHeadline(rows),
     subtitle: "Reported launches above mean alert hours. Side by side doesn’t show that one caused the other.",
     howToRead:
       "The top panel shows launches reported across the country, and the bottom panel the hours under air-raid " +

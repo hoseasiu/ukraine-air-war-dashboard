@@ -341,7 +341,13 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **Raion band:** on the alert-hour line charts, labeled “move to raion alerts”, from January to November 2025, the months in which the audit found areas switching. The badge still applies to every month from January 2025.
   - **Alerts map:** on wide screens the tab now puts the map beside its slider and badges, as stop 9 does, so it starts on the first screen at 1280 × 720.
 
+- Summary tiles and chart headlines (#69, Nov 26, 2026; drafted and built by the coding agent, **not approved by the owner**; see Open):
+  - **Tiles:** A has weapons launched, the median night and the largest night. B has the share reported destroyed for the classes shown, Shahed-type drones, cruise and ballistic missiles. E has an average month's alert hours for the mean area and each compared area. They follow the months and classes shown, and on E the oblast picker.
+  - **Tile rules:** the share over several classes stops at July 2026 (#9), as missile-class shares do (#5). A share needs the monthly minimum of launches with an outcome, so with every month shown the all-class share matches stop 1's. There's no massive-night tile, because the definition fixes the share of nights it marks.
+  - **Headlines:** worked out from each chart's rows, not fixed text. The chart's name moves under the headline and the earlier one-line subtitle stays, since some carry caveats. Guided stops are unchanged. A chart with nothing to say keeps its name as its heading.
+
 **Open**
+- Summary tiles and chart headlines (#69): does the owner approve the tile choices and the headline wording? The draft is on #69.
 - Terms of the sources behind the alert data (#26): the dataset is MIT, but it's collected from Telegram channels, including a volunteer one (eTryvoga), whose terms we don't know ([data audit](data-audit.md#alerts-license)). The site uses only the official-channel file.
 - Sources for the glossary (#24). The owner approved the wording (see Settled) without answering this separately: the general descriptions of weapons, EW and decoys in [terms.ts](../site/src/glossary/terms.ts) have no cited source. Suggested: decide before shipping whether they need citations (§9 Phase 5 asks that numbers trace to a source), alongside the Data & Methods page (#23).
 - Intercept-rate months with too few launches (#65): the issue asks for faded or hollow points rather than only gaps. Under 10 launches with an outcome there is no `intercept_rate` (#5), so for now they are hollow markers in a row under each panel, at no rate height. Showing a faded point at its rate instead would change that rule: the pipeline would have to publish those rates.

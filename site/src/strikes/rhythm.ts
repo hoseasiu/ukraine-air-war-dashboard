@@ -8,6 +8,7 @@ import { nightTable } from "../data.ts";
 import { svgElement } from "../theme/marks.ts";
 import { NIGHT_BINS, nightBin } from "../theme/nightScale.ts";
 import { plotDefaults, titledScale } from "../theme/plot.ts";
+import { calendarHeadline, gapHeadline, weekdayHeadline } from "../summary/headlineText.ts";
 import { barValue, chartSvg, count, create, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, footnote, strikeSource, svgText, yearBars, type FixedView } from "./shared.ts";
 import {
   allNights,
@@ -88,6 +89,7 @@ export function nightCalendar(selection: Selection, options: { fixed?: boolean }
 
   return chartFrame<CalendarRow>({
     title: "Calendar of attack nights",
+    headline: options.fixed ? undefined : calendarHeadline(rows, nightTable, months),
     subtitle: `A square for each date: darker means more weapons launched that night. ${yearBars(rows.map((row) => row.date))}`,
     howToRead:
       "Each square is a date, in weeks running left to right from Monday at the top, with a line between months. " +
@@ -223,6 +225,7 @@ export function weekdayChart(selection: Selection, options: { fixed?: FixedView 
   const sizeLabel = subset ? "Median launched per night, classes shown" : "Median launched per night";
   return chartFrame<WeekdayRow>({
     title: "Day of the week",
+    headline: options.fixed ? undefined : weekdayHeadline(rows),
     subtitle: `Nights grouped by the weekday they end on. ${yearBars(
       nightsInRange(allNights(nightTable, selection.classes), selection)
         .filter((night) => night.size !== null)
@@ -311,6 +314,7 @@ export function massiveGapChart(selection: Pick<Selection, "from" | "to">): HTML
   const gaps = rows.flatMap((row) => (row.gap_days === null ? [] : [row.gap_days]));
   return chartFrame<GapRow>({
     title: "Days between massive nights",
+    headline: gapHeadline(rows),
     subtitle: `Days from each massive night back to the one before. ${yearBars(rows.map((row) => row.date))}`,
     howToRead:
       "Each point is a massive night, placed by its date. Its height is the number of days since the massive night " +

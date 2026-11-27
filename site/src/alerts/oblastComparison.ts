@@ -11,6 +11,7 @@ import { monthBand } from "../chart/periodBandMarks.ts";
 import { bandMonths, RAION_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { alertAreas, alertMonthly, excludedAlertAreas } from "../data.ts";
+import { comparisonHeadline } from "../summary/headlineText.ts";
 import { AREA_STYLES } from "../theme/areaStyles.ts";
 import { areaSymbolPath, svgElement } from "../theme/marks.ts";
 import { plotDefaults, titledScale } from "../theme/plot.ts";
@@ -157,6 +158,7 @@ export function oblastComparison(settings: ComparisonSettings): HTMLElement {
 
   return chartFrame<ComparisonRow>({
     title: `Alert hours by month: ${names}`,
+    headline: settings.fixed ? undefined : comparisonHeadline(rows),
     subtitle: "Hours under air-raid alert each month, averaged over each oblast’s raions.",
     howToRead:
       "Each line is one oblast’s hours under air-raid alert in each month, on a shared scale. For an oblast, " +

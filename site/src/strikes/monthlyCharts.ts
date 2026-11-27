@@ -10,6 +10,7 @@ import { placeMarkers } from "../annotations/markerLayout.ts";
 import { annotations, formatDate, monthlyTable } from "../data.ts";
 import { CLASS_IDS, type ClassId } from "../theme/classStyles.ts";
 import { classFillScale, plotDefaults, titledScale } from "../theme/plot.ts";
+import { mixHeadline, monthlyHeadline } from "../summary/headlineText.ts";
 import { chartSvg, classLabels, create, monthAxisTicks, percent, footnote, strikeSource, svgText, type FixedView } from "./shared.ts";
 import { launchPanels, monthRows, monthsShown, type MonthChartRow, type Selection } from "./strikeData.ts";
 
@@ -127,6 +128,7 @@ export function monthlyLaunchChart(selection: Selection, options: MonthlyChartOp
     const markerSpace = markers.length ? (Math.max(...markers.map((marker) => marker.row)) + 1) * MARKER_ROW : 0;
     return {
       title: only ? `Monthly launches: ${only}` : "Monthly launches by weapon class",
+      headline: options.fixed ? undefined : monthlyHeadline(rows, split),
       subtitle: split
         ? "Published launches in each month: drones above, missile and mixed classes below. Each panel has its own scale."
         : only
@@ -262,6 +264,7 @@ export function classMixChart(selection: Selection): HTMLElement {
   const months = monthsShown(monthlyTable, selection.from, selection.to);
   const spec: ChartSpec<MonthChartRow> = {
     title: "Class mix over time",
+    headline: mixHeadline(rows, monthlyTable, months, classLabels),
     subtitle: "Each class’s share of the month’s published launches. Each panel has its own scale.",
     howToRead:
       "One small panel for each weapon class, all over the same months: its share of each month’s published launches. " +

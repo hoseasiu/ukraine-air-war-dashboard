@@ -6,7 +6,9 @@ import { classMixChart, monthlyLaunchChart } from "./monthlyCharts.ts";
 import { nightBreakdown } from "./nightBreakdown.ts";
 import { massiveGapChart, nightCalendar, weekdayChart } from "./rhythm.ts";
 import { salvoHistogram } from "./salvoHistogram.ts";
-import { create } from "./shared.ts";
+import { create, strikeSource } from "./shared.ts";
+import { attackTiles } from "../summary/tileData.ts";
+import { summaryTiles } from "../summary/tiles.ts";
 import { largestNight, massiveDates, monthsShown } from "./strikeData.ts";
 
 /** The night chosen for the breakdown, kept while the filters redraw the page. It isn't a filter. */
@@ -44,6 +46,7 @@ export function attacksTab(filters: Filters): HTMLElement {
     return section;
   }
   section.append(
+    ...summaryTiles(attackTiles(monthlyTable, nightTable, filters), strikeSource()),
     monthlyLaunchChart(filters, {
       events: showEvents,
       onEventsChange: (events) => {

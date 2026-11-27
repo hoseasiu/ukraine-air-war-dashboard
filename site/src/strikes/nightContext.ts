@@ -6,6 +6,7 @@ import { RESTRICTED_BAND } from "../chart/periodBands.ts";
 import { plotTargets } from "../chart/plotTargets.ts";
 import { formatDate, nightTable } from "../data.ts";
 import { plotDefaults } from "../theme/plot.ts";
+import { nightContextHeadline } from "../summary/headlineText.ts";
 import { barText, barValue, count, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, footnote, strikeSource } from "./shared.ts";
 import { yearNightRows, type YearNightRow } from "./strikeData.ts";
 
@@ -13,7 +14,7 @@ const HEIGHT = 164;
 
 const day = (date: string) => new Date(`${date}T00:00:00Z`);
 
-function spec(date: string): ChartSpec<YearNightRow> {
+function spec(date: string, headline: boolean): ChartSpec<YearNightRow> {
   const rows = yearNightRows(nightTable, date);
   const year = date.slice(0, 4);
   const chosen = rows.find((row) => row.date === date);
@@ -21,6 +22,7 @@ function spec(date: string): ChartSpec<YearNightRow> {
   const bar = barText(chosen.massive_above);
   return {
     title: `That night among ${year}’s nights`,
+    headline: headline ? nightContextHeadline(rows, date) : undefined,
     subtitle: `The thick bar is the chosen night. The dashed line is ${year}’s massive bar: more than ${bar}.`,
     howToRead:
       `Each thin bar is a night in ${year}, placed by its date; its height is the weapons launched. The thick black ` +
@@ -103,7 +105,7 @@ function spec(date: string): ChartSpec<YearNightRow> {
   };
 }
 
-export function nightContext(date: string): { element: HTMLElement; update(date: string): void } {
-  const chart = liveChartFrame(spec(date));
-  return { element: chart.element, update: (next) => chart.update(spec(next)) };
+export function nightContext(date: string, headline: boolean): { element: HTMLElement; update(date: string): void } {
+  const chart = liveChartFrame(spec(date, headline));
+  return { element: chart.element, update: (next) => chart.update(spec(next, headline)) };
 }

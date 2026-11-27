@@ -5,6 +5,7 @@
 import { chartFrame, type Target } from "../chart/chartFrame.ts";
 import { formatDate, nightTable } from "../data.ts";
 import { svgElement } from "../theme/marks.ts";
+import { salvoHeadline } from "../summary/headlineText.ts";
 import { barText, barValue, chartSvg, count, MASSIVE_DEFINITION, RESTRICTED_BAR_NOTE, NOTHING_SHOWN, create, footnote, strikeSource, svgText, type FixedView } from "./shared.ts";
 import { isSubset, SIZE_BIN_WIDTH, sizeBins, sizeCap, type Selection, type SizeBinRow } from "./strikeData.ts";
 
@@ -71,6 +72,7 @@ export function salvoHistogram(selection: Selection, options: { fixed?: FixedVie
 
   return chartFrame<SizeBinRow>({
     title: "How big is a night? Salvo sizes by year",
+    headline: options.fixed ? undefined : salvoHeadline(rows),
     subtitle: "Each year’s nights, counted by the number of weapons launched.",
     howToRead:
       `Each row’s bars count one year’s nights by weapons launched, in steps of ${SIZE_BIN_WIDTH}; nights of ${cap} ` +
