@@ -1,0 +1,55 @@
+/* The font, type scale, spacing and surfaces every stylesheet shares. */
+
+/*
+ * Source Sans 3 (fonts/OFL.txt), served with the site. The latin subset only:
+ * other characters, such as Cyrillic, use the system font. pipeline/budget.py
+ * counts this file. Its digits are all one width unless a style asks otherwise.
+ */
+@font-face {
+  font-family: "Source Sans 3 Variable";
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url("./fonts/source-sans-3-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --font-sans: "Source Sans 3 Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Type scale, relative to the root size in styles.css. */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+
+  --weight-medium: 600;
+  --weight-bold: 700;
+
+  /* Spacing in steps of 8px, with a half step for tight spots. */
+  --space-half: 4px;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-6: 48px;
+
+  /*
+   * Prose line length. A ch is the width of "0", which is wider than the average
+   * letter, so this holds about 75 characters.
+   */
+  --measure: 62ch;
+  /* The page column, and the narrower cap for charts that a wide axis would leave mostly empty. */
+  --page-width: min(72rem, 1280px);
+  --narrow-chart-width: 960px;
+
+  --radius: 8px;
+
+  /* The calm tint behind data-quality flags. */
+  --flag-surface: #edf2f8;
+  --flag-border: #bccbdd;
+  --muted-surface: #f3f3f3;
+}

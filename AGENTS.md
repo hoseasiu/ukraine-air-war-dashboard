@@ -40,7 +40,7 @@ pipeline/audit/   rerunnable audit scripts (read raw data, write nothing)
 pipeline/reference/ rebuilds generated reference files
 tests/            pipeline tests
 site/             Vite + TypeScript front end
-site/src/theme/   weapon-class styles (the only class color definitions), oblast line styles, patterns, Plot defaults, and the calendar and alert-hours scales
+site/src/theme/   weapon-class styles (the only class color definitions), oblast line styles, patterns, Plot defaults, the calendar and alert-hours scales, the type and spacing tokens, and the font
 site/src/chart/   the shared chart frame, its data-quality flag rules, each tab's data-notes strip and the shaded periods
 site/src/alerts/  tab E charts (alert-hours map, oblast comparison, alerts and launches) and the checks on their data
 site/src/annotations/ reading the event annotations (only verified, owner-approved rows), and numbered event markers with their citations
@@ -63,9 +63,9 @@ Pipeline commands run from the repo root, in PowerShell or on Linux. `uv` instal
 
 | Command | What it does |
 |---|---|
-| `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json`, `build_info.json`, the [alert tables](data/README.md#alert-tables) and the [strike tables](data/README.md#strike-tables). Fails if the site's data would pass 2 MB, and ends by printing the [summary report](data/README.md#build). |
+| `uv run python -m pipeline` | The data build, in one command. Needs the two Kaggle CSVs in `data/raw/`; downloads the alert files from the pinned commit if they're missing. Writes `data/processed/manifest.json`, `build_info.json`, the [alert tables](data/README.md#alert-tables) and the [strike tables](data/README.md#strike-tables). Fails if the site's data and fonts would pass 2 MB, and ends by printing the [summary report](data/README.md#build). |
 | `uv run python -m pipeline fetch` | Only downloads and verifies the pinned alert files. |
-| `uv run pytest` | Runs everything in `tests/`: the pipeline tests on made-up inputs, checks on the real raw files (including that a build reproduces `data/processed/`; skipped unless all four CSVs are in `data/raw/`, and `-rs` says so), the 2 MB data budget, checks on the committed alert and strike tables, the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. CI runs it, without the real files. |
+| `uv run pytest` | Runs everything in `tests/`: the pipeline tests on made-up inputs, checks on the real raw files (including that a build reproduces `data/processed/`; skipped unless all four CSVs are in `data/raw/`, and `-rs` says so), the 2 MB budget for data and fonts, checks on the committed alert and strike tables, the checks on `data/reference/annotations.csv` ([columns and display rule](data/reference/annotations.md)), the [oblast gazetteer](data/reference/gazetteer.md) tables and the boundary file. CI runs it, without the real files. |
 | `uv run ruff check .` | Lints the Python, apart from `.github/`. CI runs it. |
 | `uv run pipeline/audit/kaggle.py` | Prints the Kaggle audit figures quoted in `docs/data-audit.md`. Needs `data/raw/`. |
 | `uv run pipeline/audit/alerts.py` | Prints the alerts audit figures quoted in `docs/data-audit.md`. Needs the two alert CSVs in `data/raw/`. |
@@ -103,6 +103,9 @@ Site tests cover only data and logic (the list above), not rendering. To see the
 - The filter bar sticks to the top of the window and its panel opens over the page ([disclosure.ts](site/src/filters/disclosure.ts)). Chart tooltips must keep a higher `z-index` than the bar. [filters.css](site/src/filters/filters.css) adds scroll padding so a focused element isn't hidden behind it, and cancels it for the bar's own controls. The two date sliders take no pointer events; [dateRange.ts](site/src/filters/dateRange.ts) handles the pointer.
 - Text that may use a defined term goes through `withTerms()` ([popover.ts](site/src/glossary/popover.ts)), which adds the popovers; page paragraphs, guided captions, class labels and the chart frame already do. Don't use it inside a link, button or heading. Definitions and match patterns are in [terms.ts](site/src/glossary/terms.ts), and discussion prompts in [prompts.ts](site/src/teaching/prompts.ts).
 - Data is imported at build time through `site/src/data.ts`, never fetched.
+- Take type sizes, weights, spacing (8 px steps), the prose line length and the flag tint from [tokens.css](site/src/theme/tokens.css). A new kind of prose block goes in the line-length list in [styles.css](site/src/styles.css), which leaves guided mode out. Each chart frame is a card, except on a guided stop. A chart that a full-width axis would leave mostly empty is capped at `--narrow-chart-width`.
+- The font is Source Sans 3's latin subset in `site/src/theme/fonts/`; other characters use the system font. A new font file goes in `SITE_FONT_FILES` in [budget.py](pipeline/budget.py), with its license in [LICENSING.md](LICENSING.md) and [licenses.ts](site/licenses.ts).
+- Give a titled axis its scale through `titledScale()` ([plot.ts](site/src/theme/plot.ts)), which drops Plot's arrow.
 - Charts take colors, patterns, symbols and dashes from `site/src/theme/`. Dashes aren't a Plot scale, so line charts set them per class from `CLASS_STYLES`.
 - Every chart goes through `chartFrame()` ([chartFrame.ts](site/src/chart/chartFrame.ts); example: [chartSample.ts](site/src/sample/chartSample.ts)). Declare each number the chart draws as a column with a `measure`, and say what dates it `coverage`s. The frame derives the badges from these; don't add or hide them by hand. A new kind of number or caveat goes in [flags.ts](site/src/chart/flags.ts).
 - Each chart gives a one-line `subtitle`, a `howToRead` and a `source`. The frame shows the subtitle and source, and collapses `howToRead` with the `footnote` (methods). Anything a reader must see without opening that goes elsewhere: a caveat becomes a badge, a massive bar goes in the subtitle or drawing, and why a chart is empty goes in `emptyText`.
@@ -190,5 +193,5 @@ If you find new work, open an issue. Record each dependency as a GitHub "blocked
 - Pipeline: tests cover reconciliation with raw totals, unmapped model strings and non-negative alert durations. Fail loudly on new, unmapped values.
 - CI has no raw files. After changing the pipeline or the data, run `uv run pytest -rs` with them in `data/raw/` and check that nothing is skipped.
 - Site: WCAG 2.2 AA, full keyboard access, a table alternative for every chart, and reduced motion respected. Light theme by default, readable on a projector.
-- Total data the site loads stays under 2 MB. [budget.py](pipeline/budget.py) checks it; list a newly imported reference file there.
+- Total data and fonts the site loads stay under 2 MB. [budget.py](pipeline/budget.py) checks it; list a newly imported reference file or font there.
 - Every number shown traces to a source, and every annotation has a citation.

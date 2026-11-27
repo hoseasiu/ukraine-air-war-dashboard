@@ -1,4 +1,6 @@
 /* Light, high-contrast, projector-first. Weapon-class colors live in theme/classStyles.ts. */
+@import "./theme/tokens.css";
+
 :root {
   color-scheme: light;
   --surface: #ffffff;
@@ -9,9 +11,9 @@
   --accent: #0b4f9c;
   --stop-controls-height: 4rem;
 
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  /* 18px at the default browser setting, growing on large screens. */
-  font-size: clamp(112.5%, 0.75rem + 0.5vw, 137.5%);
+  font-family: var(--font-sans);
+  /* 19px at the default browser setting, growing on large screens. */
+  font-size: clamp(118.75%, 0.8rem + 0.5vw, 143.75%);
   line-height: 1.5;
 }
 
@@ -28,9 +30,14 @@ body {
 header,
 main,
 footer {
-  max-width: 72rem;
+  max-width: var(--page-width);
   margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 var(--space-3);
+}
+
+/* Guided stops size their charts to the screen, so they keep the wider column. */
+body:has(.guided) :is(header, main, footer) {
+  max-width: 72rem;
 }
 
 .masthead {
@@ -38,28 +45,47 @@ footer {
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0 1.5rem;
+  gap: 0 var(--space-3);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: var(--weight-bold);
+  line-height: 1.2;
+  text-wrap: balance;
 }
 
 h1 {
-  font-size: 1.4rem;
-  margin: 0.75rem 0 0.25rem;
+  font-size: var(--text-xl);
+  margin: var(--space-2) 0 var(--space-1);
 }
 
 h2 {
-  font-size: 1.75rem;
-  line-height: 1.25;
+  font-size: var(--text-2xl);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+h3 {
+  font-size: var(--text-lg);
+}
+
+h4 {
+  font-size: var(--text-md);
 }
 
 .snapshot {
   margin: 0;
   color: var(--ink-secondary);
+  font-size: var(--text-sm);
 }
 
 nav ul {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 0.25rem;
+  align-items: center;
+  gap: 0 var(--space-half);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -68,10 +94,12 @@ nav ul {
 
 nav a {
   display: block;
-  padding: 0.6rem 1rem;
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
   color: var(--accent);
   text-decoration: none;
-  border-bottom: 0.3rem solid transparent;
+  border-bottom: 4px solid transparent;
 }
 
 nav a:hover {
@@ -81,8 +109,61 @@ nav a:hover {
 /* Weight and a bar mark the current tab, so it doesn't depend on color. */
 nav a[aria-current="page"] {
   color: var(--ink);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   border-bottom-color: var(--ink);
+}
+
+/* Guided mode is the lecture's way in: a filled button, set apart from the tabs. */
+.nav-primary {
+  margin-left: auto;
+}
+
+nav .nav-primary a {
+  margin-block: var(--space-half);
+  padding-inline: var(--space-3);
+  color: var(--surface);
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+}
+
+nav .nav-primary a::before {
+  content: "\25B6\00A0\00A0" / "";
+  font-size: 0.75em;
+}
+
+/* A dark fill and an underline mark it as current, so it doesn't depend on color. */
+nav .nav-primary a[aria-current="page"] {
+  color: var(--surface);
+  background: var(--ink);
+  border-color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+/* Prose is capped for reading. Charts and tables take the width they need. */
+/* Guided mode sets its own line lengths, in guided.css and above. */
+body:not(:has(.guided))
+  :is(
+    main > p,
+    main > div > p,
+    main > div > div > p,
+    .prompt-list,
+    footer p,
+    .chart-subtitle,
+    .chart-notes > p,
+    .chart-source p,
+    .chart-footnote p,
+    .filter-notes p,
+    .data-notes dd,
+    .night-places-block p,
+    .event-details :is(p, li),
+    .methods p,
+    .methods > section > ul,
+    .gap-notes dd,
+    .glossary dd
+  ) {
+  max-width: var(--measure);
 }
 
 :focus-visible {
@@ -118,13 +199,18 @@ table {
 
 caption {
   text-align: left;
-  font-weight: 700;
-  padding: 0.5rem 0;
+  font-weight: var(--weight-bold);
+  padding: var(--space-1) 0;
+}
+
+td {
+  font-variant-numeric: tabular-nums;
 }
 
 th,
 td {
-  padding: 0.35rem 0.75rem;
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
+  line-height: 1.35;
   text-align: left;
   vertical-align: middle;
   border-bottom: 1px solid var(--rule-faint);
@@ -216,18 +302,21 @@ body:has(.guided) {
   white-space: nowrap;
 }
 
+/* One quiet line. It stays until the owner says otherwise (#27). */
 .preview-note {
-  margin: 0.75rem 0 0;
-  padding: 0.5rem 0.75rem;
-  border: 2px solid currentColor;
-  font-weight: 600;
+  margin: var(--space-1) 0 0;
+  padding: var(--space-half) var(--space-2);
+  color: var(--ink-secondary);
+  background: var(--muted-surface);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
 }
 
 footer {
-  margin-top: 3rem;
+  margin-top: var(--space-6);
   color: var(--ink-secondary);
   border-top: 1px solid var(--rule-faint);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 @media (prefers-reduced-motion: reduce) {
