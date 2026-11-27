@@ -6,6 +6,9 @@
  *
  * The wording is a draft until the owner approves it on #69.
  *
+ * The before/after chart has none, on the owner's choice (#69): a rate before and
+ * after an event, as a heading, could read as the event's effect.
+ *
  * Each function returns undefined where there is nothing to say, and the chart
  * then keeps its name as its heading. Guided stops don't use these.
  *
@@ -15,7 +18,6 @@ import type { MapRow } from "../alerts/alertData.ts";
 import type { AlertLaunchRow } from "../alerts/alertLaunchData.ts";
 import type { ComparisonRow } from "../alerts/comparisonData.ts";
 import { RATE_SHOWN, type RateChartRow, type SaturationRow, type SizeBinRow } from "../defense/defenseData.ts";
-import type { WindowRow } from "../defense/eventWindowData.ts";
 import {
   launchPanels,
   median,
@@ -214,23 +216,6 @@ export function sizeBinHeadline(rows: readonly SizeBinRow[]): string | undefined
   const start = `Nights of ${best.bin} weapons: median share not reported destroyed`;
   if (best.shown.length === 1) return `${start} ${share(low)} in ${low.year}`;
   return `${start} from ${share(low)} (${low.year}) to ${share(high)} (${high.year})`;
-}
-
-/** The first class, in chart order, with a rate in both windows. */
-export function eventHeadline(rows: readonly WindowRow[], labels: Labels): string | undefined {
-  for (const id of CLASS_IDS) {
-    const rate = (side: WindowRow["side"]) =>
-      rows.find((row) => row.class === id && row.side === side)?.intercept_rate ?? null;
-    const before = rate("Before");
-    const after = rate("After");
-    if (before !== null && after !== null) {
-      return (
-        `${className(labels, id)}: reported intercept rate ${percent.format(before)} before, ` +
-        `${percent.format(after)} after`
-      );
-    }
-  }
-  return undefined;
 }
 
 export function mapHeadline(rows: readonly MapRow[]): string | undefined {

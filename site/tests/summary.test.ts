@@ -6,7 +6,6 @@ import { alertLaunchRows } from "../src/alerts/alertLaunchData.ts";
 import { comparisonRows, DEFAULT_COMPARISON } from "../src/alerts/comparisonData.ts";
 import { parseAreas } from "../src/buildData.ts";
 import { parseOutcomes, parseRates, rateRows, saturationRows, sizeBinRows } from "../src/defense/defenseData.ts";
-import { eventWindows, windowRows } from "../src/defense/eventWindowData.ts";
 import {
   allNights,
   massiveGaps,
@@ -111,7 +110,6 @@ function allHeadlines(): (string | undefined)[] {
   const months = monthsShown(strikes, everything.from, everything.to);
   const saturation = saturationRows(outcomes, everything, labels);
   const monthChart = monthRows(strikes, everything, String);
-  const [before, after] = eventWindows(outcomes, "2025-03-03", 90);
   return [
     headline.monthlyHeadline(monthChart, true),
     headline.mixHeadline(monthChart, strikes, months, labels),
@@ -123,7 +121,6 @@ function allHeadlines(): (string | undefined)[] {
     headline.interceptHeadline(rateRows(rates, everything), labels),
     headline.saturationHeadline(saturation),
     headline.sizeBinHeadline(sizeBinRows(saturation, rates)),
-    headline.eventHeadline(windowRows(outcomes, rates, [before, after], CLASS_IDS), labels),
     headline.comparisonHeadline(comparisonRows(alerts, areas, DEFAULT_COMPARISON, everything.from, everything.to)),
     headline.alertLaunchHeadline(alertLaunchRows(alerts, strikes, everything)),
   ];
@@ -152,7 +149,6 @@ test("a headline with nothing to say is left out, never filled with a zero", () 
     headline.interceptHeadline([], labels),
     headline.saturationHeadline([]),
     headline.sizeBinHeadline([]),
-    headline.eventHeadline([], labels),
     headline.mapHeadline([]),
     headline.comparisonHeadline([]),
     headline.alertLaunchHeadline([]),

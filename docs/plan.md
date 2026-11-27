@@ -345,6 +345,7 @@ Leave about 3–5 minutes of the 20 for questions. Stops 6 and 8 make natural pa
   - **Tiles:** A has weapons launched, the median night and the largest night. B has the share reported destroyed for the classes shown, Shahed-type drones, cruise and ballistic missiles. E has an average month's alert hours for the mean area and each compared area. They follow the months and classes shown, and on E the oblast picker.
   - **Tile rules:** the share over several classes stops at July 2026 (#9), as missile-class shares do (#5). A share needs the monthly minimum of launches with an outcome, so with every month shown the all-class share matches stop 1's. There's no massive-night tile, because the definition fixes the share of nights it marks.
   - **Headlines:** worked out from each chart's rows, not fixed text. The chart's name moves under the headline and the earlier one-line subtitle stays, since some carry caveats. Guided stops are unchanged. A chart with nothing to say keeps its name as its heading.
+- Before/after headline (owner, Nov 26, 2026, #69): the before/after chart has no headline and keeps its name as its heading. The coding agent had drafted one giving a class's rate before and after the event, said a reader might take it as the event's effect, and recommended dropping it; the owner chose to. This doesn't approve the other headlines or the tiles.
 
 **Open**
 - Summary tiles and chart headlines (#69): does the owner approve the tile choices and the headline wording? The draft is on #69.
