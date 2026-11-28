@@ -87,27 +87,35 @@ function shahed136({ length: l, wingspan }: Record<DimensionId, number>): Outlin
   const tip = wingspan / 2;
   const body = 0.045 * l;
   return [
+    // The trailing edge is cut away in the middle, around the engine.
     ...pair([
-      [0.22 * l, body],
-      [0.74 * l, tip],
-      [0.88 * l, tip],
-      [0.88 * l, 0],
-      [0.22 * l, 0],
-    ]),
-    mirrored([...nose(0.11 * l, body, 0.5), [0.91 * l, body], [0.93 * l, 0.6 * body]]),
-    ...pair([
-      [0.72 * l, tip - 0.04],
+      [0.29 * l, body],
       [0.75 * l, tip],
-      [0.95 * l, tip],
-      [0.95 * l, tip - 0.04],
+      [0.94 * l, tip],
+      [0.94 * l, 0.23],
+      [0.876 * l, 0.23],
+      [0.876 * l, 0],
+      [0.29 * l, 0],
+    ]),
+    mirrored([...nose(0.09 * l, body, 0.5), [0.865 * l, body], [0.878 * l, 0.7 * body]]),
+    ...pair([
+      [0.81 * l, tip - 0.04],
+      [0.825 * l, tip],
+      [0.964 * l, tip],
+      [0.958 * l, tip - 0.04],
+    ]),
+    // The engine, then the propeller.
+    mirrored([
+      [0.876 * l, 0.06],
+      [0.895 * l, 0.06],
+      [0.895 * l, 0.2],
+      [0.97 * l, 0.2],
+      [0.97 * l, 0.05],
+      [0.983 * l, 0.05],
     ]),
     mirrored([
-      [0.93 * l, 0.1],
-      [0.975 * l, 0.1],
-    ]),
-    mirrored([
-      [0.975 * l, 0.36],
-      [l, 0.36],
+      [0.983 * l, 0.32],
+      [l, 0.32],
     ]),
   ];
 }
