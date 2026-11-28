@@ -73,6 +73,36 @@
   overflow-wrap: anywhere;
 }
 
+/*
+ * Every drawing's viewBox is the same width in meters, and the cards' columns are
+ * the same width, so they all share one scale.
+ */
+.drawing {
+  max-width: 40rem;
+  margin: var(--space-2) 0;
+}
+
+.drawing svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Outlines keep their weight at any size. The fill hides the lines of the part underneath. */
+.drawing path {
+  fill: var(--surface);
+  stroke: var(--ink);
+  stroke-width: 1.5px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.drawing figcaption p {
+  margin: var(--space-half) 0;
+}
+
+.drawing figcaption,
+.drawing-note,
 .member-models,
 .cited-from,
 .by-source,
@@ -165,6 +195,7 @@
   margin: var(--space-1) 0 var(--space-2);
 }
 
+.based-on summary,
 .by-source summary,
 .mixed-models summary {
   min-height: 24px;

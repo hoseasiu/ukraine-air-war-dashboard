@@ -19,6 +19,7 @@ import { parseAreas, parseBuildInfo, parseWeaponClasses } from "./buildData.ts";
 import { parseOutcomes, parseRates } from "./defense/defenseData.ts";
 import { parseManifest, parseReconciliation, parseTaxonomy } from "./methods/methodsData.ts";
 import { parseMonthly, parseNights } from "./strikes/strikeData.ts";
+import { buildDrawings } from "./weapons/drawings.ts";
 import { parseWeapons } from "./weapons/weaponData.ts";
 
 export const buildInfo = parseBuildInfo(buildInfoJson);
@@ -34,6 +35,7 @@ export const outcomeTable = parseOutcomes(nightsJson);
 export const rateTable = parseRates(monthlyByClassJson);
 // The weapon reference tables, for the primer and Data & Methods.
 export const weapons = parseWeapons(weaponMembersCsv, weaponFiguresCsv, weaponSourcesCsv);
+export const drawings = buildDrawings(weapons);
 // For Data & Methods.
 export const taxonomy = parseTaxonomy(weaponClassesCsv, modelClassesCsv);
 export const manifest = parseManifest(manifestJson);
