@@ -15,6 +15,7 @@ export const CHANGELOG: readonly ChangelogEntry[] = [
   {
     date: "2026-11-27",
     changes: [
+      "Weapon classes: added a scale line drawing of one weapon in each class, beside a person for size. No figure or count changed.",
       "Added the weapon-class primer: a card for each of the five classes, with each member’s role, launch platform, speed category and cited published figures, and notes on mixed counts and excluded types. Data & Methods lists the pages it cites. No count or rate changed.",
     ],
   },

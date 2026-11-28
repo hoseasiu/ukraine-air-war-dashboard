@@ -163,6 +163,15 @@ export const TRACES: readonly Trace[] = [
     code: ["site/src/weapons/weaponData.ts"],
   },
   {
+    figure: "Weapon primer: scale drawings",
+    shownOn: "Weapon classes",
+    method:
+      "Our own outlines. Each drawn dimension is one that a single cited page gives, checked against the figures table; the person’s height is chosen for comparison. Other proportions are approximate.",
+    tables: ["weapon_figures.csv", "weapon_sources.csv"],
+    handCompiled: true,
+    code: ["site/src/weapons/drawings.ts"],
+  },
+  {
     figure: "Chart headlines",
     shownOn: "Tabs A, B and E",
     method:

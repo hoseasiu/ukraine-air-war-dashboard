@@ -10,6 +10,7 @@ This repo mixes our own work with material from three data sources and one font,
 | Our writing: the Markdown docs, and the on-screen teaching text (definitions, discussion prompts, captions and explanations), including where it sits in code files | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Credit "Hosea Siu, The Air War, in Data", link to this repo and say what you changed. |
 | `data/reference/annotations.csv`: our event labels, descriptions and notes | CC BY 4.0. The linked sources belong to their publishers. |
 | `data/reference/weapon_classes.csv` | CC BY 4.0 |
+| The weapon line drawings: the outlines in `site/src/weapons/drawings.ts` and as the built site draws them | CC BY 4.0, with the same credit as our writing. The rest of that file is MIT. They're our own: no image was traced or copied. [What each shape was drawn from](data/reference/weapons.md#drawings). |
 | `data/reference/weapon_figures.csv`, `weapon_sources.csv`: our choice of weapon figures, notes and citations | CC BY 4.0. The figures are facts taken from the linked pages, which belong to their publishers. |
 
 ## Data from other sources

@@ -5,16 +5,18 @@
  * The figures are published claims about types of weapon, not counts from the
  * data, so they aren't charts and take no data-quality badges. Leave out
  * anything about cost, interception, launch areas or particular launches.
+ * One member of each class has a scale line drawing (drawings.ts, #89).
  *
  * The owner approved the "About the figures", "Mixed", "Decoys" and "Left out"
  * paragraphs and the wording in the tables (#86), then the rest (#87). Changing
  * any of it needs their review again.
  */
-import { taxonomy, weaponClasses, weapons } from "../data.ts";
+import { drawings, taxonomy, weaponClasses, weapons } from "../data.ts";
 import { withTerms } from "../glossary/popover.ts";
 import type { TermId } from "../glossary/terms.ts";
 import { CLASS_STYLES, type ClassId } from "../theme/classStyles.ts";
 import { classKeyFill, classSymbolPath, svgElement } from "../theme/marks.ts";
+import { DRAWING_WIDTH_M, outlinePath, PERSON_HEIGHT_M, type Drawing, type Outline } from "./drawings.ts";
 import {
   allUnknown,
   classOnlySearch,
@@ -167,6 +169,51 @@ function figures(member: Member): Content[] {
   return [scroller, bySource(member)];
 }
 
+/** The outline drawing, its dimensions and source, and what the shape was drawn from. */
+function drawingFigure(member: Member, drawing: Drawing): HTMLElement {
+  const svg = svgElement("svg", {
+    viewBox: `0 0 ${DRAWING_WIDTH_M} ${+drawing.height.toFixed(3)}`,
+    role: "img",
+    "aria-label": drawing.description,
+    focusable: "false",
+  });
+  const paths = (className: string, outlines: Outline[]) =>
+    outlines.map((outline) => svgElement("path", { class: className, d: outlinePath(outline) }));
+  svg.append(...paths("outline-person", drawing.person), ...paths("outline-weapon", drawing.weapon));
+  const { spec, source } = drawing;
+  return create(
+    "figure",
+    "drawing",
+    svg,
+    create(
+      "figcaption",
+      "",
+      create(
+        "p",
+        "",
+        `${spec.variant}, seen ${spec.view === "above" ? "from above" : "from the side"}. To scale: ` +
+          `${drawing.dimensionText}.`,
+        ...mark([source]),
+        " ",
+        create("span", "cited-from", "Dimensions from: ", citations([source])),
+      ),
+      ...(spec.note ? [create("p", "", spec.note)] : []),
+      create(
+        "details",
+        "based-on",
+        create("summary", "", "What the shape is based on", hidden(`: ${member.name}`)),
+        create(
+          "ul",
+          "",
+          ...spec.basedOn.map((reference) =>
+            create("li", "", link(reference.url, reference.title), reference.license ? ` (${reference.license})` : ""),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 function memberBlock(member: Member, seen: Set<TermId>): HTMLElement {
   const block = create("article", "member", create("h4", "", member.name));
   block.append(
@@ -178,6 +225,8 @@ function memberBlock(member: Member, seen: Set<TermId>): HTMLElement {
     ),
   );
   if (member.note) block.append(paragraph(member.note, seen));
+  const drawing = drawings.get(member.id);
+  if (drawing) block.append(drawingFigure(member, drawing));
   if (allUnknown(member)) {
     const reasons = [...new Set(member.measures.map((measure) => measure.unknownReason))].join(" ");
     block.append(
@@ -244,7 +293,15 @@ function card(id: ClassId): [HTMLElement, HTMLHeadingElement] {
       ),
     );
   }
-  element.append(create("div", "members", ...members.map((member) => memberBlock(member, seen))));
+  element.append(
+    create(
+      "p",
+      "drawing-note",
+      `Drawn: ${members.filter((member) => drawings.has(member.id)).map((member) => member.name).join(", ")}. ` +
+        "The other weapons in this class have no drawing.",
+    ),
+    create("div", "members", ...members.map((member) => memberBlock(member, seen))),
+  );
   return [element, heading];
 }
 
@@ -310,6 +367,9 @@ function aboutFigures(): HTMLElement {
     `A coding agent compiled the figures and read the pages, on ${checked.map((day) => date.format(new Date(day))).join(" and ")}, ` +
       "with an automated tool that returns extracts. Most figures haven’t been re-read against their pages. Check the " +
       "linked page before relying on one.",
+    "The drawings are our own plain outlines, one for each class, all at one scale, beside a person " +
+      `${PERSON_HEIGHT_M} m tall, a height we chose for comparison. Only the dimensions listed under a drawing are ` +
+      "to scale. Everything else, such as the shape and position of wings and fins, is approximate.",
   ];
   const [element] = section(
     "primer-about",

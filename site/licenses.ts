@@ -20,6 +20,8 @@ function siteNotices(): string {
     `${boundaries.attribution}\n${boundaries.license}\nNo endorsement by Kartographia or OCHA is implied.`,
     "== Font ==",
     read("./src/theme/fonts/OFL.txt").trim(),
+    "== Weapon drawings ==",
+    "The line drawings on the weapon-class page are our own, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Credit: Hosea Siu, The Air War, in Data. The page lists what each shape was drawn from; no image was traced or copied.",
     "== Weapon-class table ==",
     "The model strings on the Data & Methods page come from Massive Missile Attacks on Ukraine by Petro Ivaniuk (https://www.kaggle.com/datasets/piterfm/massive-missile-attacks-on-ukraine), under CC BY-NC-SA 4.0 (https://creativecommons.org/licenses/by-nc-sa/4.0/). We added the class assignments. The table is shared under the same license.",
     "== Weapon reference tables ==",
