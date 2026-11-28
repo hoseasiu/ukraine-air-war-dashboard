@@ -114,11 +114,12 @@ The primer draws one member of each class. [drawings.ts](../../site/src/weapons/
 | Drawing | View | Dimensions to scale | From | Shape drawn from |
 |---|---|---|---|---|
 | Shahed-136 | above | length 3.5 m, wingspan 2.5 m | `wp-shahed` (Wikipedia only) | [Three-view drawing](https://commons.wikimedia.org/wiki/File:Shahed-136-335-250draw.svg) by Alexpl, CC BY 4.0 |
-| Kh-101 | above | length 7.45 m, wingspan 4.3 m, diameter 0.742 m | `gur-kh101` | The 3D model on the `gur-kh101` page |
+| Kh-101 | above | length 7.45 m, wingspan 4.3 m, diameter 0.742 m | `gur-kh101` | [Top and side views](https://commons.wikimedia.org/wiki/File:H101_missile.jpg) uploaded by Vslv, CC0, and the 3D model on the `gur-kh101` page |
 | Iskander-M (9M723) | side | length 7.185 m, diameter 0.92 m | `gur-iskander-m` | The 3D model on the `gur-iskander-m` page |
 | Kinzhal, without tail fairing | side | length 7.175 m, diameter 0.92 m | `gur-kinzhal` | The 3D model on the `gur-kinzhal` page |
-| Kh-22 | above | length 11.65 m, wingspan 3 m, diameter 0.92 m | `wp-kh22` (Wikipedia only) | Museum photos: a [side view](https://commons.wikimedia.org/wiki/File:Raduga_Kh-22,_side_view.JPG) by Антон Бородин, CC BY-SA 3.0, and a [Kh-22NA](https://commons.wikimedia.org/wiki/File:Kh-22NA_Kyiv_Museum_2018_G1.jpg) by George Chernilevsky, CC BY 4.0 |
+| Kh-22 | above | length 11.65 m, wingspan 3 m, diameter 0.92 m | `wp-kh22` (Wikipedia only) | Museum photos: a [side view](https://commons.wikimedia.org/wiki/File:Raduga_Kh-22,_side_view.JPG) by Антон Бородин, CC BY-SA 3.0, and a [Kh-22NA](https://commons.wikimedia.org/wiki/File:Kh-22NA_Kyiv_Museum_2018_G1.jpg) by George Chernilevsky, CC BY 4.0, and a [photo from below](https://commons.wikimedia.org/wiki/File:Raduga_Kh-22.jpg) uploaded by Victor12, public domain |
 
+- **Checked again:** the owner found the Shahed-136's wing misplaced. It was re-measured, and then so were the other four against straighter views, on Nov 27, 2026. The Kh-101's wings and tailplane moved or changed size, the Iskander-M and Kinzhal noses got longer, and the Kh-22's wingtips got wider. Positions were read off screen views by eye. The 3D models are in perspective and the Kh-22 photos are at an angle, so those four are less certain than the Shahed-136, which has a flat drawing. The Kh-101 image's uploader calls it their own work; it looks processed from other material, and where that came from isn't known.
 - **To scale:** only the dimensions above. Wing, fin and nose shapes and positions were judged by eye, as was the width of the Shahed-136's body, which has no cited diameter.
 - **The person** is 1.75 m tall, a height chosen for comparison, not a figure from a source.
 - **Scale:** every drawing is 13 m wide and shown at the same width, so they share one scale.

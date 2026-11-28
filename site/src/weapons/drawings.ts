@@ -120,57 +120,66 @@ function shahed136({ length: l, wingspan }: Record<DimensionId, number>): Outlin
   ];
 }
 
-/** Kh-101: a slender body, narrow wings behind the middle and a small tailplane. */
+/** Kh-101: a slender body, narrow swept wings just ahead of the middle and a small tailplane. */
 function kh101({ length: l, wingspan, diameter }: Record<DimensionId, number>): Outline[] {
   const tip = wingspan / 2;
   const body = diameter / 2;
   return [
     ...pair([
-      [0.47 * l, 0],
-      [0.515 * l, tip],
-      [0.56 * l, tip],
-      [0.56 * l, 0],
+      [0.375 * l, 0],
+      [0.486 * l, tip],
+      [0.523 * l, tip],
+      [0.426 * l, 0],
     ]),
     ...pair([
-      [0.88 * l, 0],
-      [0.94 * l, 0.9],
-      [0.975 * l, 0.9],
-      [0.95 * l, 0],
+      [0.915 * l, 0],
+      [0.915 * l, 0.7 * body],
+      [0.946 * l, 0.52],
+      [0.971 * l, 0.52],
+      [0.971 * l, 0],
     ]),
-    mirrored([...nose(0.13 * l, body, 0.6), [0.84 * l, body], [l, 0.35 * body]]),
+    mirrored([
+      ...nose(0.13 * l, body, 0.6),
+      [0.78 * l, body],
+      [0.965 * l, 0.6 * body],
+      [0.975 * l, 0.3 * body],
+      [l, 0.2 * body],
+    ]),
   ];
 }
 
-/** Iskander-M: a pointed nose on a thick body, with small fins at the back. */
+/** Iskander-M: a long pointed nose, about half the length, on a thick body with small fins at the back. */
 function iskanderM({ length: l, diameter }: Record<DimensionId, number>): Outline[] {
   const body = diameter / 2;
   return [
     ...pair([
-      [0.88 * l, 0.8 * body],
-      [0.95 * l, body + 0.24],
-      [0.99 * l, body + 0.24],
-      [0.98 * l, 0.8 * body],
+      [0.875 * l, 0.8 * body],
+      [0.875 * l, body],
+      [0.92 * l, body + 0.25],
+      [0.967 * l, body + 0.25],
+      [0.957 * l, 0.8 * body],
     ]),
-    mirrored([...nose(0.34 * l, body, 0.8), [0.92 * l, body], [l, 0.82 * body]]),
+    mirrored([...nose(0.5 * l, body, 1.1), [0.97 * l, body], [0.975 * l, 0.8 * body], [l, 0.8 * body]]),
   ];
 }
 
-/** Kinzhal without its tail fairing: a longer, finer nose than the Iskander-M's, and larger fins. */
+/** Kinzhal without its tail fairing: a nose that runs to the section joint, fins and a nozzle. */
 function kinzhal({ length: l, diameter }: Record<DimensionId, number>): Outline[] {
   const body = diameter / 2;
   return [
     ...pair([
-      [0.84 * l, body],
-      [0.93 * l, body + 0.33],
-      [0.975 * l, body + 0.33],
-      [0.97 * l, 0.8 * body],
+      [0.85 * l, 0.8 * body],
+      [0.85 * l, body],
+      [0.91 * l, body + 0.26],
+      [0.945 * l, body + 0.26],
+      [0.94 * l, 0.8 * body],
     ]),
-    mirrored([...nose(0.5 * l, body, 0.85), [0.94 * l, body], [l, 0.72 * body]]),
+    mirrored([...nose(0.55 * l, body, 1), [0.945 * l, body], [0.955 * l, 0.55 * body], [l, 0.55 * body]]),
     [
-      [0.505 * l, body],
-      [0.505 * l, -body],
-      [0.51 * l, -body],
-      [0.51 * l, body],
+      [0.553 * l, body],
+      [0.553 * l, -body],
+      [0.558 * l, -body],
+      [0.558 * l, body],
     ],
   ];
 }
@@ -182,8 +191,8 @@ function kh22({ length: l, wingspan, diameter }: Record<DimensionId, number>): O
   return [
     ...pair([
       [0.43 * l, body],
-      [0.72 * l, tip],
-      [0.775 * l, tip],
+      [0.68 * l, tip],
+      [0.77 * l, tip],
       [0.775 * l, 0],
       [0.43 * l, 0],
     ]),
@@ -237,6 +246,11 @@ export const DRAWING_SPECS: readonly DrawingSpec[] = [
     ],
     note: "The wings are shown open. Sources disagree on the diameter; this uses the same page as the other dimensions.",
     basedOn: [
+      {
+        title: "Top and side views of the Kh-101, uploaded by Vslv to Wikimedia Commons",
+        url: "https://commons.wikimedia.org/wiki/File:H101_missile.jpg",
+        license: "CC0",
+      },
       { title: GUR_MODEL, url: "https://war-sanctions.gur.gov.ua/en/page-kh-101", license: "" },
     ],
     shape: kh101,
@@ -292,6 +306,11 @@ export const DRAWING_SPECS: readonly DrawingSpec[] = [
         title: "Photo of a museum Kh-22NA by George Chernilevsky, Wikimedia Commons",
         url: "https://commons.wikimedia.org/wiki/File:Kh-22NA_Kyiv_Museum_2018_G1.jpg",
         license: "CC BY 4.0",
+      },
+      {
+        title: "Photo of a Kh-22 under an aircraft, seen from below, uploaded by Victor12 to Wikimedia Commons",
+        url: "https://commons.wikimedia.org/wiki/File:Raduga_Kh-22.jpg",
+        license: "Public domain",
       },
     ],
     shape: kh22,
